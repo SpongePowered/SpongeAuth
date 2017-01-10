@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Log in" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-default panel-signup">
+				<div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Log in" %}</h4>
+				</div>
+
+				<div class="panel-body">
+                    {% crispy form %}
+				</div><!-- .panel-body -->
+			</div><!-- .panel -->
+		</div><!-- .col-md-6 -->
+	</div><!-- .row -->
+</div><!-- .container -->
+
+{% include 'accounts/_google_signin_form.html' %}
+{% endblock main %}

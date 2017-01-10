@@ -1,0 +1,6 @@
+<form style="display: none;" id="form-glogin" method="POST" action="{% url 'accounts:login' %}">
+    {% csrf_token %}
+    <input type="hidden" name="google_id_token">
+    <input type="hidden" name="login_type" value="google">
+</form>
+

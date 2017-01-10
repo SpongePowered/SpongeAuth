@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Sign up" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default panel-signup">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Sign up" %}</h4>
+                </div>
+                <div class="panel-body">
+
+					{% if not login_type %}
+                    <div class="g-signin2" data-onsuccess="onGoogleSignIn" data-theme="dark"></div>
+					{% endif %}
+
+                    {% crispy form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "accounts/_google_signin_form.html" %}
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Your authenticators" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Your authenticators" %}</h4>
+                </div>
+
+                <div class="panel-body">
+                    {% if devices %}
+                        <p>{% trans "You have the following authenticators attached to your account:" %}</p>
+                        <ul class="list-group">
+                            {% for device in devices %}
+                            <li class="list-group-item">
+                                <strong>{{ device.name }}</strong>
+                                {% if device.extra_info %}
+                                    <p>{{ device.extra_info }}</p>
+                                {% endif %}
+                                <dl class="dl-horizontal">
+                                    <dt>Last used:</dt>
+                                        <dd>{% if not device.last_used_at %}Never{% else %}{{ device.last_used_at }}{% endif %}</dd>
+
+                                    <dt>Added:</dt>
+                                        <dd>{{ device.added_at }}</dd>
+                                </dl>
+                                {% if device.can_regenerate %}
+                                    <form method="POST" action="{% url 'twofa:regenerate' device_id=device.pk %}" class="clearfix">
+                                        {% csrf_token %}
+                                        <input type="submit" class="btn btn-primary pull-right" value="Regenerate">
+                                    </form>
+                                {% endif %}
+                                {% if device.can_delete %}
+                                    <form method="POST" action="{% url 'twofa:remove' device_id=device.pk %}" class="clearfix">
+                                        {% csrf_token %}
+                                        <input type="submit" class="btn btn-danger pull-right" value="Remove">
+                                    </form>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>{% trans "You have no authenticators attached to your account. Why not improve your security today?" %}</p>
+                        <a href="{% url 'twofa:setup-totp' %}" class="btn btn-primary pull-right">Add new authenticator</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

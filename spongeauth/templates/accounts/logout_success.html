@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Logged out" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-default panel-signup">
+				<div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Logged out" %}</h4>
+				</div>
+
+				<div class="panel-body">
+                    {% trans "You have been logged out successfully." %}
+					
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary pull-right">{% trans "Log in" %}</a>
+				</div><!-- .panel-body -->
+			</div><!-- .panel -->
+		</div><!-- .col-md-6 -->
+	</div><!-- .row -->
+</div><!-- .container -->
+{% endblock %}

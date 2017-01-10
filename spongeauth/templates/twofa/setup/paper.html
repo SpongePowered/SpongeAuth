@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block title %}{% trans "Secure your account" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Secure your account" %}</h4>
+                </div>
+
+                <div class="panel-body">
+                    <p>{% trans "Your recovery codes have been regenerated, and the old ones have been removed from your account." %}</p>
+                    <p>{% trans "They are displayed below, and will be displayed only once. They can be used in situations where you don't have access to your usual authenticator." %}</p>
+                    <pre>{% for code in codes %}{{ code }}{% if not forloop.last %}
+{% endif %}{% endfor %}</pre>
+                    <form action="" method="POST">{% csrf_token %}
+                        <input type="submit" class="btn btn-primary pull-right" value="I've saved them somewhere safe">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

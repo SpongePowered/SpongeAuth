@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Log in" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Log in" %}</h4>
+                </div>
+
+                <div class="panel-body">
+                    <p>{% trans "This account has two factor authentication enabled." %}</p>
+
+                    {% block twofa %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    {% if other_devices.exists %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Use another verification method" %}</h4>
+                </div>
+
+                <div class="panel-body">
+                        <ul class="list-group">
+                            {% for other_device in other_devices %}
+                                <a href="{% url 'twofa:verify' device_id=other_device.pk %}" class="list-group-item">{{ other_device.name }}</a>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

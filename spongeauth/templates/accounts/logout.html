@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Log out" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-default panel-signup">
+				<div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Logging out..." %}</h4>
+				</div>
+
+				<div class="panel-body">
+                    {% trans "Are you sure you wish to log out?" %}
+					
+                    <form method="POST" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary pull-right" value="{% trans "Yes, log me out" %}">
+                    </form>
+				</div><!-- .panel-body -->
+			</div><!-- .panel -->
+		</div><!-- .col-md-6 -->
+	</div><!-- .row -->
+</div><!-- .container -->
+{% endblock %}

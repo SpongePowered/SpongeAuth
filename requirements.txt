@@ -1,0 +1,9 @@
+Django==1.10.5
+django-user-sessions==1.4.0
+Pillow==4.0.0
+oauth2client==4.0.0
+django-crispy-forms==1.6.1
+django-model-utils==2.6
+qrcode==5.3
+pytest-django==3.1.2
+prospector==0.12.4

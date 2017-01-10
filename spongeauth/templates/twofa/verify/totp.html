@@ -1,0 +1,8 @@
+{% extends "twofa/verify/base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block twofa %}
+<p>{% trans "Please provide the 6 digit code from your authenticator." %}</p>
+{% crispy form %}
+{% endblock %}

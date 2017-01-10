@@ -1,0 +1,25 @@
+// Used for overriding any variables.
+
+$icon-font-path: "../fonts/";
+
+$brand-primary: #f6cf17;
+
+$link-color: #337ab7;
+$link-hover-color: darken($link-color, 15%);
+$link-hover-decoration: none;
+
+$border-radius-base: 0;
+$border-radius-large: 0;
+$border-radius-small: 0;
+
+$component-active-color: #474a54;
+$component-active-bg: $brand-primary;
+
+$btn-primary-color: black;
+$btn-primary-bg: $brand-primary;
+$btn-primary-border: darken($btn-primary-bg, 5%);
+
+//$navbar-height: 75px;
+//$navbar-inverse-bg: #3a3a3a;
+
+@import "bootstrap-sass/assets/stylesheets/_bootstrap.scss";

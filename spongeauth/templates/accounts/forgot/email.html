@@ -1,0 +1,16 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<body>
+<strong>{% blocktrans with username=user.username %}Hi {{ username }},{% endblocktrans %}</strong>
+
+{% blocktrans %}Someone with the IP {{ ip }} asked to reset your password. If this is something you were expecting to see, then please click the link below to proceed with setting a new password.{% endblocktrans %}
+
+<a href="{{ link }}">{{ link }}</a>
+
+{% blocktrans %}If you did not ask for your password to be reset, please reply to this email and let us know.{% endblocktrans %}
+
+{% blocktrans %}Best regards,
+The SpongePowered Team{% endblocktrans %}
+</body>
+</html>

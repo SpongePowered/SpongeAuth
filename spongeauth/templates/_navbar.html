@@ -1,0 +1,47 @@
+{% load i18n %}
+<nav id="topbar" class="navbar-main navbar-inverse">
+    <div class="container">
+        <!-- Left navbar -->
+        <div id="sp-logo-container">
+            <a class="logo" href="/">
+                <img src="https://www.spongepowered.org/assets/img/icons/spongie-mark.svg">
+                <span>Sponge</span>
+                <i class="fa fa-fw fa-chevron-down"></i>
+            </a>
+            <div id="sp-logo-menu">
+                <ul id="sp-logo-dropdown">
+                    <li><a href="https://www.spongepowered.org">
+                        <i class="fa-fw fa fa-home"></i>{% trans "Homepage" %}
+                    </a></li>
+                    <li><a href="https://forums.spongepowered.org">
+                        <i class="fa-fw fa fa-comments"></i>{% trans "Forums" %}
+                    </a></li>
+                    <li><a href="https://github.com/SpongePowered">
+                        <i class="fa-fw fa fa-code"></i>{% trans "Code" %}
+                    </a></li>
+                    <li><a href="https://docs.spongepowered.org">
+                        <i class="fa-fw fa fa-book"></i>{% trans "SpongeDocs" %}
+                    </a></li>
+                    <li><a href="https://jd.spongepowered.org">
+                        <i class="fa-fw fa fa-graduation-cap"></i>{% trans "JavaDocs" %}
+                    </a></li>
+                    <li><a href="https://ore.spongepowered.org">
+                        <i class="fa-fw fa fa-plug"></i>{% trans "Plugins" %}
+                    </a></li>
+                    <li><a href="https://www.spongepowered.org/#downloads">
+                        <i class="fa-fw fa fa-download"></i>{% trans "Downloads" %}
+                    </a></li>
+                    <li><a href="https://www.spongepowered.org/chat">
+                        <i class="fa-fw fa fa-comment"></i>{% trans "Chat" %}
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    <!-- Right navbar -->
+    <div class="nav navbar-nav navbar-collapse collapse navbar-right">
+        {% if request.user.is_staff %}
+        <a href="/admin/" class="btn btn-primary navbar-btn">Admin</a>
+        {% endif %}
+    </div>
+    </div>
+</nav>

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Account Settings" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default panel-signup">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "User Information" %}</h4>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>{% trans "Username" %}</dt>
+                            <dd>{{ user.username }}</dd>
+
+                        <dt>{% trans "Email" %}</dt>
+                            <dd>{{ user.email }}</dd>
+
+                        <dt>{% trans "Member since" %}</dt>
+                            <dd>{{ user.joined_at }}</dd>
+
+                        <dt>{% trans "Two-factor auth" %}</dt>
+                            <dd><a href="{% url 'twofa:list' %}">{% if user.twofa_enabled %}{% trans "Enabled" %}{% else %}{% trans "Disabled" %}{% endif %}</a></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default panel-signup">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Avatar" %}</h4>
+                </div>
+                <div class="panel-body">
+                    <img src="{{ user.avatar.get_absolute_url }}" class="pull-right avatar-view">
+                    {% crispy avatar_form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default panel-signup">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Profile" %}</h4>
+                </div>
+                <div class="panel-body">
+                    {% crispy profile_form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.has_usable_password %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default panel-signup">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Change Password" %}</h4>
+                </div>
+                <div class="panel-body">
+                    {% crispy password_form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

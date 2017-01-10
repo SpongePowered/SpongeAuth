@@ -1,0 +1,25 @@
+.panel-signup .panel-body {
+  form { margin: 0; }
+  div:not(:last-child) { margin-bottom: 10px; }
+  i { color: gray; }
+  .user-input a {
+    font-size: 11px;
+    font-weight: normal;
+    float: right;
+  }
+}
+
+.qr-totp {
+  display: block;
+  margin: 0 auto;
+}
+
+.form-totp {
+  p { max-width: 80%; }
+  i { color: gray; }
+  input { margin-bottom: 10px; }
+}
+
+.forgot-link {
+  font-size: smaller;
+}

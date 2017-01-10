@@ -1,0 +1,63 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block fulltitle %}{% block title %}{% endblock %} | SpongePowered{% endblock fulltitle %}</title>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-signin-scope" content="profile email">
+        <meta name="google-signin-client_id" content="375961146994-9cnsdrrhs12geakfbmgiq9e3mfhqo3av.apps.googleusercontent.com">
+
+        <link rel="icon" type="image/png" href="https://forums-cdn.spongepowered.org/uploads/default/original/2X/9/9ba706a80e45cf427617525ee2a19fad7bb6b109.png">
+        <link rel="stylesheet" type="text/css"
+              href="{% static "styles/font-awesome.css" %}">
+        <link rel="stylesheet" type="text/css"
+              href="{% static "styles/bootstrap.css" %}">
+        <link rel="stylesheet" type="text/css"
+              href="{% static "styles/app.css" %}">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+
+        <script type="text/javascript" src="{% static "scripts/jquery.slim.min.js" %}"></script>
+    </head>
+    <body class="body-navbar-pad">
+        {% include "_navbar.html" %}
+
+        {% block messages %}
+            {% if messages %}
+                <div class="top-level">
+                    {% for message in messages %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                            <div class="alert alert-danger" role="alert">
+                                <div class="container"><strong>{% trans "Uh oh!" %}</strong>
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                            <div class="alert alert-warning" role="alert">
+                                <div class="container"><strong>{% trans "Woah!" %}</strong>
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                            <div class="alert alert-success" role="alert">
+                                <div class="container"><strong>{% trans "Hooray!" %}</strong>
+                        {% else %}{% comment %}including info!{% endcomment %}
+                            <div class="alert alert-info" role="alert">
+                                <div class="container"><strong>{% trans "Heads up!" %}</strong>
+                        {% endif %}
+                                    {{ message }}
+                                </div>
+                            </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endblock %}
+
+        {% block main %}{% endblock %}
+
+        {% include "_footer.html" %}
+
+        <script type="text/javascript" src="{% static "scripts/bootstrap.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "scripts/app.js" %}"></script>
+        <script type="text/javascript" src="https://apis.google.com/js/platform.js" async defer></script>
+    </body>
+</html>
+
+

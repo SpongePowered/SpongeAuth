@@ -1,0 +1,27 @@
+.panel-settings {
+  .setting:first-child {
+    padding-top: 0;
+  }
+
+  .setting-avatar {
+    position: relative;
+    .setting-content > form {
+      position: absolute;
+      bottom: 20px;
+      .btn-group {
+        margin-top: 10px;
+      }
+    }
+  }
+}
+
+.table-avatar td {
+  padding-right: 10px;
+  padding-top: 10px;
+}
+
+.avatar-view {
+  width: 90px;
+  height: auto;
+  max-height: 90px;
+}

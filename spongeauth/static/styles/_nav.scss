@@ -1,0 +1,136 @@
+@import 'utils';
+
+// left nav
+@import 'topbar';
+
+#topbar {
+  font-size: 15px;
+
+  .container {
+    max-width: 1110px;
+  }
+
+  a.logo {
+    color: $sponge_yellow;
+    outline: 0;
+
+    &:hover, &:focus, &:active, &.active {
+      color: $sponge_yellow;
+      outline: 0;
+    }
+  }
+}
+
+// right nav
+
+.navbar-inverse .navbar-nav > .open > a {
+   &, &:hover, &:focus, &:active {
+     background: transparent;
+  }
+}
+
+.navbar-nav > li > .main-dropdown, .user-dropdown {
+  @include no-box-shadow();
+  border-radius: 0 0 4px 4px;
+  border: 1px solid #e4e4e4;
+}
+
+.navbar-nav > li > .main-dropdown {
+  padding: 10px 0 4px;
+  border-top: none;
+}
+
+.navbar-nav > li > .user-dropdown {
+  width: 200px;
+}
+
+.user-dropdown > li {
+  position: relative;
+  .unread {
+    bottom: 6px;
+    margin-left: 5px;
+  }
+}
+
+.navbar-main {
+  .navbar-right > li > a { padding: 0; }
+  .navbar-right {
+    @include padding-vert(9px, 9px);
+    padding-right: 20px;
+  }
+}
+
+.project-search {
+  @include size(0, 40px);
+  padding: 3px;
+  overflow: hidden;
+}
+
+.nav-icon {
+  @include transition2(background-color, 0.5s);
+  cursor: pointer;
+  padding: 7px;
+  margin-right: 5px;
+  text-align: center;
+
+  .icon {
+    @include transition2(color, 0.5s);
+    cursor: pointer;
+    font-size: 25px;
+    color: #F6CF17;
+  }
+}
+
+.nav-icon:hover {
+  background-color: white;
+  .icon { color: black; }
+}
+
+.new-icon {
+  .caret { padding-bottom: 10px; }
+}
+
+.new-icon:hover {
+  background-color: transparent;
+  .icon { color: #F6CF17; }
+}
+
+.user-controls {
+  @include padding-vert(5px, 17px);
+}
+
+.new-controls {
+  @include padding-vert(10px, 19px);
+}
+
+.user-avatar:hover {
+  background-color: white;
+}
+
+.user-dropdown > li > a {
+  overflow: hidden;
+}
+
+.user-dropdown > li > a > i {
+  transform: translateY(4px);
+}
+
+.btn-group-login {
+  padding: 4px;
+}
+
+.btn-group-login > a {
+  margin: 0 auto;
+}
+
+.unread {
+  @include size(12px, 12px);
+  @include circle();
+  position: absolute;
+  background-image: linear-gradient(#e6b800, #FFD21A);
+}
+
+.user-toggle {
+  position: relative;
+  .unread { right: 10px; }
+}

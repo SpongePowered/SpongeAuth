@@ -1,0 +1,41 @@
+{% load static %}
+{% load i18n %}
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="info">
+                    <span class="minor copy">&copy;</span>
+                    <span class="minor copyright">2016 SpongePowered</span>
+                    <a href="#">{% trans "Terms" %}</a>
+                    <a href="mailto:sysops@spongepowered.org">{% trans "Support" %}</a>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-spongie">
+                <div>
+                    <img width="50" height="50" id="spongie" class="svg" src="{% static "images/spongie-mark.svg" %}" />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="social pull-right">
+
+                    
+
+                    <a href="https://docs.spongepowered.org/master/en/about/index.html">{% trans "About" %}</a>
+                    <a href="https://www.spongepowered.org/sponsors">{% trans "Sponsors" %}</a>
+                    <a class="social-icon" target="_blank" href="https://twitter.com/spongepowered">
+                        <i class="fa fa-twitter fa-2x"></i>
+                    </a>
+                    <a class="social-icon" target="_blank" href="https://www.facebook.com/SpongePoweredMC">
+                        <i class="fa fa-facebook-official fa-2x"></i>
+                    </a>
+                    <a class="social-icon" target="_blank" href="https://www.reddit.com/r/spongeproject">
+                        <i class="fa fa-reddit fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

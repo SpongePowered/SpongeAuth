@@ -1,0 +1,10 @@
+env/
+db.sqlite3
+__pycache__/
+static-build/
+node_modules/
+media/
+*.sw?
+.cache/
+.tox/
+.coverage

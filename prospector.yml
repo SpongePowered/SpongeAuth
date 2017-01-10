@@ -1,0 +1,23 @@
+strictness: veryhigh
+
+doc-warnings: false
+test-warnings: true
+
+uses:
+  - django
+
+ignore-paths:
+  - node_modules
+  - env
+  - spongeauth/spongeauth/settings
+
+ignore-patterns:
+  - ^[a-z]+/migrations(/|$)
+
+pep8:
+  full: true
+  options:
+    max-line-length: 120
+
+mccabe:
+  run: false

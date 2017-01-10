@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block title %}{% trans "Secure your account" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Secure your account" %}</h4>
+                </div>
+
+                <div class="panel-body">
+                    <p>{% trans "Setting up Google Authenticator on your account is easy!" %}</p>
+                    <ol>
+                        <li>
+                            <p>{% trans "Scan the QR code below to add Sponge to your authenticator." %}</p>
+                            <p class="text-center"><img src="data:image/svg+xml;utf8,{{ qr_code_svg }}"></p>
+                        </li>
+                        <li>
+                            {% trans "Enter the 6 digit code that it displays to verify that your authenticator is set up correctly. You'll need to do this every time you log in from now on." %}
+                            {% crispy form %}
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

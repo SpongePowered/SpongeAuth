@@ -1,0 +1,89 @@
+@import 'pallette';
+@import 'utils';
+
+/* footer */
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-height: 60px;
+  height: 60px;
+  padding: 0 10px 0 10px;
+  a { outline: none; }
+  .col-md-4.col-spongie { padding: 0; }
+  .info { display: table; }
+
+  .col-md-4 {
+    @include padding-horiz(5px, 5px);
+    font-size: 12px;
+    padding-top: 12px;
+    vertical-align: middle;
+    border-top: 1px solid $lighter;
+  }
+
+  .info > a, .info > .copyright {
+    display: table-cell;
+    padding-right: 10px;
+    vertical-align: middle;
+  }
+
+  .commit {
+    font-size: 10px;
+    color: $mainBackground;
+  }
+
+  .commit:hover {
+    color: $mainBackground;
+  }
+}
+
+.footer > .navbar-default {
+  background-color: $light;
+  border: 0;
+  border-top: 1px solid #A5A5A5;
+}
+
+#spongie, .col-spongie > div {
+  @include size(50px, 50px);
+  display: block;
+  margin: 0 auto;
+  path {
+    @include transition3(fill, 0.15s, ease-in-out);
+    fill: gray;
+  }
+}
+
+.col-spongie > div {
+  cursor: pointer;
+}
+
+.copy {
+  font-size: 11px;
+  padding-right: 2px;
+}
+
+.copyright {
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.social {
+  display: table;
+  .fa-twitter:hover { color: #00aced; }
+  .fa-facebook-official:hover { color: #3b5998; }
+  .fa-reddit:hover { color: #3399ff; }
+}
+
+.social > a {
+  display: table-cell;
+  padding-left: 10px;
+  vertical-align: middle;
+}
+
+.social > .social-icon {
+  color: #727272;
+}
+
+.social > a > .fa {
+  @include transition3(color, 0.15s, ease-in-out);
+}
