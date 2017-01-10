@@ -1,0 +1,11 @@
+[run]
+omit =
+	# omit tests themselves
+	*/tests/*
+	# omit migrations
+	*/migrations/*
+	# omit spongeauth (config directory)
+	spongeauth/*
+	# omit apps.py
+	*/apps.py
+branch = True

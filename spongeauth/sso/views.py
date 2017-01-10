@@ -7,8 +7,6 @@ from django.conf import settings
 
 from . import discourse_sso
 
-sso = discourse_sso.DiscourseSigner(settings.DISCOURSE_SSO_SECRET)
-
 
 def _make_payload(user, nonce, request=None):
     avatar_url = user.avatar.get_absolute_url()
@@ -17,7 +15,7 @@ def _make_payload(user, nonce, request=None):
     payload = {
         'nonce': nonce,
         'email': user.email,
-        'external_id': user.pk + 9999999,
+        'external_id': user.pk,
         'username': user.username,
         'name': user.username,
         'avatar_url': avatar_url,
@@ -31,6 +29,8 @@ def _make_payload(user, nonce, request=None):
 
 @login_required
 def begin(request):
+    sso = discourse_sso.DiscourseSigner(settings.DISCOURSE_SSO_SECRET)
+
     raw_payload = request.GET.get('sso', '')
     raw_signature = request.GET.get('sig', '')
     try:
@@ -38,7 +38,8 @@ def begin(request):
     except discourse_sso.SignatureError:
         return HttpResponseForbidden()
 
-    payload = {k: v[0] for k, v in payload.items()}
+    if b'return_sso_url' not in payload:
+        return HttpResponseForbidden()
 
     out_payload, out_signature = sso.sign(_make_payload(request.user, payload[b'nonce']))
     redirect_to = '{}?{}'.format(

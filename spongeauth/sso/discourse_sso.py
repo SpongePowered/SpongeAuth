@@ -22,9 +22,15 @@ class DiscourseSigner:
     def unsign(self, payload, signature):
         self._verify(payload.encode('utf8'), signature.encode('utf8'))
         payload_raw = base64.b64decode(payload)
-        return urllib.parse.parse_qs(payload_raw)
+        parsed_qs = urllib.parse.parse_qs(payload_raw)
+        # take only the first element
+        return {k: v[0] for k, v in parsed_qs.items()}
 
     def sign(self, payload_data):
+        for k, v in payload_data.items():
+            if isinstance(v, bool):
+                v = 'true' if v else 'false'
+            payload_data[k] = v
         payload_raw = urllib.parse.urlencode(payload_data).encode('utf8')
         payload = base64.b64encode(payload_raw)
         signature = self._sign(payload)

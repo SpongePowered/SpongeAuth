@@ -63,6 +63,14 @@ class TestVerify(django.test.TestCase):
         user = django.contrib.auth.get_user(self.client)
         assert user.is_authenticated()
 
+    def test_can_render_totp(self):
+        self.device = models.TOTPDevice(
+            owner=self.user, activated_at=timezone.now(),
+            last_t=0, base32_secret='GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ')
+        self.device.save()
+
+        self.client.get(self.path())
+
     def test_full_login_flow_default_device(self):
         self.device = models.PaperDevice(
             owner=self.user)
