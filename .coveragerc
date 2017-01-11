@@ -1,5 +1,7 @@
 [run]
 omit =
+	# ignore manage.py
+	manage.py
 	# omit tests themselves
 	*/tests/*
 	# omit migrations

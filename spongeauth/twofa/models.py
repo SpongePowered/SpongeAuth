@@ -45,16 +45,16 @@ class Device(models.Model):
 
     objects = DeviceManager()
 
-    def name(self):
+    def name(self):  # pragma: no cover
         raise NotImplementedError
 
     def extra_info(self):
         return None
 
-    def verify_form(self, *args, **kwargs):
+    def verify_form(self, *args, **kwargs):  # pragma: no cover
         raise NotImplementedError
 
-    def verify_template(self):
+    def verify_template(self):  # pragma: no cover
         raise NotImplementedError
 
     def can_delete(self):

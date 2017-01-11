@@ -39,51 +39,9 @@ class ProfileFieldsMixin(forms.Form):
                     'Enter your GitHub username here'))
 
 
-class RegisterGoogleForm(ProfileFieldsMixin, CoreFieldsMixin, forms.Form):
-    google_id_token = forms.CharField(widget=forms.HiddenInput())
-
-    form_submitted = forms.CharField(widget=forms.HiddenInput())
-
-    def __init__(self, *args, **kwargs):
-        email_editable = kwargs.pop('email_editable', False)
-        super().__init__(*args, **kwargs)
-        if not email_editable:
-            self.fields['email'].disabled = True
-            self.fields['email'].widget.attrs['readonly'] = True
-        del self.fields['password']
-        self.fields['login_type'].initial = 'google'
-        self.fields['form_submitted'].initial = 'yes'
-
-        self.helper = FormHelper()
-        self.helper.add_input(Submit(
-            'submit', _('Sign up'), css_class="pull-right"))
-
-
-class RegisterForm(ProfileFieldsMixin, CoreFieldsMixin, forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            Field('username'),
-            Field('password'),
-            Field('email'),
-            Field('mc_username'),
-            Field('irc_nick'),
-            Field('gh_username'),
-            FormActions(
-                HTML("""<a href="{{% url 'accounts:login' %}}" """
-                     """class="btn btn-default">{}</a> """.format(
-                         _("Log in"))),
-                Submit('sign up', _("Sign up")),
-                css_class="pull-right"
-            )
-        )
-
+class RegistrationMixin:
     def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if not username:
-            return username
+        username = self.cleaned_data['username']
         if models.User.objects.filter(
                 username=username).exists():
             raise forms.ValidationError(
@@ -91,9 +49,7 @@ class RegisterForm(ProfileFieldsMixin, CoreFieldsMixin, forms.Form):
         return username
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if not email:
-            return email
+        email = self.cleaned_data['email']
         if models.User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 _('A user with that email already exists.'))
@@ -117,10 +73,52 @@ class RegisterForm(ProfileFieldsMixin, CoreFieldsMixin, forms.Form):
         return cleaned_data
 
 
+class RegisterGoogleForm(ProfileFieldsMixin, CoreFieldsMixin, RegistrationMixin, forms.Form):
+    google_id_token = forms.CharField(widget=forms.HiddenInput())
+
+    form_submitted = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        email_editable = kwargs.pop('email_editable', False)
+        super().__init__(*args, **kwargs)
+        if not email_editable:
+            self.fields['email'].disabled = True
+            self.fields['email'].widget.attrs['readonly'] = True
+        del self.fields['password']
+        self.fields['login_type'].initial = 'google'
+        self.fields['form_submitted'].initial = 'yes'
+
+        self.helper = FormHelper()
+        self.helper.add_input(Submit(
+            'submit', _('Sign up'), css_class="pull-right"))
+
+
+class RegisterForm(ProfileFieldsMixin, CoreFieldsMixin, RegistrationMixin, forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Field('username'),
+            Field('password'),
+            Field('email'),
+            Field('mc_username'),
+            Field('irc_nick'),
+            Field('gh_username'),
+            FormActions(
+                HTML("""<a href="{{% url 'accounts:login' %}}" """
+                     """class="btn btn-default">{}</a> """.format(
+                         _("Log in"))),
+                Submit('sign up', _("Sign up")),
+                css_class="pull-right"
+            )
+        )
+
+
 class AuthenticationForm(forms.Form):
     username = forms.CharField(label=_('Username'), max_length=20)
     password = forms.CharField(
-        label=_('Password'), min_length=8, max_length=255,
+        label=_('Password'), max_length=255,
         widget=forms.PasswordInput())
 
     def __init__(self, *args, **kwargs):
@@ -230,7 +228,7 @@ class ChangePasswordForm(forms.Form):
         help_text=_('At least 8 characters'),
         widget=forms.PasswordInput(render_value=True))
     old_password = forms.CharField(
-        label=_('Old password'), min_length=8, max_length=255,
+        label=_('Old password'), max_length=255,
         widget=forms.PasswordInput(render_value=True))
 
     def __init__(self, *args, **kwargs):

@@ -1,5 +1,6 @@
 import hashlib
 
+from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.http import Http404
@@ -16,7 +17,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, urlencode
-from django.core.signing import Signer
+from django.core.signing import Signer, BadSignature
 
 from . import models
 from . import forms
@@ -122,6 +123,12 @@ def _send_forgot_email(request, user):
     )
 
 
+def _make_gravatar_url(user):
+    canonicalized_email = user.email.strip().lower()
+    email_hash = hashlib.md5(canonicalized_email.encode('utf8')).hexdigest()
+    return 'https://www.gravatar.com/avatar/{}'.format(email_hash)
+
+
 @middleware.allow_without_verified_email
 def logout(request):
     if not request.user.is_authenticated():
@@ -169,15 +176,14 @@ def register(request):
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST)
 
-        print(form.is_valid(), form.errors)
         if form.is_valid():
             user = models.User(
                 username=form.cleaned_data['username'],
-                password=form.cleaned_data['password'],
                 email=form.cleaned_data['email'],
                 mc_username=form.cleaned_data['mc_username'],
                 gh_username=form.cleaned_data['gh_username'],
                 irc_nick=form.cleaned_data['irc_nick'])
+            user.set_password(form.cleaned_data['password'])
             user.save()
             _send_verify_email(request, user)
             return _log_user_in(request, user)
@@ -204,11 +210,9 @@ def login_google(request):
 
 
 def register_google(request):
-    try:
-        token, idinfo = _verify_google_id_token(request)
-    except crypt.AppIdentityError as exc:
-        messages.error(request, _obfuscate_error(str(exc)))
-        return redirect('accounts:login')
+    token, idinfo = _verify_google_id_token(request)
+    # crypt.AppIdentityError can't happen here, right now
+    # since we must have made it through login_google
 
     form = _build_google_register_form(request, token, idinfo)
     user = None
@@ -216,33 +220,22 @@ def register_google(request):
     if request.method == 'POST' and form.is_valid():
         data = form.cleaned_data
         # register them
-        user = models.User()
-        user.username = data.get('username', '')
-        user.email = data.get('email', '')
-        user.mc_username = data.get('mc_username', '')
-        user.irc_nick = data.get('irc_nick', '')
-        user.gh_username = data.get('gh_username', '')
-        user.email_verified = idinfo.get('email_verified', False)
+        user = models.User(
+            username=data.get('username', ''),
+            email=data.get('email', ''),
+            mc_username=data.get('mc_username', ''),
+            irc_nick=data.get('irc_nick', ''),
+            gh_username=data.get('gh_username', ''),
+            email_verified=idinfo.get('email_verified', False))
         user.set_unusable_password()
-        try:
-            user.save()
-            if not user.email_verified:
-                _send_verify_email(request, user)
-        except django.db.utils.IntegrityError:
-            user_by_username = models.User.objects.filter(username=user.username).first()
-            if user_by_username:
-                form.add_error('username', _('A user with that username already exists. Please choose another.'))
-
-            user_by_email = models.User.objects.filter(email=user.email).first()
-            if user_by_email:
-                form.add_error('email', _('A user with that email already exists. Do you already have an account?'))
-            user = None
-        if user:
-            ext_auth = models.ExternalAuthenticator(
-                source=models.ExternalAuthenticator.GOOGLE,
-                external_id=idinfo['sub'],
-                user=user)
-            ext_auth.save()
+        user.save()
+        if not user.email_verified:
+            _send_verify_email(request, user)
+        ext_auth = models.ExternalAuthenticator(
+            source=models.ExternalAuthenticator.GOOGLE,
+            external_id=idinfo['sub'],
+            user=user)
+        ext_auth.save()
 
     if user:
         return _log_user_in(request, ext_auth.user, skip_twofa=True)
@@ -266,10 +259,19 @@ def verify(request):
 @middleware.allow_without_verified_email
 @login_required
 def verify_step2(request, uidb64, token):
-    uid = urlsafe_base64_decode(uidb64)
+    bytes_uid = urlsafe_base64_decode(uidb64)
+    try:
+        uid = int(bytes_uid)
+    except ValueError:
+        raise SuspiciousOperation('verify_step2 received invalid base64 user ID: {}'.format(
+            bytes_uid))
+    if uid != request.user.id:
+        raise PermissionDenied('UID mismatch - user is {}, request was for {}'.format(
+            request.user.id, uid))
     user = get_object_or_404(models.User, pk=uid)
     if not verify_token_generator.check_token(user, token):
         raise Http404('token invalid')
+
     if not user.email_verified:
         user.email_verified = True
         user.save()
@@ -280,6 +282,9 @@ def verify_step2(request, uidb64, token):
 
 
 def forgot(request):
+    if request.user.is_authenticated():
+        return redirect(_login_redirect_url(request))
+
     form = forms.ForgotPasswordForm()
     if request.method == 'POST':
         form = forms.ForgotPasswordForm(request.POST)
@@ -304,14 +309,28 @@ def forgot(request):
 
 
 def forgot_step1done(request):
+    if request.user.is_authenticated():
+        return redirect(_login_redirect_url(request))
+
     signer = Signer('accounts.views.forgot-email')
     email_signed = urlsafe_base64_decode(request.GET.get('e', ''))
-    email = signer.unsign(email_signed)
+    try:
+        email = signer.unsign(email_signed)
+    except BadSignature:
+        raise SuspiciousOperation('forgot_step1done received invalid signed email {}'.format(signer))
     return render(request, 'accounts/forgot/step1done.html', {'email': email})
 
 
 def forgot_step2(request, uidb64, token):
-    uid = urlsafe_base64_decode(uidb64)
+    if request.user.is_authenticated():
+        return redirect(_login_redirect_url(request))
+
+    bytes_uid = urlsafe_base64_decode(uidb64)
+    try:
+        uid = int(bytes_uid)
+    except ValueError:
+        raise SuspiciousOperation('forgot_step2 received invalid base64 user ID: {}'.format(
+            bytes_uid))
     user = get_object_or_404(models.User, pk=uid)
     if not forgot_token_generator.check_token(user, token):
         raise Http404('token invalid')
@@ -328,12 +347,6 @@ def forgot_step2(request, uidb64, token):
             return _log_user_in(request, user)
     return render(
         request, 'accounts/forgot/step2.html', {'form': form, 'user': user})
-
-
-def _make_gravatar_url(user):
-    canonicalized_email = user.email.strip().lower()
-    email_hash = hashlib.md5(canonicalized_email.encode('utf8')).hexdigest()
-    return 'https://www.gravatar.com/avatar/{}'.format(email_hash)
 
 
 @login_required

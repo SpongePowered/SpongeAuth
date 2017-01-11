@@ -1,12 +1,15 @@
-from django.utils.translation import ugettext_lazy as _
 
 import hashlib
 import os.path
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils.translation import ugettext_lazy as _
+
+import PIL.Image
 
 from . import letter_avatar
+import spongemime
 
 
 class UserManager(BaseUserManager):
@@ -96,11 +99,18 @@ def _avatar_upload_path(instance, filename):
     h = hashlib.sha256()
     for chunk in instance.image_file.chunks(chunk_size):
         h.update(chunk)
-    _, ext = os.path.splitext(filename)
     filehash = h.hexdigest()
+
+    instance.image_file.open('rb')
+    image = PIL.Image.open(instance.image_file)
+    image.verify()
+    mime = PIL.Image.MIME.get(image.format)
+    exts = spongemime.mime2exts(mime)
+    ext = exts[0] if exts else 'bin'
+
     bits = ('avatars',
             filehash[0:2], filehash[2:4], filehash[4:6],
-            ('{}{}'.format(filehash[6:], ext)))
+            ('{}.{}'.format(filehash[6:], ext)))
     path = os.path.join(*bits)
     return path
 
