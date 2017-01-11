@@ -2,12 +2,12 @@ import pytest
 
 from .. import discourse_sso
 
-TEST_SECRET = 'slartibartfast'
+HARDCODED_SIGNING = 'slartibartfast'
 
 
 class SignerTestCase:
     def setup(self):
-        self.signer = discourse_sso.DiscourseSigner(TEST_SECRET)
+        self.signer = discourse_sso.DiscourseSigner(HARDCODED_SIGNING)
 
 
 class TestSign(SignerTestCase):
@@ -24,7 +24,8 @@ class TestSign(SignerTestCase):
 
     def test_sign_combo(self):
         assert self.signer.sign({'username': 'lukegb', 'avatar_force_update': True}) == (
-            'dXNlcm5hbWU9bHVrZWdiJmF2YXRhcl9mb3JjZV91cGRhdGU9dHJ1ZQ==', '1c10d05832df8b667414c2602dfda6b11b0bc122ca0cd23cd158622dc96976d3')
+            'dXNlcm5hbWU9bHVrZWdiJmF2YXRhcl9mb3JjZV91cGRhdGU9dHJ1ZQ==',
+            '1c10d05832df8b667414c2602dfda6b11b0bc122ca0cd23cd158622dc96976d3')
 
 
 class TestUnsign(SignerTestCase):
