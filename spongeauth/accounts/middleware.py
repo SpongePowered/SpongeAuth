@@ -1,5 +1,6 @@
 from django.urls import resolve
 from django.shortcuts import redirect
+import django.urls.exceptions
 
 
 class EnforceVerifiedEmails:
@@ -19,8 +20,11 @@ class EnforceVerifiedEmails:
 
     @staticmethod
     def may_pass(url):
-        return getattr(
-            resolve(url).func, 'allow_without_verified_email', False)
+        try:
+            return getattr(
+                resolve(url).func, 'allow_without_verified_email', False)
+        except django.urls.exceptions.Resolver404:
+            return False
 
 
 def allow_without_verified_email(f):
