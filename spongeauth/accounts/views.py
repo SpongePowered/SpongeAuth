@@ -2,7 +2,7 @@ import hashlib
 
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.utils.translation import ugettext as _
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -45,12 +45,12 @@ def _log_user_in(request, user, skip_twofa=False):
 def _login_redirect_url(request, fallback_to=None):
     redirect_to = request.POST.get('next', request.GET.get('next', ''))
     if not redirect_to or not is_safe_url(url=redirect_to, host=request.get_host()):
-        return fallback_to or settings.LOGIN_REDIRECT_URL
+        return fallback_to or django_settings.LOGIN_REDIRECT_URL
     return redirect_to
 
 
 def _obfuscate_error(msg):
-    if settings.DEBUG:
+    if django_settings.DEBUG:
         return msg
     return _("An error occurred logging you in. Please try again later.")
 
@@ -77,7 +77,7 @@ def _verify_google_id_token(request):
         raise crypt.AppIdentityError("google_id_token missing.")
     token = request.POST.get('google_id_token', None)
 
-    idinfo = client.verify_id_token(token, settings.GOOGLE_CLIENT_ID)
+    idinfo = client.verify_id_token(token, django_settings.GOOGLE_CLIENT_ID)
     if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
         raise crypt.AppIdentityError("Invalid issuer.")
 
@@ -350,7 +350,7 @@ def forgot_step2(request, uidb64, token):
 
 
 @login_required
-def profile(request):
+def settings(request):
     user = request.user
 
     profile_form = forms.ProfileForm(instance=user)
@@ -359,7 +359,7 @@ def profile(request):
         if profile_form.is_valid():
             profile_form.save()
             messages.success(request, _('Your profile has been saved.'))
-            return redirect('accounts:profile')
+            return redirect('accounts:settings')
 
     password_form = forms.ChangePasswordForm(user=user)
     if request.method == 'POST' and request.POST.get('form', '') == 'password':
@@ -368,7 +368,7 @@ def profile(request):
             user.set_password(password_form.cleaned_data['new_password'])
             user.save()
             messages.success(request, _('Your password has been changed.'))
-            return redirect('accounts:profile')
+            return redirect('accounts:settings')
 
     avatar_form = forms.SetAvatarForm(user=user)
     if request.method == 'POST' and request.POST.get('form', '') == 'avatar':
@@ -397,7 +397,7 @@ def profile(request):
             user.save()
 
             messages.success(request, _('Your avatar has been changed.'))
-            return redirect('accounts:profile')
+            return redirect('accounts:settings')
 
     return render(request, 'accounts/profile.html', {
         'profile_form': profile_form,

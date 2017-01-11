@@ -1,5 +1,3 @@
-import io
-
 import django.test
 import django.shortcuts
 
@@ -17,7 +15,7 @@ class TestProfile(django.test.TestCase):
         assert c.login(username=user.username, password='secret')
 
     def path(self):
-        return django.shortcuts.reverse('accounts:profile')
+        return django.shortcuts.reverse('accounts:settings')
 
     def test_redirects_if_logged_out(self):
         client = django.test.Client()

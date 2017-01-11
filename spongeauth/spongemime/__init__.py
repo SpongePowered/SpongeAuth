@@ -42,4 +42,3 @@ def mime2exts(mime):
 def ext2mime(ext):
     _, rev_cache = _load()
     return rev_cache.get(ext)
-

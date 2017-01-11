@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^logout/success/$', accounts.views.logout_success,
         name='logout-success'),
 
-    url(r'^settings/$', accounts.views.profile, name='profile'),
+    url(r'^settings/$', accounts.views.settings, name='settings'),
 
     url(r'^login/$', accounts.views.login, name='login'),
 

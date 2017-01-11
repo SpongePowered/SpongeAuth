@@ -80,7 +80,8 @@ class TestLoginGoogle(django.test.TestCase):
         self.mock_verify_google_id_token.side_effect = oauth2client.crypt.AppIdentityError('boo')
         resp = self.client.post(self.path(), {'login_type': 'google'}, follow=True)
         assert len(resp.redirect_chain) == 1
-        assert 'An error occurred logging you in. Please try again later.' in [m.message for m in resp.context['messages']]
+        assert 'An error occurred logging you in. Please try again later.' in [
+            m.message for m in resp.context['messages']]
 
     @unittest.mock.patch('accounts.views._log_user_in')
     def test_has_existing_user(self, mock_log_user_in):

@@ -1,4 +1,3 @@
-import unittest.mock
 import io
 
 from django.core.files.base import ContentFile
