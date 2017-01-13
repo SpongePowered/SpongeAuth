@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'accounts',
     'twofa',
     'sso',
+    'migrator',
 
     'crispy_forms',
 
@@ -152,3 +153,5 @@ AUTH_USER_MODEL = 'accounts.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DISCOURSE_SSO_SECRET = 'aardvark'
+
+IS_TESTING = False
