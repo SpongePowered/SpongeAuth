@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 import accounts.urls
+import api.urls
 import twofa.urls
 import sso.urls
 
@@ -36,6 +37,7 @@ urlpatterns = [
     url(r'^avatar/(?P<username>[A-Za-z_0-9]+)/?$', avatar_for_user, name='avatar-for-user'),
     url(r'^sso/', include(sso.urls, 'sso')),
     url(r'^$', index, name='index'),
+    url(r'^api/', include(api.urls, 'api')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

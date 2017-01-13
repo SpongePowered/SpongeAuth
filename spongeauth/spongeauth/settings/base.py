@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'twofa',
     'sso',
     'migrator',
+    'api',
 
     'crispy_forms',
 
