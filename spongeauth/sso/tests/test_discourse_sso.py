@@ -1,4 +1,5 @@
 import pytest
+import base64
 
 from .. import discourse_sso
 
@@ -26,6 +27,10 @@ class TestSign(SignerTestCase):
         assert self.signer.sign({'username': 'lukegb', 'avatar_force_update': True}) == (
             'dXNlcm5hbWU9bHVrZWdiJmF2YXRhcl9mb3JjZV91cGRhdGU9dHJ1ZQ==',
             '1c10d05832df8b667414c2602dfda6b11b0bc122ca0cd23cd158622dc96976d3')
+
+    def test_sign_with_plus(self):
+        payload, _ = self.signer.sign({'email': 'blah+plus@example.com'})
+        assert base64.b64decode(payload) == b'email=blah%2Bplus%40example.com'
 
 
 class TestUnsign(SignerTestCase):
