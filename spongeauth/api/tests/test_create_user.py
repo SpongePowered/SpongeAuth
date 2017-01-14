@@ -1,4 +1,5 @@
 import django.shortcuts
+import django.contrib.auth.models
 
 import pytest
 import faker
@@ -74,6 +75,27 @@ def test_sets_verified_correctly(client, fake):
     assert accounts.models.User.objects.exists()
     user = accounts.models.User.objects.get()
     assert not user.email_verified
+
+
+@pytest.mark.django_db
+def test_sets_dummy_correctly(client, fake):
+    api.models.APIKey.objects.create(key='barshu')
+    assert not accounts.models.User.objects.exists()
+    username, email = fake.user_name(), fake.safe_email()
+    resp = client.post(django.shortcuts.reverse('api:users-list'), {
+        'api-key': 'barshu',
+        'username': username,
+        'password': 'oofbar',
+        'email': email,
+        'verified': 'false',
+        'dummy': 'true'})
+    assert resp.status_code == 201
+    assert resp['Location'] == django.shortcuts.reverse('api:users-detail', kwargs={'username': username})
+
+    # check database
+    assert accounts.models.User.objects.exists()
+    user = accounts.models.User.objects.get()
+    assert user.groups.filter(name="Dummy").exists()
 
 
 @pytest.mark.django_db

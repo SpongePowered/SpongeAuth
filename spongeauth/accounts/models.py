@@ -13,6 +13,15 @@ from . import letter_avatar
 import spongemime
 
 
+class Group(models.Model):
+    name = models.CharField(max_length=80, unique=True)
+
+    internal_only = models.BooleanField(null=False, default=True)
+
+    def __str__(self):
+        return self.name
+
+
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **kwargs):
         user = self.model(
@@ -95,6 +104,13 @@ class User(AbstractBaseUser):
 
     twofa_enabled = models.BooleanField(
         default=False, null=False, verbose_name=_('2FA Enabled'))
+
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name='groups',
+        blank=True,
+        related_name='user_set',
+        related_query_name='user')
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

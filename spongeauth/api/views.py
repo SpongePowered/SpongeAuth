@@ -62,8 +62,7 @@ def _create_user(request):
     password = request.POST.get('password')
     email = request.POST.get('email')
     verified = request.POST.get('verified', 'false') == 'true'
-
-    # There's also a dummy boolean, which is unused here.
+    dummy = request.POST.get('dummy', 'false') == 'true'
 
     user = accounts.models.User(
         username=username,
@@ -72,6 +71,8 @@ def _create_user(request):
     user.set_password(password)
     try:
         user.save()
+        if dummy:
+            user.groups = [accounts.models.Group.objects.get(name='Dummy')]
     except django.db.IntegrityError as exc:
         return django.http.JsonResponse({
             'error': str(exc)}, status=422)
