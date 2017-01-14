@@ -44,18 +44,18 @@
   border-top: 1px solid #A5A5A5;
 }
 
-#spongie, .col-spongie > div {
+.spongie-link {
   @include size(50px, 50px);
   display: block;
   margin: 0 auto;
-  path {
-    @include transition3(fill, 0.15s, ease-in-out);
-    fill: gray;
-  }
 }
 
-.col-spongie > div {
-  cursor: pointer;
+.spongie {
+  @include transition3(filter, 0.15s, ease-in-out);
+  filter: grayscale(100%) contrast(30%);
+  &:hover {
+    filter: none;
+  }
 }
 
 .copy {
