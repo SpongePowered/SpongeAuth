@@ -4,9 +4,23 @@ import raven
 
 from .base import *
 
-DEBUG = False
 GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
 PARENT_ROOT = os.path.dirname(GIT_REPO_ROOT)
+
+DEBUG = False
+
+SECRET_KEY = os.environ['SECRET_KEY']
+
+DEFAULT_FROM_EMAIL = 'admin@spongepowered.org'
+SERVER_EMAIL = 'admin@spongepowered.org'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST = 'mail.spongepowered.org'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 TEMPLATES = [
     {   
