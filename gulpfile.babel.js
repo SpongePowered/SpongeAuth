@@ -28,19 +28,11 @@ gulp.task('styles', () => {
 });
 
 gulp.task('scripts', () => {
-  const modules = gulp.src([
-    './node_modules/jquery/dist/jquery.slim.min.js',
-    './node_modules/bootstrap-sass/assets/javascripts/bootstrap.min.js',
-  ])
-    .pipe(gulp.dest(paths.outBase + paths.scripts));
-
-  const app = gulp.src(paths.inBase + paths.appScript)
+  return gulp.src(paths.inBase + paths.appScript)
     .pipe(babel({
       presets: ['es2015'],
     }))
     .pipe(gulp.dest(paths.outBase + paths.scripts));
-
-  return merge(modules, app);
 });
 
 gulp.task('fonts', () => {
