@@ -1,13 +1,17 @@
 sudo: false
 
 language: python
-python:
-  - 3.6
-  - 3.5
-env:
-  - TOX_ENV=py35
-  - TOX_ENV=py36
-  - TOX_ENV=lint
+matrix:
+  include:
+    - python: 3.5
+      env:
+      - TOX_ENV=py35
+    - python: 3.6
+      env:
+      - TOX_ENV=py36
+    - python: 3.6
+      env:
+      - TOX_ENV=lint
 cache:
   directories:
     - ~/.cache/pip
