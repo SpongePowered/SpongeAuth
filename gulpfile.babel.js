@@ -63,5 +63,7 @@ gulp.task('watch', function() {
   gulp.watch(paths.inBase + paths.images + '/**', ['images']);
 });
 
+gulp.task('build', ['fonts', 'styles', 'scripts', 'images']);
+
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['watch', 'fonts', 'styles', 'scripts', 'images']);
+gulp.task('default', ['watch', 'build']);
