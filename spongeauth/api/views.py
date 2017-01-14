@@ -1,7 +1,6 @@
 import functools
-import urllib.parse
 
-from django.shortcuts import render, get_object_or_404, reverse
+from django.shortcuts import get_object_or_404, reverse
 import django.core.exceptions
 import django.http
 import django.views.decorators.csrf
@@ -16,8 +15,9 @@ def _require_api_key(fn):
     def _wrap(request, *args, **kwargs):
         api_key = None
         api_key = request.POST.get('api-key', request.GET.get('apiKey', None))
-        if (not api_key or
-            not api.models.APIKey.objects.filter(key=api_key).exists()):
+        if (
+                not api_key or
+                not api.models.APIKey.objects.filter(key=api_key).exists()):
             raise django.core.exceptions.PermissionDenied('No such API key')
 
         return fn(request, *args, **kwargs)
@@ -62,7 +62,8 @@ def _create_user(request):
     password = request.POST.get('password')
     email = request.POST.get('email')
     verified = request.POST.get('verified', 'false') == 'true'
-    dummy = request.POST.get('dummy', 'false') == 'true'
+
+    # There's also a dummy boolean, which is unused here.
 
     user = accounts.models.User(
         username=username,
@@ -104,4 +105,3 @@ def _user_detail(request, username):
     return django.http.JsonResponse(
         _encode_user(request, user),
         status=200)
-

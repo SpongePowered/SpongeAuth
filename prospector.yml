@@ -21,3 +21,6 @@ pep8:
 
 mccabe:
   run: false
+
+pylint:
+  run: false  # broken

@@ -1,11 +1,8 @@
-import urllib.parse
-
 import django.shortcuts
 
 import pytest
 import faker
 
-import accounts.tests.factories
 import api.models
 
 
