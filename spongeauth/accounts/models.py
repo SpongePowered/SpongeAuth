@@ -173,6 +173,9 @@ class Avatar(models.Model):
             return self.image_file.url
         return self.remote_url
 
+    def __str__(self):
+        return "Avatar for {} from {}".format(self.user, self.get_absolute_url())
+
 
 class ExternalAuthenticator(models.Model):
     GOOGLE = 'google'
@@ -187,3 +190,8 @@ class ExternalAuthenticator(models.Model):
         blank=False, null=False)
 
     external_id = models.CharField(max_length=255, blank=False, null=False)
+
+    def __str__(self):
+        return "{} credential for user {}".format(
+            self.get_source_display(),
+            self.user_id)

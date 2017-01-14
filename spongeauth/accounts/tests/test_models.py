@@ -102,3 +102,28 @@ class TestAvatar:
     def test_get_absolute_url_remote(self):
         avatar = factories.AvatarFactory.build()
         assert avatar.get_absolute_url() == avatar.remote_url
+
+    def test_str_upload(self):
+        user = factories.UserFactory.build()
+        avatar = factories.AvatarFactory.build(user=user, uploaded=True)
+        assert str(avatar).startswith('Avatar for {} from /'.format(
+            str(user)))
+
+    def test_str_remote(self):
+        user = factories.UserFactory.build()
+        avatar = factories.AvatarFactory.build(user=user)
+        assert str(avatar).startswith('Avatar for {} from http'.format(
+            str(user)))
+
+
+class TestGroup:
+    def test_str(self):
+        assert str(models.Group(name='blah')) == 'blah'
+
+
+class TestExternalAuthenticator:
+    def test_str(self):
+        assert str(models.ExternalAuthenticator(
+            user_id=21,
+            source=models.ExternalAuthenticator.GOOGLE,
+            external_id='blah')) == 'Google credential for user 21'
