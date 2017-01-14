@@ -1,5 +1,7 @@
 import unittest
+import re
 
+import django.core.mail
 import django.test
 import django.shortcuts
 import django.http
@@ -83,6 +85,51 @@ class TestRegister(django.test.TestCase):
         authed_user = django.contrib.auth.get_user(self.client)
         assert authed_user == user
 
+    def test_verify_link_works(self):
+        assert not models.User.objects.all().exists()
+        resp = self.client.post(
+            self.path(),
+            {'username': 'foobar', 'password': 'password4363',
+             'email': 'baz@example.com'})
+        assert resp.status_code == 302
+
+        assert len(django.core.mail.outbox) == 1
+        email = django.core.mail.outbox[0]
+        link_match = re.search(r'^https?:\/\/testserver(\/.*)$', email.body, re.MULTILINE)
+        assert link_match
+        link = link_match.group(1)
+
+        resp = self.client.get(link)
+        assert resp.status_code == 302
+
+    def test_cannot_repeatedly_reuse_token(self):
+        assert not models.User.objects.all().exists()
+        resp = self.client.post(
+            self.path(),
+            {'username': 'foobar', 'password': 'password4363',
+             'email': 'baz@example.com'})
+        assert resp.status_code == 302
+
+        assert len(django.core.mail.outbox) == 1
+        email = django.core.mail.outbox[0]
+        link_match = re.search(r'^https?:\/\/testserver(\/.*)$', email.body, re.MULTILINE)
+        assert link_match
+        link = link_match.group(1)
+
+        resp = self.client.get(link)
+        assert resp.status_code == 302
+
+        user = models.User.objects.get()
+        user.email_verified = False
+        user.email = 'baz2@example.com'
+        user.save()
+
+        resp = self.client.get(link)
+        assert resp.status_code == 404
+
+        user = models.User.objects.get()
+        assert not user.email_verified
+
 
 class TestRegisterGoogle(django.test.TestCase):
     def setUp(self):
@@ -161,3 +208,26 @@ class TestRegisterGoogle(django.test.TestCase):
         assert len(args) == 2
         assert args[1] == user
         assert kwargs == {'skip_twofa': True}
+
+    def test_verify_link_works(self):
+        assert not models.User.objects.exists()
+        self.mock_verify_google_id_token.return_value = ('token', {'sub': '15151'})
+        resp = self.client.post(self.path(), {
+            'login_type': 'google', 'form_submitted': 'yes',
+            'username': 'baz', 'email': 'baz@example.org',
+            'password': 'slartibartfast', 'google_id_token': 'baz'})
+        assert models.User.objects.exists()
+        user = models.User.objects.get()
+        assert not user.email_verified
+
+        assert len(django.core.mail.outbox) == 1
+        email = django.core.mail.outbox[0]
+        link_match = re.search(r'^https?:\/\/testserver(\/.*)$', email.body, re.MULTILINE)
+        assert link_match
+        link = link_match.group(1)
+
+        resp = self.client.get(link)
+        assert resp.status_code == 302
+
+        user = models.User.objects.get()
+        assert user.email_verified

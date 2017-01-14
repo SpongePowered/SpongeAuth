@@ -25,10 +25,21 @@ from . import middleware
 
 from oauth2client import client, crypt
 
-verify_token_generator = django.contrib.auth.tokens.PasswordResetTokenGenerator()
-verify_token_generator.key_salt = 'accounts.views.verify_token_generator'
-forgot_token_generator = django.contrib.auth.tokens.PasswordResetTokenGenerator()
-forgot_token_generator.key_salt = 'accounts.views.forgot_token_generator'
+
+class VerifyTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerator):
+    key_salt = 'accounts.views.verify_token_generator'
+
+    def _make_hash_value(self, user, timestamp):
+        hash_value = super()._make_hash_value(user, timestamp)
+        hash_value += hashlib.sha256(user.email.encode('utf8')).hexdigest()
+        return hash_value
+
+
+class ForgotTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerator):
+    key_salt = 'accounts.views.forgot_token_generator'
+
+verify_token_generator = VerifyTokenGenerator()
+forgot_token_generator = ForgotTokenGenerator()
 
 
 def _log_user_in(request, user, skip_twofa=False):
@@ -185,8 +196,11 @@ def register(request):
                 irc_nick=form.cleaned_data['irc_nick'])
             user.set_password(form.cleaned_data['password'])
             user.save()
+            # _log_user_in must happen before sending the email, since the token
+            # will change after the user has been logged in.
+            resp = _log_user_in(request, user)
             _send_verify_email(request, user)
-            return _log_user_in(request, user)
+            return resp
 
     return render(request, 'accounts/register.html', {'form': form})
 
@@ -229,8 +243,6 @@ def register_google(request):
             email_verified=idinfo.get('email_verified', False))
         user.set_unusable_password()
         user.save()
-        if not user.email_verified:
-            _send_verify_email(request, user)
         ext_auth = models.ExternalAuthenticator(
             source=models.ExternalAuthenticator.GOOGLE,
             external_id=idinfo['sub'],
@@ -238,7 +250,11 @@ def register_google(request):
         ext_auth.save()
 
     if user:
-        return _log_user_in(request, ext_auth.user, skip_twofa=True)
+        resp = _log_user_in(request, user, skip_twofa=True)
+        if not user.email_verified:
+            # This must happen /after/ _log_user_in.
+            _send_verify_email(request, user)
+        return resp
 
     return render(request, 'accounts/register.html', {'form': form, 'login_type': 'google'})
 
