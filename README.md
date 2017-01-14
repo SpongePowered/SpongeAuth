@@ -1,7 +1,7 @@
 SpongeAuth
 ==========
 
-[![Build Status](https://travis-ci.org/lukegb/SpongeAuth.svg?branch=master)](https://travis-ci.org/lukegb/SpongeAuth)
+[![Build Status](https://travis-ci.org/lukegb/SpongeAuth.svg?branch=master)](https://travis-ci.org/lukegb/SpongeAuth) [![Coverage Status](https://coveralls.io/repos/github/lukegb/SpongeAuth/badge.svg?branch=master)](https://coveralls.io/github/lukegb/SpongeAuth?branch=master)
 
 An authentication portal for shared user accounts between Sponge services.
 
