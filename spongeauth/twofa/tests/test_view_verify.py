@@ -75,6 +75,7 @@ class TestVerify(django.test.TestCase):
         self.device = models.PaperDevice(
             owner=self.user)
         self.device.save()
+        assert self.device.last_used_at is None
 
         used_code = models.PaperCode(
             device=self.device, code='deadbeef',
@@ -100,6 +101,12 @@ class TestVerify(django.test.TestCase):
 
         user = django.contrib.auth.get_user(self.client)
         assert user.is_authenticated()
+
+        code = models.PaperCode.objects.get(id=code.id)
+        assert code.used_at is not None
+
+        device = models.PaperDevice.objects.get(id=self.device.id)
+        assert device.last_used_at is not None
 
     def test_full_login_flow_different_device(self):
         self.device = models.PaperDevice(

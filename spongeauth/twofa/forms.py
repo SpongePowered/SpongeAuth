@@ -82,5 +82,7 @@ class PaperVerifyForm(forms.Form):
         # mark as used
         code_obj.used_at = timezone.now()
         code_obj.save()
+        self.device.last_used_at = timezone.now()
+        self.device.save()
 
         return code
