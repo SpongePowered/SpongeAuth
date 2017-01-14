@@ -1,7 +1,8 @@
-
 import hashlib
 import os.path
+import re
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
@@ -30,9 +31,42 @@ class UserManager(BaseUserManager):
         return user
 
 
+def validate_username(username):
+    errs = []
+    if len(username) < 3:
+        errs.append(ValidationError(
+            _('Username must be at least 3 characters long.'),
+            code='username_min_length'))
+    if re.search(r'[^\w.-]', username):
+        errs.append(ValidationError(
+            _('Username must only include numbers, letters, and underscores.'),
+            code='username_charset'))
+    if re.search(r'\W', username[0]):
+        errs.append(ValidationError(
+            _('Username must begin with a number, letter or underscore.'),
+            code='username_initial_charset'))
+    if re.search(r'[^A-Za-z0-9]', username[-1]):
+        errs.append(ValidationError(
+            _('Username must end with a letter or number.'),
+            code='username_ending_charset'))
+    if re.search(r'[-_.]{2,}', username):
+        errs.append(ValidationError(
+            _('Username must not contain two special characters in a row.'),
+            code='username_double_special'))
+    if re.search(
+            r'\.(js|json|css|htm|html|xml|jpg|jpeg|png|gif|bmp|ico|tif|tiff|woff)$',
+            username):
+        errs.append(ValidationError(
+            _('Username must not end with a confusing file suffix.'),
+            code='username_file_suffix'))
+    if errs:
+        raise ValidationError(errs)
+
+
 class User(AbstractBaseUser):
     username = models.CharField(
-        max_length=20, unique=True, blank=False, null=False)
+        max_length=20, unique=True, blank=False, null=False,
+        validators=[validate_username])
     email = models.EmailField(
         max_length=255, unique=True, blank=False, null=False)
     email_verified = models.BooleanField(default=False, null=False)

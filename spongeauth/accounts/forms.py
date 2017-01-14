@@ -14,7 +14,8 @@ from . import models
 class CoreFieldsMixin(forms.Form):
     username = forms.CharField(
         label=_('Username'), max_length=20,
-        help_text=_('Unique, no spaces, max 20 characters'))
+        help_text=_('Unique, no spaces, max 20 characters'),
+        validators=[models.validate_username])
     password = forms.CharField(
         label=_('Password'), min_length=8,
         max_length=255, help_text=_('At least 8 characters'),
