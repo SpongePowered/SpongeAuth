@@ -1,10 +1,16 @@
 "use strict";
 
 import gulp from 'gulp';
+import sourcemaps from 'gulp-sourcemaps';
+import util from 'gulp-util'
 import sass from 'gulp-sass';
+import cleanCSS from 'gulp-clean-css';
 import moduleImporter from 'sass-module-importer';
 import babel from 'gulp-babel';
 import merge from 'merge-stream';
+import { gulp as closureGulp } from 'google-closure-compiler-js';
+
+const closureCompiler = closureGulp();
 
 var paths = {
   inBase: './spongeauth/static',
@@ -21,17 +27,37 @@ var paths = {
   images: '/images',
 };
 
+const production = !!util.env.production;
+
 gulp.task('styles', () => {
-  return gulp.src(paths.inBase + paths.styles + '/*.scss')
-    .pipe(sass({ importer: moduleImporter() }))
+  let pipe = gulp.src(paths.inBase + paths.styles + '/*.scss')
+    .pipe(sourcemaps.init())
+    .pipe(sass({ importer: moduleImporter() }));
+
+  if (production) {
+    pipe = pipe.pipe(cleanCSS());
+  }
+
+  return pipe
+    .pipe(sourcemaps.write('../maps/'))
     .pipe(gulp.dest(paths.outBase + paths.styles));
 });
 
 gulp.task('scripts', () => {
+  const compiler = production ? closureCompiler({
+    compilationLevel: production ? 'SIMPLE' : 'WHITESPACE_ONLY',
+    languageIn: 'ES6',
+    languageOut: 'ES5',
+    createSourceMap: true,
+    jsOutputFile: 'app.js',
+  }) : babel({
+    presets: ['es2015'],
+  });
+
   return gulp.src(paths.inBase + paths.appScript)
-    .pipe(babel({
-      presets: ['es2015'],
-    }))
+    .pipe(sourcemaps.init())
+    .pipe(compiler)
+    .pipe(sourcemaps.write('../maps/'))
     .pipe(gulp.dest(paths.outBase + paths.scripts));
 });
 
