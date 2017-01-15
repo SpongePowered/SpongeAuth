@@ -1,5 +1,8 @@
 "use strict";
 
+import fs from 'fs';
+import path from 'path';
+
 import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import util from 'gulp-util'
@@ -43,13 +46,29 @@ gulp.task('styles', () => {
     .pipe(gulp.dest(paths.outBase + paths.styles));
 });
 
+const buildExterns = () => {
+  const externsDir = './closureexterns';
+  const externsFiles = fs.readdirSync(externsDir);
+  return externsFiles
+    .filter((fn) => fn.endsWith('.js'))
+    .map((fn) => path.join(externsDir, fn))
+    .map((fp) => ({
+      src: fs.readFileSync(fp, 'utf8'),
+      path: fp,
+    }));
+};
+
 gulp.task('scripts', () => {
   const compiler = production ? closureCompiler({
-    compilationLevel: production ? 'SIMPLE' : 'WHITESPACE_ONLY',
+    compilationLevel: 'ADVANCED',
     languageIn: 'ES6',
     languageOut: 'ES5',
     createSourceMap: true,
     jsOutputFile: 'app.js',
+    assumeFunctionWrapper: true,
+    outputWrapper: '(function(){%output%}).call(this)',
+    externs: buildExterns(),
+    warningLevel: 'VERBOSE',
   }) : babel({
     presets: ['es2015'],
   });
