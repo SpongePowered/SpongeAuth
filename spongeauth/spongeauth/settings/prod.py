@@ -65,7 +65,7 @@ DATABASES = {
     }
 }
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'core.staticfiles.SourcemapManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(PARENT_ROOT, 'public_html', 'static')
 MEDIA_ROOT = os.path.join(PARENT_ROOT, 'public_html', 'media')
 
