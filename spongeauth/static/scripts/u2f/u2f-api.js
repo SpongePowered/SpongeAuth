@@ -1,14 +1,38 @@
-//Copyright 2014-2015 Google Inc. All rights reserved.
-
-//Use of this source code is governed by a BSD-style
-//license that can be found in the LICENSE file or at
-//https://developers.google.com/open-source/licenses/bsd
+/**
+ * @license
+ * Copyright 2014, Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ * * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 /**
  * @fileoverview The U2F api.
  */
 'use strict';
-
 
 /**
  * Namespace for the U2F api.
@@ -18,7 +42,7 @@ var u2f = u2f || {};
 
 /**
  * FIDO U2F Javascript API Version
- * @number
+ * @type {number}
  */
 var js_api_version;
 
@@ -79,6 +103,13 @@ u2f.U2fRequest;
 
 
 /**
+ * Things which are compatible with MessagePort.
+ * @typedef {(MessagePort | u2f.WrappedChromeRuntimePort_ | u2f.WrappedAuthenticatorPort_ | u2f.WrappedIosPort_)}
+ */
+u2f.MessagePortish_;
+
+
+/**
  * A message for registration responses
  * @typedef {{
  *   type: u2f.MessageTypes,
@@ -98,9 +129,17 @@ u2f.U2fResponse;
  */
 u2f.Error;
 
+/** @enum {string} */
+u2f.TransportEnum = {
+  'BLUETOOTH_RADIO': 'BLUETOOTH_RADIO',
+  'BLUETOOTH_LOW_ENERGY': 'BLUETOOTH_LOW_ENERGY',
+  'USB': 'USB',
+  'NFC': 'NFC',
+};
+
 /**
  * Data object for a single sign request.
- * @typedef {enum {BLUETOOTH_RADIO, BLUETOOTH_LOW_ENERGY, USB, NFC}}
+ * @typedef {!u2f.TransportEnum}
  */
 u2f.Transport;
 
@@ -149,7 +188,7 @@ u2f.RegisterRequest;
  * @typedef {{
  *   version: string,
  *   keyHandle: string,
- *   transports: Transports,
+ *   transports: u2f.Transports,
  *   appId: string
  * }}
  */
@@ -161,7 +200,7 @@ u2f.RegisterResponse;
  * @typedef {{
  *   version: string,
  *   keyHandle: string,
- *   transports: ?Transports,
+ *   transports: ?u2f.Transports,
  *   appId: ?string
  * }}
  */
@@ -182,7 +221,7 @@ u2f.GetJsApiVersionResponse;
 /**
  * Sets up a MessagePort to the U2F extension using the
  * available mechanisms.
- * @param {function((MessagePort|u2f.WrappedChromeRuntimePort_))} callback
+ * @param {function((u2f.MessagePortish_))} callback
  */
 u2f.getMessagePort = function(callback) {
   if (typeof chrome != 'undefined' && chrome.runtime) {
@@ -280,7 +319,9 @@ u2f.WrappedChromeRuntimePort_ = function(port) {
 
 /**
  * Format and return a sign request compliant with the JS API version supported by the extension.
- * @param {Array<u2f.SignRequest>} signRequests
+ * @param {string} appId
+ * @param {string} challenge
+ * @param {Array<u2f.RegisteredKey>} registeredKeys
  * @param {number} timeoutSeconds
  * @param {number} reqId
  * @return {Object}
@@ -318,8 +359,9 @@ u2f.formatSignRequest_ =
 
 /**
  * Format and return a register request compliant with the JS API version supported by the extension..
- * @param {Array<u2f.SignRequest>} signRequests
- * @param {Array<u2f.RegisterRequest>} signRequests
+ * @param {string} appId
+ * @param {Array<u2f.RegisteredKey>} registeredKeys
+ * @param {Array<u2f.RegisterRequest>} registerRequests
  * @param {number} timeoutSeconds
  * @param {number} reqId
  * @return {Object}
@@ -412,7 +454,7 @@ u2f.WrappedAuthenticatorPort_.prototype.postMessage = function(message) {
 
 /**
  * Tells what type of port this is.
- * @return {String} port type
+ * @return {string} port type
  */
 u2f.WrappedAuthenticatorPort_.prototype.getPortType = function() {
   return "WrappedAuthenticatorPort_";
@@ -439,7 +481,7 @@ u2f.WrappedAuthenticatorPort_.prototype.addEventListener = function(eventName, h
 
 /**
  * Callback invoked  when a response is received from the Authenticator.
- * @param function({data: Object}) callback
+ * @param {function({data: Object})} callback
  * @param {Object} message message Object
  */
 u2f.WrappedAuthenticatorPort_.prototype.onRequestUpdate_ =
@@ -484,7 +526,7 @@ u2f.WrappedIosPort_.prototype.postMessage = function(message) {
 
 /**
  * Tells what type of port this is.
- * @return {String} port type
+ * @return {string} port type
  */
 u2f.WrappedIosPort_.prototype.getPortType = function() {
   return "WrappedIosPort_";
@@ -544,14 +586,14 @@ u2f.EXTENSION_TIMEOUT_SEC = 30;
 
 /**
  * A singleton instance for a MessagePort to the extension.
- * @type {MessagePort|u2f.WrappedChromeRuntimePort_}
+ * @type {u2f.MessagePortish_}
  * @private
  */
 u2f.port_ = null;
 
 /**
  * Callbacks waiting for a port
- * @type {Array<function((MessagePort|u2f.WrappedChromeRuntimePort_))>}
+ * @type {Array<function((u2f.MessagePortish_))>}
  * @private
  */
 u2f.waitingForPort_ = [];
@@ -573,7 +615,7 @@ u2f.callbackMap_ = {};
 
 /**
  * Creates or retrieves the MessagePort singleton to use.
- * @param {function((MessagePort|u2f.WrappedChromeRuntimePort_))} callback
+ * @param {function((u2f.MessagePortish_))} callback
  * @private
  */
 u2f.getPortSingleton_ = function(callback) {
@@ -597,7 +639,7 @@ u2f.getPortSingleton_ = function(callback) {
 
 /**
  * Handles response messages from the extension.
- * @param {MessageEvent.<u2f.Response>} message
+ * @param {MessageEvent.<u2f.U2fResponse>} message
  * @private
  */
 u2f.responseHandler_ = function(message) {
@@ -617,8 +659,8 @@ u2f.responseHandler_ = function(message) {
  * If the JS API version supported by the extension is unknown, it first sends a
  * message to the extension to find out the supported API version and then it sends
  * the sign request.
- * @param {string=} appId
- * @param {string=} challenge
+ * @param {string} appId
+ * @param {string} challenge
  * @param {Array<u2f.RegisteredKey>} registeredKeys
  * @param {function((u2f.Error|u2f.SignResponse))} callback
  * @param {number=} opt_timeoutSeconds
@@ -640,8 +682,8 @@ u2f.sign = function(appId, challenge, registeredKeys, callback, opt_timeoutSecon
 
 /**
  * Dispatches an array of sign requests to available U2F tokens.
- * @param {string=} appId
- * @param {string=} challenge
+ * @param {string} appId
+ * @param {string} challenge
  * @param {Array<u2f.RegisteredKey>} registeredKeys
  * @param {function((u2f.Error|u2f.SignResponse))} callback
  * @param {number=} opt_timeoutSeconds
@@ -663,7 +705,7 @@ u2f.sendSignRequest = function(appId, challenge, registeredKeys, callback, opt_t
  * If the JS API version supported by the extension is unknown, it first sends a
  * message to the extension to find out the supported API version and then it sends
  * the register request.
- * @param {string=} appId
+ * @param {string} appId
  * @param {Array<u2f.RegisterRequest>} registerRequests
  * @param {Array<u2f.RegisteredKey>} registeredKeys
  * @param {function((u2f.Error|u2f.RegisterResponse))} callback
@@ -689,7 +731,7 @@ u2f.register = function(appId, registerRequests, registeredKeys, callback, opt_t
 /**
  * Dispatches register requests to available U2F tokens. An array of sign
  * requests identifies already registered tokens.
- * @param {string=} appId
+ * @param {string} appId
  * @param {Array<u2f.RegisterRequest>} registerRequests
  * @param {Array<u2f.RegisteredKey>} registeredKeys
  * @param {function((u2f.Error|u2f.RegisterResponse))} callback
@@ -746,3 +788,5 @@ u2f.getApiVersion = function(callback, opt_timeoutSeconds) {
     port.postMessage(req);
   });
 };
+
+export default u2f;
