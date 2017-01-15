@@ -20,12 +20,11 @@ var paths = {
   outBase: './spongeauth/static-build',
 
   styles: '/styles',
-  appStyle: '/styles/app.scss',
 
   fonts: '/fonts',
 
   scripts: '/scripts',
-  appScript: '/scripts/app.js',
+  inputScripts: ['u2f/u2f-api.js', 'app.js'],
 
   images: '/images',
 };
@@ -73,7 +72,7 @@ gulp.task('scripts', () => {
     presets: ['es2015'],
   });
 
-  return gulp.src(paths.inBase + paths.appScript)
+  return gulp.src([paths.inBase + paths.scripts + '/u2f-api.js', paths.inBase + paths.scripts + '/app.js'])
     .pipe(sourcemaps.init())
     .pipe(compiler)
     .pipe(sourcemaps.write('../maps/'))
