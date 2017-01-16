@@ -1,7 +1,7 @@
 import unittest.mock
 
 import accounts.tests.factories
-from .. import views
+from .. import utils
 
 import pytest
 
@@ -18,14 +18,14 @@ class TestMakePayload:
         user.current_avatar = avatar
         user.save()
 
-        payload = views._make_payload(user, 'nonce-nce', self.request)
+        payload = utils.make_payload(user, 'nonce-nce', self.request)
         self.request.build_absolute_uri.assert_called_once_with(avatar.remote_url)
         assert payload['avatar_url'] == 'http://www.example.com/example.jpg'
 
     def test_builds_payload(self):
         user = accounts.tests.factories.UserFactory.build()
 
-        payload = views._make_payload(user, 'nonce-nce', self.request)
+        payload = utils.make_payload(user, 'nonce-nce', self.request)
         assert payload == {
             'nonce': 'nonce-nce',
             'email': user.email,
