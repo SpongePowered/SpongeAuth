@@ -1,5 +1,6 @@
 from django.urls import resolve
 from django.shortcuts import redirect
+from django.conf import settings
 import django.urls.exceptions
 
 
@@ -16,7 +17,7 @@ class EnforceVerifiedEmails:
 
     @staticmethod
     def must_verify(user):
-        return user.is_authenticated() and not user.email_verified
+        return user.is_authenticated() and not user.email_verified and settings.REQUIRE_EMAIL_CONFIRM
 
     @staticmethod
     def may_pass(url):

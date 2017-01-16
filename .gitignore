@@ -8,3 +8,6 @@ media/
 .cache/
 .tox/
 .coverage
+.idea
+*.iml
+.DS_Store
