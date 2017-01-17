@@ -27,7 +27,8 @@ def test_send_update_ping(settings):
         data={
             'sso': 'payload',
             'sig': 'signature',
-            'api_key': 'discourse-api-key'})
+            'api_key': 'discourse-api-key',
+            'api_username': 'system'})
     fake_discourse_signer.sign.assert_called_once_with({
         'nonce': '10101',
         'email': 'foo@example.com',

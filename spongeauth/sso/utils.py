@@ -35,6 +35,7 @@ def send_update_ping(user, send_post=None, sso=None):
         data={
             'sso': out_payload,
             'sig': out_signature,
-            'api_key': settings.DISCOURSE_API_KEY})
+            'api_key': settings.DISCOURSE_API_KEY,
+            'api_username': 'system'})
     resp.raise_for_status()
     return resp
