@@ -2,6 +2,7 @@ import urllib.parse
 import unittest.mock
 
 import django.test
+import django.shortcuts
 
 import pytest
 
