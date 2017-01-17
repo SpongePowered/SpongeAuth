@@ -35,8 +35,6 @@ def test_send_update_ping(settings):
         'external_id': 10101,
         'username': 'foo_',
         'name': 'foo_',
-        'avatar_url': user.avatar.get_absolute_url(),
-        'avatar_force_update': 'true',
         'custom.user_field_1': 'meep',
         'custom.user_field_2': 'meeep',
         'custom.user_field_3': 'XxXmeepXxX'})

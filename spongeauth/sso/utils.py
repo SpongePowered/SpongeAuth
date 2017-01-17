@@ -15,8 +15,6 @@ def make_payload(user, nonce, request=None):
         'external_id': user.pk,
         'username': user.username,
         'name': user.username,
-        'avatar_url': avatar_url,
-        'avatar_force_update': 'true',
         'custom.user_field_1': user.mc_username,
         'custom.user_field_2': user.gh_username,
         'custom.user_field_3': user.irc_nick,
