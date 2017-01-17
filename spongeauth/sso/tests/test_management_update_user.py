@@ -65,5 +65,16 @@ def test_happy_path(fake_send_ping, settings):
     assert '{} OK\n'.format(user1.username) in out.getvalue()
     assert "{} failed: ValueError('boo',)\n".format(user2.username) in out.getvalue()
 
-    fake_send_ping.assert_any_call(user1)
-    fake_send_ping.assert_any_call(user2)
+
+@pytest.mark.django_db
+@unittest.mock.patch('sso.management.commands.sso_ping_discourse.send_update_ping')
+def test_skip_on_email_not_verified(fake_send_ping, settings):
+    out = io.StringIO()
+
+    user1 = UserFactory.create(email_verified=False)
+    user2 = UserFactory.create(is_active=False)
+
+    call_command('sso_ping_discourse', user1.username, user2.username, stdout=out)
+
+    assert '{} SKIP\n'.format(user1.username) in out.getvalue()
+    assert '{} SKIP\n'.format(user2.username) in out.getvalue()
