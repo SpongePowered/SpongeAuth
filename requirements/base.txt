@@ -6,3 +6,4 @@ django-crispy-forms==1.6.1
 django-model-utils==2.6
 qrcode==5.3
 pytz==2016.10
+requests==2.12.4

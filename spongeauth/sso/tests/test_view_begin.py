@@ -2,6 +2,7 @@ import urllib.parse
 import unittest.mock
 
 import django.test
+import django.shortcuts
 
 import pytest
 
@@ -41,7 +42,7 @@ class TestBegin(django.test.TestCase):
         resp = self.client.get(self.path({'sso': 'blah', 'sig': 'nope'}))
         assert resp.status_code == 403
 
-    @unittest.mock.patch('sso.views._make_payload')
+    @unittest.mock.patch('sso.utils.make_payload')
     def test_valid(self, mock_make_payload):
         mock_make_payload.return_value = {b'yooo': b'hooo'}
 

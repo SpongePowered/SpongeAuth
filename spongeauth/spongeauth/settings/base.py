@@ -155,5 +155,7 @@ AUTH_USER_MODEL = 'accounts.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DISCOURSE_SSO_SECRET = 'aardvark'
+DISCOURSE_API_KEY = None
+DISCOURSE_SERVER = None
 
 IS_TESTING = False
