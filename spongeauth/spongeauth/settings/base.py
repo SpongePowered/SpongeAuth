@@ -29,6 +29,8 @@ ALLOWED_HOSTS = [
     'auth.spongepowered.org',
 ]
 
+REQUIRE_EMAIL_CONFIRM = True
+
 
 # Application definition
 

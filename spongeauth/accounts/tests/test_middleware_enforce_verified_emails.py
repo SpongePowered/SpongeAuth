@@ -23,6 +23,11 @@ class TestMustVerify:
             email_verified=False)
         assert middleware.EnforceVerifiedEmails.must_verify(user)
 
+    @django.test.override_settings(REQUIRE_EMAIL_CONFIRM=False)
+    def test_setting_require_email_confirm(self):
+        user = accounts.tests.factories.UserFactory.build(email_verified=False)
+        assert not middleware.EnforceVerifiedEmails.must_verify(user)
+
 
 @django.test.override_settings(ROOT_URLCONF='accounts.tests.test_middleware_enforce_verified_emails')
 class TestMayPass(django.test.SimpleTestCase):

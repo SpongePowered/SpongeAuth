@@ -199,7 +199,8 @@ def register(request):
             # _log_user_in must happen before sending the email, since the token
             # will change after the user has been logged in.
             resp = _log_user_in(request, user)
-            _send_verify_email(request, user)
+            if django_settings.REQUIRE_EMAIL_CONFIRM:
+                _send_verify_email(request, user)
             return resp
 
     return render(request, 'accounts/register.html', {'form': form})
@@ -251,7 +252,7 @@ def register_google(request):
 
     if user:
         resp = _log_user_in(request, user, skip_twofa=True)
-        if not user.email_verified:
+        if not user.email_verified and django_settings.REQUIRE_EMAIL_CONFIRM:
             # This must happen /after/ _log_user_in.
             _send_verify_email(request, user)
         return resp
