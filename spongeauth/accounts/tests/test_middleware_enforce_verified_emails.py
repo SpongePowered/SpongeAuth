@@ -1,7 +1,6 @@
 import unittest.mock
 
 from django.conf.urls import url, include
-from django.conf import settings
 import django.http
 import django.test
 import django.shortcuts
@@ -24,11 +23,10 @@ class TestMustVerify:
             email_verified=False)
         assert middleware.EnforceVerifiedEmails.must_verify(user)
 
+    @django.test.override_settings(REQUIRE_EMAIL_CONFIRM=False)
     def test_setting_require_email_confirm(self):
-        settings.REQUIRE_EMAIL_CONFIRM = False
         user = accounts.tests.factories.UserFactory.build(email_verified=False)
         assert not middleware.EnforceVerifiedEmails.must_verify(user)
-        settings.REQUIRE_EMAIL_CONFIRM = True
 
 
 @django.test.override_settings(ROOT_URLCONF='accounts.tests.test_middleware_enforce_verified_emails')
