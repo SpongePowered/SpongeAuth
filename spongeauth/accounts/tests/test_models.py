@@ -106,14 +106,12 @@ class TestAvatar:
     def test_str_upload(self):
         user = factories.UserFactory.build()
         avatar = factories.AvatarFactory.build(user=user, uploaded=True)
-        assert str(avatar).startswith('Avatar for {} from /'.format(
-            str(user)))
+        assert str(avatar).startswith('Avatar for {} from /'.format(user.id))
 
     def test_str_remote(self):
         user = factories.UserFactory.build()
         avatar = factories.AvatarFactory.build(user=user)
-        assert str(avatar).startswith('Avatar for {} from http'.format(
-            str(user)))
+        assert str(avatar).startswith('Avatar for {} from http'.format(user.id))
 
 
 class TestGroup:

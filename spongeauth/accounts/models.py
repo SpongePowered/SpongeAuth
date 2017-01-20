@@ -190,7 +190,7 @@ class Avatar(models.Model):
         return self.remote_url
 
     def __str__(self):
-        return "Avatar for {} from {}".format(self.user, self.get_absolute_url())
+        return "Avatar for {} from {}".format(self.user_id, self.get_absolute_url())
 
 
 class ExternalAuthenticator(models.Model):
