@@ -5,6 +5,10 @@ import requests
 from . import discourse_sso
 
 
+def _cast_bool(b):
+    return str(bool(b)).lower()
+
+
 def make_payload(user, nonce, request=None):
     avatar_url = user.avatar.get_absolute_url()
     if request is not None:
@@ -12,6 +16,7 @@ def make_payload(user, nonce, request=None):
     payload = {
         'nonce': nonce,
         'email': user.email,
+        'require_activation': _cast_bool(not user.email_verified),
         'external_id': user.pk,
         'username': user.username,
         'name': user.username,

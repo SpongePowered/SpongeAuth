@@ -32,6 +32,7 @@ def test_send_update_ping(settings):
     fake_discourse_signer.sign.assert_called_once_with({
         'nonce': '10101',
         'email': 'foo@example.com',
+        'require_activation': 'false',
         'external_id': 10101,
         'username': 'foo_',
         'name': 'foo_',

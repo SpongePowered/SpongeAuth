@@ -6,6 +6,12 @@ from .. import utils
 import pytest
 
 
+def test_cast_bool():
+    assert utils._cast_bool(True) == 'true'
+    assert utils._cast_bool(False) == 'false'
+    assert utils._cast_bool(None) == 'false'
+
+
 @pytest.mark.django_db
 class TestMakePayload:
     def setup(self):
@@ -19,6 +25,24 @@ class TestMakePayload:
         assert payload == {
             'nonce': 'nonce-nce',
             'email': user.email,
+            'require_activation': 'false',
+            'custom.user_field_1': user.mc_username,
+            'custom.user_field_2': user.gh_username,
+            'custom.user_field_3': user.irc_nick,
+            'name': user.username,
+            'username': user.username,
+            'external_id': user.id
+        }
+
+    def test_builds_payload_not_activated(self):
+        user = accounts.tests.factories.UserFactory.build(
+            email_verified=False)
+
+        payload = utils.make_payload(user, 'nonce-nce', self.request)
+        assert payload == {
+            'nonce': 'nonce-nce',
+            'email': user.email,
+            'require_activation': 'true',
             'custom.user_field_1': user.mc_username,
             'custom.user_field_2': user.gh_username,
             'custom.user_field_3': user.irc_nick,
