@@ -85,6 +85,29 @@ class TestRegister(django.test.TestCase):
         authed_user = django.contrib.auth.get_user(self.client)
         assert authed_user == user
 
+    @django.test.override_settings(REQUIRE_EMAIL_CONFIRM=False)
+    @unittest.mock.patch('accounts.views._send_verify_email')
+    def test_valid_user_require_email_confirm_disabled(self, mock_send_verify_email):
+        assert not models.User.objects.all().exists()
+        resp = self.client.post(
+            self.path(),
+            {'username': 'foobar', 'password': 'password4363',
+             'email': 'baz@example.com'})
+        assert resp.status_code == 302
+
+        assert models.User.objects.all().exists()
+        user = models.User.objects.get()
+        assert user.username == 'foobar'
+        assert user.password != 'password4363'
+        assert user.check_password('password4363')
+        assert user.email == 'baz@example.com'
+        assert not user.email_verified
+
+        mock_send_verify_email.assert_not_called()
+
+        authed_user = django.contrib.auth.get_user(self.client)
+        assert authed_user == user
+
     def test_verify_link_works(self):
         assert not models.User.objects.all().exists()
         resp = self.client.post(
