@@ -99,9 +99,23 @@ class TestAvatar:
         avatar = factories.AvatarFactory.build(user=user, uploaded=True)
         assert avatar.get_absolute_url() == avatar.image_file.url
 
+    def test_get_absolute_url_upload_invalid(self):
+        user = factories.UserFactory.build(username='foobar')
+        fallback = letter_avatar.LetterAvatar('foobar').get_absolute_url()
+        avatar = factories.AvatarFactory.build(
+            user=user, source=models.Avatar.UPLOAD, remote_url='')
+        assert avatar.get_absolute_url() == fallback
+
     def test_get_absolute_url_remote(self):
         avatar = factories.AvatarFactory.build()
         assert avatar.get_absolute_url() == avatar.remote_url
+
+    def test_get_absolute_url_remote_empty(self):
+        user = factories.UserFactory.build(username='foobar')
+        fallback = letter_avatar.LetterAvatar('foobar').get_absolute_url()
+        avatar = factories.AvatarFactory.build(
+            user=user, source=models.Avatar.URL, remote_url='')
+        assert avatar.get_absolute_url() == fallback
 
     def test_str_upload(self):
         user = factories.UserFactory.build()

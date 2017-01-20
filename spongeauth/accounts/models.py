@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import os.path
 import re
 
@@ -11,6 +12,9 @@ import PIL.Image
 
 from . import letter_avatar
 import spongemime
+
+
+logger = logging.getLogger(__name__)
 
 
 class Group(models.Model):
@@ -185,9 +189,14 @@ class Avatar(models.Model):
         blank=False, null=False)
 
     def get_absolute_url(self):
+        url = self.remote_url
         if self.source == self.UPLOAD:
-            return self.image_file.url
-        return self.remote_url
+            try:
+                url = self.image_file.url
+            except ValueError:
+                # this avatar is invalid!
+                logger.error('Invalid avatar', exc_info=True)
+        return url or letter_avatar.LetterAvatar(self.user.username).get_absolute_url()
 
     def __str__(self):
         return "Avatar for {} from {}".format(self.user_id, self.get_absolute_url())
