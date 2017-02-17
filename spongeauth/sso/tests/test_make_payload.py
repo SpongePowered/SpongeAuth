@@ -27,8 +27,8 @@ class TestMakePayload:
             'email': user.email,
             'require_activation': 'false',
             'custom.user_field_1': user.mc_username,
-            'custom.user_field_2': user.gh_username,
-            'custom.user_field_3': user.irc_nick,
+            'custom.user_field_2': user.irc_nick,
+            'custom.user_field_3': user.gh_username,
             'name': user.username,
             'username': user.username,
             'external_id': user.id
@@ -44,8 +44,8 @@ class TestMakePayload:
             'email': user.email,
             'require_activation': 'true',
             'custom.user_field_1': user.mc_username,
-            'custom.user_field_2': user.gh_username,
-            'custom.user_field_3': user.irc_nick,
+            'custom.user_field_2': user.irc_nick,
+            'custom.user_field_3': user.gh_username,
             'name': user.username,
             'username': user.username,
             'external_id': user.id

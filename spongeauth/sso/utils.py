@@ -21,8 +21,8 @@ def make_payload(user, nonce, request=None):
         'username': user.username,
         'name': user.username,
         'custom.user_field_1': user.mc_username,
-        'custom.user_field_2': user.gh_username,
-        'custom.user_field_3': user.irc_nick,
+        'custom.user_field_2': user.irc_nick,
+        'custom.user_field_3': user.gh_username,
     }
     return payload
 
