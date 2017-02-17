@@ -37,5 +37,6 @@ def test_send_update_ping(settings):
         'username': 'foo_',
         'name': 'foo_',
         'custom.user_field_1': 'meep',
-        'custom.user_field_2': 'meeep',
-        'custom.user_field_3': 'XxXmeepXxX'})
+        'custom.user_field_2': 'XxXmeepXxX',
+        'custom.user_field_3': 'meeep',
+    })
