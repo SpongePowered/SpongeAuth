@@ -60,3 +60,26 @@ def test_nonexistent_user(client, fake):
         'api:users-detail', kwargs={'username': fake.user_name()}), {
             'apiKey': 'foobar'})
     assert resp.status_code == 404
+
+
+@pytest.mark.django_db
+def test_existing_user_in_group(client, fake):
+    api.models.APIKey.objects.create(key='foobar')
+
+    user = accounts.tests.factories.UserFactory.create()
+    group = accounts.tests.factories.GroupFactory.create()
+    user.groups = [group]
+    user.save()
+
+    resp = client.get(django.shortcuts.reverse(
+        'api:users-detail', kwargs={'username': user.username}), {
+            'apiKey': 'foobar'})
+    assert resp.status_code == 200
+
+    data = resp.json()
+    assert 'groups' in data
+    assert len(data['groups']) == 1
+    assert data['groups'][0] == {
+        'id': group.id,
+        'name': group.name,
+    }

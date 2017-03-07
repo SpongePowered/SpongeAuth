@@ -36,3 +36,10 @@ class UserFactory(factory.django.DjangoModelFactory):
     irc_nick = factory.Faker('user_name')
 
     joined_at = factory.Faker('date_time_this_decade')
+
+
+class GroupFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Group
+
+    name = factory.Faker('user_name')

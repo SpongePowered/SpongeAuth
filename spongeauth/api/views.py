@@ -25,6 +25,13 @@ def _require_api_key(fn):
     return _wrap
 
 
+def _encode_group(request, group):
+    return {
+        'id': group.id,
+        'name': group.name,
+    }
+
+
 def _encode_user(request, user):
     return {
         'id': user.id,
@@ -32,6 +39,8 @@ def _encode_user(request, user):
         'email': user.email,
         'avatar_url': request.build_absolute_uri(
             user.avatar.get_absolute_url()),
+        'groups': [_encode_group(request, group)
+                   for group in user.groups.all()],
     }
 
 
@@ -102,7 +111,8 @@ def user_detail(request, username):
 
 
 def _user_detail(request, username):
-    user = get_object_or_404(accounts.models.User, is_active=True, username=username)
+    qs = accounts.models.User.objects.all().prefetch_related('groups')
+    user = get_object_or_404(qs, is_active=True, username=username)
     return django.http.JsonResponse(
         _encode_user(request, user),
         status=200)
