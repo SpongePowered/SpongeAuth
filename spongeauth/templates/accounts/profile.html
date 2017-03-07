@@ -23,7 +23,7 @@
                             <dd>{{ user.joined_at }}</dd>
 
                         <dt>{% trans "Two-factor auth" %}</dt>
-                            <dd><a href="{% url 'twofa:list' %}">{% if user.twofa_enabled %}{% trans "Enabled" %}{% else %}{% trans "Disabled" %}{% endif %}</a></dd>
+                        <dd><a href="{% url 'twofa:list' %}">{% if user.twofa_enabled %}{% trans "Enabled" %}{% else %}{% trans "Disabled" %}{% endif %}</a><br><a href="{% url 'twofa:list' %}" class="btn btn-primary">{% trans "Manage 2FA" %}</a></dd>
                     </dl>
                 </div>
             </div>
