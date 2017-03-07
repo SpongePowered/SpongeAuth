@@ -44,6 +44,8 @@
                         </ul>
                     {% else %}
                         <p>{% trans "You have no authenticators attached to your account. Why not improve your security today?" %}</p>
+                    {% endif %}
+                    {% if can_setup %}
                         <a href="{% url 'twofa:setup-totp' %}" class="btn btn-primary pull-right">Add new authenticator</a>
                     {% endif %}
                 </div>

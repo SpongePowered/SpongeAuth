@@ -201,4 +201,8 @@ def list(request):
     device_qs = (
         twofa.models.Device.objects
         .active_for_user(request.user).select_subclasses().order_by('last_used_at'))
-    return render(request, 'twofa/list.html', {'devices': device_qs})
+    can_setup = not twofa.models.TOTPDevice.objects.active_for_user(request.user).exists()
+    return render(request, 'twofa/list.html', {
+        'devices': device_qs,
+        'can_setup': can_setup,
+    })
