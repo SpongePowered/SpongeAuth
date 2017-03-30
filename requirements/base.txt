@@ -5,5 +5,5 @@ oauth2client==4.0.0
 django-crispy-forms==1.6.1
 django-model-utils==2.6.1
 qrcode==5.3
-pytz==2016.10
+pytz==2017.2
 requests==2.13.0
