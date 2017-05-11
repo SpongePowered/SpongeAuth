@@ -1,4 +1,4 @@
 -r dev.txt
 
 coveralls==1.1
-pytest-cov==2.4.0
+pytest-cov==2.5.1
