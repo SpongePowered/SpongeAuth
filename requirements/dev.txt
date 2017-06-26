@@ -5,4 +5,4 @@ prospector==0.12.5
 factory_boy==2.8.1
 Faker==0.7.11
 django-debug-toolbar==1.8
-pylint==1.7.1
+pylint==1.7.2
