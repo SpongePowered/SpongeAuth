@@ -1,6 +1,6 @@
 import io
 
-from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 import pytest
 
@@ -77,7 +77,7 @@ def _generate_image():
     thumb_io = io.BytesIO()
     thumb.save(thumb_io, format='PNG')
     thumb_io.seek(0, io.SEEK_SET)
-    return thumb_io
+    return SimpleUploadedFile("image.png", thumb_io.getbuffer(), content_type="image/png")
 
 
 def test_avatar_upload_path():
@@ -85,7 +85,7 @@ def test_avatar_upload_path():
 
     instance = models.Avatar()
     image_buf = _generate_image()  # actually a PNG
-    instance.image_file.file = ContentFile(image_buf.getvalue())
+    instance.image_file.file = image_buf
     instance.image_file.name = filename
 
     upload_path = models._avatar_upload_path(instance, filename)
