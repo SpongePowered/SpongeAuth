@@ -24,16 +24,23 @@
 <!-- sneaky continue logout -->
 <script>
 (function() {
-    const origins = ["https://ore.spongepowered.org", "https://forums.spongepowered.org"];
-    origins.forEach(function(origin) {
-        console.log("Logging out of " + origin);
-        fetch(origin + "/_logout", {
-            method: 'DELETE',
-            mode: 'cors',
-            credentials: true,
-            cache: 'no-cache'
-        });
+  "use strict";
+  const origins = ["https://ore.spongepowered.org", "https://forums.spongepowered.org"];
+  origins.forEach(function(origin) {
+    console.log("Logging out of " + origin);
+    fetch(origin + "/_logout", {
+      method: 'DELETE',
+      mode: 'cors',
+      credentials: 'include',
+      cache: 'no-cache'
+    }).then(function(response) {
+      if (response.ok) {
+        console.log('Logged out of ' + origin + ' OK!');
+      } else {
+        console.error('Failed to log out of ' + origin);
+      }
     });
+  });
 })();
 </script>
 {% endblock %}
