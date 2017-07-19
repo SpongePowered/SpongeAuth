@@ -83,9 +83,9 @@ class TestProfile(django.test.TestCase):
             'avatar_from': 'upload',
             'avatar_image': test_models._generate_image()})
         user = models.User.objects.get(id=self.user.id)
+        assert resp.status_code == 302
         assert user.current_avatar.get_absolute_url().startswith('/media/avatars/')
         assert user.current_avatar.get_absolute_url().endswith('.png')
-        assert resp.status_code == 302
 
         # set to gravatar
         resp = self.client.post(self.path(), {
