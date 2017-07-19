@@ -176,7 +176,9 @@ def login(request):
         if form.is_valid() and hasattr(form, 'cached_user'):
             return _log_user_in(request, form.cached_user)
 
-    return render(request, 'accounts/login.html', {'form': form})
+    return render(request, 'accounts/login.html', {
+        'form': form,
+        'next': _login_redirect_url(request)})
 
 
 def register(request):

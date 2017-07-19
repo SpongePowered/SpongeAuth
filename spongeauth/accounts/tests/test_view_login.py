@@ -30,6 +30,11 @@ class TestLogin(django.test.TestCase):
         resp = self.client.get(self.path() + '?next=https://www.google.com/')
         assert 'google.com' not in resp['Location']
 
+    def test_next_appears_in_template(self):
+        resp = self.client.get(self.path() + '?next=/aardvark/')
+        assert 'next' in resp.context
+        assert resp.context['next'] == '/aardvark/'
+
     @unittest.mock.patch('accounts.views.login_google')
     def test_invokes_login_google_if_google(self, mock_login_google):
         mock_login_google.return_value = django.http.HttpResponse('ohai')
