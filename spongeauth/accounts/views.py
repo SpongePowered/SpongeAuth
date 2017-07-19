@@ -157,7 +157,10 @@ def logout(request):
 def logout_success(request):
     if request.user.is_authenticated():
         return redirect('index')
-    return render(request, 'accounts/logout_success.html')
+
+    resp = render(request, 'accounts/logout_success.html')
+    resp['Clear-Site-Data'] = '"cache", "cookies", "storage", "executionContexts"'
+    return resp
 
 
 def login(request):

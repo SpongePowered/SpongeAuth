@@ -20,4 +20,20 @@
 		</div><!-- .col-md-6 -->
 	</div><!-- .row -->
 </div><!-- .container -->
+
+<!-- sneaky continue logout -->
+<script>
+(function() {
+    const origins = ["https://ore.spongepowered.org", "https://forums.spongepowered.org"];
+    origins.forEach(function(origin) {
+        console.log("Logging out of " + origin);
+        fetch(origin + "/_logout", {
+            method: 'DELETE',
+            mode: 'cors',
+            credentials: true,
+            cache: 'no-cache'
+        });
+    });
+})();
+</script>
 {% endblock %}
