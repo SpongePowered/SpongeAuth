@@ -205,7 +205,9 @@ def register(request):
                 _send_verify_email(request, user)
             return resp
 
-    return render(request, 'accounts/register.html', {'form': form})
+    return render(request, 'accounts/register.html', {
+        'form': form,
+        'next': _login_redirect_url(request)})
 
 
 @require_POST
