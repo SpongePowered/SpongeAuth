@@ -23,6 +23,8 @@ def make_payload(user, nonce, request=None):
         'custom.user_field_1': user.mc_username,
         'custom.user_field_2': user.irc_nick,
         'custom.user_field_3': user.gh_username,
+        'admin': user.is_admin,
+        'moderator': user.is_admin or user.is_staff,
     }
     return payload
 

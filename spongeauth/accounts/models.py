@@ -85,6 +85,7 @@ class User(AbstractBaseUser):
     email_verified = models.BooleanField(default=False, null=False)
 
     is_active = models.BooleanField(default=True, null=False)
+    is_staff = models.BooleanField(default=False, null=False)
     is_admin = models.BooleanField(default=False, null=False)
 
     mc_username = models.CharField(
@@ -137,14 +138,24 @@ class User(AbstractBaseUser):
         return self.username
 
     def has_perm(self, perm, obj=None):
-        return self.is_admin
+        if self.is_admin:
+            return True
+        elif not self.is_staff:
+            return False
+
+        if perm in ('accounts.change_user', 'accounts.change_avatar'):
+            return True
+        return False
 
     def has_module_perms(self, app_label):
-        return self.is_admin
+        if self.is_admin:
+            return True
+        elif not self.is_staff:
+            return False
 
-    @property
-    def is_staff(self):
-        return self.is_admin
+        if app_label == 'accounts':
+            return True
+        return False
 
 
 def _avatar_upload_path(instance, filename):

@@ -36,7 +36,14 @@ class TestUser:
         assert not user.has_module_perms('blah')
         assert not user.is_staff
 
-        admin = factories.UserFactory.build(is_admin=True)
+        staff = factories.UserFactory.build(is_admin=False, is_staff=True)
+        assert not staff.has_perm('blah.create')
+        assert staff.has_perm('accounts.change_user')
+        assert staff.has_perm('accounts.change_avatar')
+        assert staff.has_module_perms('accounts')
+        assert not staff.has_module_perms('blah')
+
+        admin = factories.UserFactory.build(is_admin=True, is_staff=True)
         assert admin.has_perm('blah.create')
         assert admin.has_module_perms('blah')
         assert admin.is_staff

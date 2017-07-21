@@ -31,7 +31,9 @@ class TestMakePayload:
             'custom.user_field_3': user.gh_username,
             'name': user.username,
             'username': user.username,
-            'external_id': user.id
+            'external_id': user.id,
+            'moderator': False,
+            'admin': False
         }
 
     def test_builds_payload_not_activated(self):
@@ -48,5 +50,7 @@ class TestMakePayload:
             'custom.user_field_3': user.gh_username,
             'name': user.username,
             'username': user.username,
-            'external_id': user.id
+            'external_id': user.id,
+            'moderator': False,
+            'admin': False
         }
