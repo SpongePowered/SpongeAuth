@@ -1,0 +1,13 @@
+env
+node_modules
+.tox
+
+spongeauth/media
+spongeauth/db.sqlite3
+spongeauth/static-build
+
+__pycache__
+*/__pycache__
+*/*/__pycache__
+*/*/*/__pycache__
+*/*/*/*/__pycache__

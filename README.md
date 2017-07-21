@@ -12,34 +12,27 @@ Developing
 
 You'll need:
 
-* Python 3.6 or above
-* A recent version of Node.js and NPM
+* A working Docker install (for Linux, install from your package manager; for macOS, use [Docker for Mac](https://docs.docker.com/docker-for-mac/install/); for Windows, use [Docker for Windows](https://docs.docker.com/docker-for-windows/install/))
+* docker-compose (for Linux, install from your package manager; for macOS/Windows, these should be included with Docker for Mac/Windows)
 
-To install all the dependencies, from the root of your fresh checkout, run:
-
-```
-python3 -m venv env
-source env/bin/activate
-pip install -r requirements/dev.txt
-npm install
-npm install gulp-cli
-node_modules/.bin/gulp build
-```
-
-Then, to bootstrap the database:
+Run
 
 ```
-python spongeauth/manage.py migrate
+docker-compose up
 ```
 
-You can then start the webserver on localhost:8000 by running:
+and wait for a bit. When you see
 
 ```
-python spongeauth/manage.py runserver
+su -c '/env/bin/python spongeauth/manage.py runserver 0.0.0.0:8000' spongeauth
 ```
 
-If you're working on the CSS, JavaScript, or other frontend stuff, you should also run gulp in the background to watch when you make changes and push them into the correct place for Django to pick them up:
+then you should be able to visit http://localhost:8000 and have a working SpongeAuth install.
+
+If you need an administrator account, you should be able to run:
 
 ```
-node_modules/.bin/gulp
+docker-compose run app /env/bin/python spongeauth/manage.py createsuperuser
 ```
+
+and follow the prompts to get an administrator account. This must be done after the `up` command above.
