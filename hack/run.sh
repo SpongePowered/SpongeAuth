@@ -27,6 +27,7 @@ echo "Postgres ready, continuing" >&2
 # migrate database
 su -c "/env/bin/python spongeauth/manage.py migrate" spongeauth
 
+set +euxo pipefail
 (
 	trap 'kill -TERM $PYTHONPID' TERM INT
 	while true; do
