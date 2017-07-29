@@ -6,9 +6,18 @@ import django.contrib.auth.password_validation
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, HTML, Hidden
-from crispy_forms.bootstrap import FormActions
+import crispy_forms.bootstrap
 
 from . import models
+
+
+class FormActions(crispy_forms.bootstrap.FormActions):
+    def __init__(self, *fields, **kwargs):
+        if 'css_class' in kwargs:
+            kwargs['css_class'] += ' form-group'
+        else:
+            kwargs['css_class'] = 'form-group'
+        super().__init__(*fields, **kwargs)
 
 
 class CoreFieldsMixin(forms.Form):
