@@ -223,7 +223,7 @@ class ProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', _("Save changes"),
+        self.helper.add_input(Submit('profile-save', _("Save changes"),
                               css_class='pull-right'))
         self.helper.add_input(Hidden('form', 'profile'))
 
@@ -246,7 +246,7 @@ class ChangePasswordForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', _("Change password"),
+        self.helper.add_input(Submit('password-save', _("Change password"),
                               css_class='pull-right'))
         self.helper.add_input(Hidden('form', 'password'))
 
@@ -282,7 +282,7 @@ class SetAvatarForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', _("Set avatar"),
+        self.helper.add_input(Submit('avatar-save', _("Set avatar"),
                               css_class='pull-right'))
         self.helper.add_input(Hidden('form', 'avatar'))
 
