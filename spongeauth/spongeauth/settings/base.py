@@ -97,7 +97,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'spongeauth',
         'USER': 'postgres',
-        'ATOMIC_REQUESTS': True,
     }
 }
 
