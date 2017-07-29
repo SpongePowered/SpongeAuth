@@ -248,6 +248,57 @@ def test_send_forgot_email(mock_token_generator, mock_send_mail, mock_render_to_
         'accounts/forgot/email.txt', template_kwargs)
 
 
+@unittest.mock.patch('accounts.views.render_to_string')
+@unittest.mock.patch('accounts.views.send_mail')
+@unittest.mock.patch('accounts.views.verify_token_generator')
+def test_send_change_email(mock_token_generator, mock_send_mail, mock_render_to_string):
+    mock_render_to_string.side_effect = lambda template, kwargs: template
+    mock_token_generator.make_token.return_value = 'deadbeef-cafe'
+    request = unittest.mock.MagicMock()
+    request.META = {'REMOTE_ADDR': '::1'}
+    request.build_absolute_uri.side_effect = lambda inp: inp
+    user = factories.UserFactory.build()
+    views._send_change_email(request, user, 'new-email@example.com')
+    mock_send_mail.assert_called_once_with(
+        '[Sponge] Confirm your new email address',
+        'accounts/change_email/email.txt',
+        'admin@spongepowered.org',
+        ['new-email@example.com'],
+        html_message='accounts/change_email/email.html')
+    template_kwargs = {
+        'user': user,
+        'link': '/accounts/change-email/Tm9uZQ/deadbeef-cafe/bmV3LWVtYWlsQGV4YW1wbGUuY29t/'
+    }
+    mock_render_to_string.assert_any_call(
+        'accounts/change_email/email.html', template_kwargs)
+    mock_render_to_string.assert_any_call(
+        'accounts/change_email/email.txt', template_kwargs)
+
+
+@unittest.mock.patch('accounts.views.render_to_string')
+@unittest.mock.patch('accounts.views.send_mail')
+def test_send_email_changed_email(mock_send_mail, mock_render_to_string):
+    mock_render_to_string.side_effect = lambda template, kwargs: template
+    request = unittest.mock.MagicMock()
+    request.build_absolute_uri.side_effect = lambda inp: inp
+    user = factories.UserFactory.build()
+    views._send_email_changed_email(request, user, 'old-email@example.com')
+    mock_send_mail.assert_called_once_with(
+        '[Sponge] Your email address has been changed',
+        'accounts/change_email/confirmation_email.txt',
+        'admin@spongepowered.org',
+        ['old-email@example.com'],
+        html_message='accounts/change_email/confirmation_email.html')
+    template_kwargs = {
+        'user': user,
+        'new_email': user.email,
+    }
+    mock_render_to_string.assert_any_call(
+        'accounts/change_email/confirmation_email.html', template_kwargs)
+    mock_render_to_string.assert_any_call(
+        'accounts/change_email/confirmation_email.txt', template_kwargs)
+
+
 def test_make_gravatar_url():
     user = unittest.mock.MagicMock()
     user.email = '  FooBar@eXaMple.com '

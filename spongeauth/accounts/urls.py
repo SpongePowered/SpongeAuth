@@ -21,6 +21,11 @@ urlpatterns = [
     url(r'^verify/' + RESET_TOKEN_RE + r'$', accounts.views.verify_step2,
         name='verify-step2'),
 
+    url(r'^change-email/$', accounts.views.change_email, name='change-email'),
+    url(r'^change-email/sent/$', accounts.views.change_email_step1done, name='change-email-sent'),
+    url(r'^change-email/' + RESET_TOKEN_RE + r'(?P<new_email>[0-9A-Za-z_\-]+)/$', accounts.views.change_email_step2,
+        name='change-email-step2'),
+
     url(r'^reset/$', accounts.views.forgot, name='forgot'),
     url(r'^reset/sent/$', accounts.views.forgot_step1done, name='forgot-sent'),
     url(r'^reset/' + RESET_TOKEN_RE + r'$', accounts.views.forgot_step2,

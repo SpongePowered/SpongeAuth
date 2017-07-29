@@ -17,7 +17,7 @@
                             <dd>{{ user.username }}</dd>
 
                         <dt>{% trans "Email" %}</dt>
-                            <dd>{{ user.email }}</dd>
+                            <dd><a href="{% url 'accounts:change-email' %}">{{ user.email }}</a><a href="{% url 'accounts:change-email' %}" class="btn"><i class="fa fa-pencil"></i></a></dd>
 
                         <dt>{% trans "Member since" %}</dt>
                             <dd>{{ user.joined_at }}</dd>

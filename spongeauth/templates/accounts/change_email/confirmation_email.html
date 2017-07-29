@@ -1,0 +1,14 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<body>
+  <p><strong>{% blocktrans with username=user.username %}Hi {{ username }},{% endblocktrans %}</strong></p>
+
+  <p>{% blocktrans %}Your email address has been changed to <strong>{{ new_email }}</strong>.{% endblocktrans %}</p>
+
+  <p>{% blocktrans %}If you did not intend to make this change, please email <a href="mailto:staff@spongepowered.org">staff@spongepowered.org</a> as quickly as possible, as this means that your account has been compromised.{% endblocktrans %}</p>
+
+  <p>{% blocktrans %}Best regards,<br>
+    The SpongePowered Team{% endblocktrans %}</p>
+</body>
+</html>

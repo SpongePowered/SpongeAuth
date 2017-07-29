@@ -2,30 +2,33 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
+
 {% block title %}{% trans "Email verification" %}{% endblock %}
 {% block main %}
+{% url 'accounts:change-email' as change_email_url %}
 <div class="container top-level">
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
 			<div class="panel panel-default panel-signup">
 				<div class="panel-heading">
-                    <h4 class="panel-title">{% trans "Email verification" %}</h4>
+          <h4 class="panel-title">{% trans "Email verification" %}</h4>
 				</div>
 
 				<div class="panel-body">
-                    <p>{% blocktrans %}Your email address isn't yet verified, so your account cannot be used.{% endblocktrans %}</p>
-                    <p>{% blocktrans %}We've sent you an email with a link you need to click to verify your account.{% endblocktrans %}</p>
-                    <p>{% blocktrans %}It may take a minute or two for the email to arrive. If it doesn't show up, click the button below and we'll try to send you another one.{% endblocktrans %}</p>
-                    <div class="pull-right">
-                        <form action="{% url 'accounts:logout' %}" method="POST" class="inline-form">
-                            {% csrf_token %}
-                            <input type="submit" value="{% trans "Logout" %}" class="btn btn-default">
-                        </form>
-                        <form action="" method="POST" class="inline-form">
-                            {% csrf_token %}
-                            <input type="submit" value="{% trans "Send again" %}" class="btn btn-primary">
-                        </form>
-                    </div>
+          <p>{% blocktrans %}Your email address isn't yet verified, so your account cannot be used.{% endblocktrans %}</p>
+          <p>{% blocktrans with email=user.email %}We've sent you an email to <strong>{{ email }}</strong> with a link you need to click to verify your account.{% endblocktrans %}</p>
+          <p>{% blocktrans %}It may take a minute or two for the email to arrive. If it doesn't show up, click the button below and we'll try to send you another one.{% endblocktrans %}</p>
+          <p>{% blocktrans with email=user.email change_email_url=change_email_url %}If the email address <strong>{{ email }}</strong> is not what you intended to sign up with, you can <a href="{{ change_email_url }}">change it here</a>.{% endblocktrans %}</p>
+          <div class="pull-right">
+            <form action="{% url 'accounts:logout' %}" method="POST" class="inline-form">
+              {% csrf_token %}
+              <input type="submit" value="{% trans "Logout" %}" class="btn btn-default">
+            </form>
+            <form action="" method="POST" class="inline-form">
+              {% csrf_token %}
+              <input type="submit" value="{% trans "Send again" %}" class="btn btn-primary">
+            </form>
+          </div>
 				</div><!-- .panel-body -->
 			</div><!-- .panel -->
 		</div><!-- .col-md-6 -->

@@ -1,0 +1,8 @@
+{% load i18n %}{% blocktrans with username=user.username %}Hi {{ username }},{% endblocktrans %}
+
+{% blocktrans %}Your email address has been changed to {{ new_email }}.{% endblocktrans %}
+
+{% blocktrans %}If you did not intend to make this change, please email staff@spongepowered.org as quickly as possible, as this means that your account has been compromised.{% endblocktrans %}
+
+{% blocktrans %}Best regards,
+The SpongePowered Team{% endblocktrans %}
