@@ -286,3 +286,22 @@ class SetAvatarForm(forms.Form):
                 self.fields['avatar_image'].error_messages['required'],
                 code='required'))
         return cleaned_data
+
+
+class ChangeEmailForm(forms.Form):
+    new_email = forms.EmailField(label=_('New email'))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('save', _("Change email"),
+                              css_class='pull-right'))
+
+    def clean_new_email(self):
+        old_email = self.user.email
+        new_email = self.cleaned_data['new_email']
+        if old_email == new_email:
+            raise forms.ValidationError(_('Your new email must be different to your old email.'))
+        return new_email

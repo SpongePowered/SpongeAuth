@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Change email" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-default panel-signup">
+				<div class="panel-heading">
+          <h4 class="panel-title">{% trans "Change email" %}</h4>
+				</div>
+
+				<div class="panel-body">
+          <p>{% blocktrans %}To change the email address associated with your account, please fill out the form below. We'll then send you an email with a link you'll need to click to confirm ownership of the new email address.{% endblocktrans %}</p>
+          {% crispy form %}
+				</div><!-- .panel-body -->
+			</div><!-- .panel -->
+		</div><!-- .col-md-6 -->
+	</div><!-- .row -->
+</div><!-- .container -->
+{% endblock main %}

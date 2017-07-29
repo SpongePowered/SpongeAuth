@@ -134,6 +134,45 @@ def _send_forgot_email(request, user):
     )
 
 
+def _send_change_email(request, user, new_email):
+    old_email = user.email
+    user.email = new_email
+    template_kwargs = {
+        'user': user,
+        'link': request.build_absolute_uri(reverse('accounts:change-email-step2', kwargs={
+            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+            'token': verify_token_generator.make_token(user),
+            'new_email': urlsafe_base64_encode(force_bytes(new_email)),
+        })),
+    }
+    user.email = old_email
+    msg_html = render_to_string('accounts/change_email/email.html', template_kwargs)
+    msg_text = render_to_string('accounts/change_email/email.txt', template_kwargs)
+    send_mail(
+        '[Sponge] Confirm your new email address',
+        msg_text,
+        'admin@spongepowered.org',
+        [new_email],
+        html_message=msg_html,
+    )
+
+
+def _send_email_changed_email(request, user, old_email):
+    template_kwargs = {
+        'user': user,
+        'new_email': user.email,
+    }
+    msg_html = render_to_string('accounts/change_email/confirmation_email.html', template_kwargs)
+    msg_text = render_to_string('accounts/change_email/confirmation_email.txt', template_kwargs)
+    send_mail(
+        '[Sponge] Your email address has been changed',
+        msg_text,
+        'admin@spongepowered.org',
+        [old_email],
+        html_message=msg_html,
+    )
+
+
 def _make_gravatar_url(user):
     canonicalized_email = user.email.strip().lower()
     email_hash = hashlib.md5(canonicalized_email.encode('utf8')).hexdigest()
@@ -265,6 +304,74 @@ def register_google(request):
         return resp
 
     return render(request, 'accounts/register.html', {'form': form, 'login_type': 'google'})
+
+
+@middleware.allow_without_verified_email
+@login_required
+def change_email(request):
+    if request.method == 'POST':
+        form = forms.ChangeEmailForm(request.POST, user=request.user)
+    else:
+        form = forms.ChangeEmailForm(user=request.user)
+
+    if request.method == 'POST' and form.is_valid():
+        new_email = form.cleaned_data['new_email']
+        _send_change_email(request, request.user, new_email)
+        signer = Signer('accounts.views.change-email')
+        email_signed = urlsafe_base64_encode(signer.sign(new_email.encode('utf8')).encode('utf8'))
+        return redirect(reverse('accounts:change-email-sent') + '?e=' + email_signed.decode('utf8'))
+
+    return render(request, 'accounts/change_email/step1.html', {'form': form})
+
+
+@middleware.allow_without_verified_email
+@login_required
+def change_email_step1done(request):
+    signer = Signer('accounts.views.change-email')
+    email_signed = urlsafe_base64_decode(request.GET.get('e', ''))
+    try:
+        email = signer.unsign(email_signed)
+    except BadSignature:
+        raise SuspiciousOperation('change_step1done received invalid signed email {}'.format(signer))
+    return render(request, 'accounts/change_email/step1done.html', {'email': email})
+
+
+@middleware.allow_without_verified_email
+@login_required
+def change_email_step2(request, uidb64, token, new_email):
+    bytes_uid = urlsafe_base64_decode(uidb64)
+    try:
+        uid = int(bytes_uid)
+    except ValueError:
+        raise SuspiciousOperation('change_email_step2 received invalid base64 user ID: {}'.format(
+            bytes_uid))
+
+    if uid != request.user.id:
+        raise PermissionDenied('UID mismatch - user is {}, request was for {}'.format(
+            request.user.id, uid))
+
+    user = get_object_or_404(models.User, pk=uid)
+    old_email = user.email
+    new_email = urlsafe_base64_decode(new_email).decode('utf8')
+    user.email = new_email
+
+    if not verify_token_generator.check_token(user, token):
+        raise Http404('token invalid')
+
+    if old_email == new_email:
+        messages.info(request, _('Your email address has already been changed.'))
+    else:
+        was_verified = user.email_verified
+        user.email_verified = True
+        user.email = new_email
+        user.save()
+
+        if was_verified:
+            _send_email_changed_email(request, user, old_email)
+
+        messages.success(request, _('Your email address has been changed successfully.'))
+
+    return redirect('index')
 
 
 @middleware.allow_without_verified_email
