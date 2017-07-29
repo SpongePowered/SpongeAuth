@@ -13,10 +13,7 @@ from . import models
 
 class FormActions(crispy_forms.bootstrap.FormActions):
     def __init__(self, *fields, **kwargs):
-        if 'css_class' in kwargs:
-            kwargs['css_class'] += ' form-group'
-        else:
-            kwargs['css_class'] = 'form-group'
+        kwargs['css_class'] = 'form-group ' + kwargs.get('css_class', '')
         super().__init__(*fields, **kwargs)
 
 
