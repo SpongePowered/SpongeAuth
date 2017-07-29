@@ -14,7 +14,7 @@
                     <p>{% blocktrans with username=request.user.username %}You are currently logged in as <strong>{{ username }}</strong>.{% endblocktrans %}</p>
                     
 
-                    <ul class="list-group list-group-home">
+                    <div class="list-group list-group-home">
                         <a href="https://spongepowered.org#downloads" class="list-group-item">
                             <span>{% trans "Download Sponge" %}</span>
                             <i class="fa fa-download"></i>
@@ -40,7 +40,7 @@
                             <i class="fa fa-cog"></i>
                             <div class="clearfix"></div>
                         </a>
-                    </ul>
+                    </div>
 
                     <form action="{% url 'accounts:logout' %}" method="POST">
                         {% csrf_token %}

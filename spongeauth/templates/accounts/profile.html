@@ -39,7 +39,7 @@
                     <h4 class="panel-title">{% trans "Avatar" %}</h4>
                 </div>
                 <div class="panel-body">
-                    <img src="{{ user.avatar.get_absolute_url }}" class="pull-right avatar-view">
+                    <img src="{{ user.avatar.get_absolute_url }}" class="pull-right avatar-view" alt="{{ user.username }}'s avatar">
                     {% crispy avatar_form %}
                 </div>
             </div>

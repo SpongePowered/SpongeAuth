@@ -6,9 +6,15 @@ import django.contrib.auth.password_validation
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, HTML, Hidden
-from crispy_forms.bootstrap import FormActions
+import crispy_forms.bootstrap
 
 from . import models
+
+
+class FormActions(crispy_forms.bootstrap.FormActions):
+    def __init__(self, *fields, **kwargs):
+        kwargs['css_class'] = 'form-group ' + kwargs.get('css_class', '')
+        super().__init__(*fields, **kwargs)
 
 
 class CoreFieldsMixin(forms.Form):
@@ -214,7 +220,7 @@ class ProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', _("Save changes"),
+        self.helper.add_input(Submit('profile-save', _("Save changes"),
                               css_class='pull-right'))
         self.helper.add_input(Hidden('form', 'profile'))
 
@@ -237,7 +243,7 @@ class ChangePasswordForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', _("Change password"),
+        self.helper.add_input(Submit('password-save', _("Change password"),
                               css_class='pull-right'))
         self.helper.add_input(Hidden('form', 'password'))
 
@@ -273,7 +279,7 @@ class SetAvatarForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('save', _("Set avatar"),
+        self.helper.add_input(Submit('avatar-save', _("Set avatar"),
                               css_class='pull-right'))
         self.helper.add_input(Hidden('form', 'avatar'))
 

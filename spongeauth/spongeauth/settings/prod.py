@@ -14,6 +14,11 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEFAULT_FROM_EMAIL = 'admin@spongepowered.org'
 SERVER_EMAIL = 'admin@spongepowered.org'
 
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
