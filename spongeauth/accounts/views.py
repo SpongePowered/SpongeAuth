@@ -421,7 +421,7 @@ def forgot(request):
         form = forms.ForgotPasswordForm(request.POST)
         if form.is_valid():
             try:
-                user = models.User.objects.get(email=form.cleaned_data['email'])
+                user = models.User.objects.get(email__iexact=form.cleaned_data['email'])
                 if not user.has_usable_password():
                     form.add_error(
                         'email',
