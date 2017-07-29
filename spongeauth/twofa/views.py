@@ -148,7 +148,8 @@ def setup_totp(request):
             messages.success(request, _('Your authenticator has been added to your account.'))
             return _generate_paper_codes_if_needed(request.user, reverse('twofa:list'))
 
-    return render(request, 'twofa/setup/totp.html', {'form': form, 'qr_code_svg': img_buf.getvalue(), 'b32_secret': b32_secret})
+    return render(request, 'twofa/setup/totp.html', {
+        'form': form, 'qr_code_svg': img_buf.getvalue(), 'b32_secret': b32_secret})
 
 
 @login_required
