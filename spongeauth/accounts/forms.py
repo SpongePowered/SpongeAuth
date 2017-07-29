@@ -44,7 +44,7 @@ class RegistrationMixin:
     def clean_username(self):
         username = self.cleaned_data['username']
         if models.User.objects.filter(
-                username=username).exists():
+                username__iexact=username).exists():
             raise forms.ValidationError(
                 _('A user with that username already exists.'))
         return username
@@ -149,7 +149,7 @@ class AuthenticationForm(forms.Form):
         # but it's easy enough to find usernames anyway
         # so I'm not especially concerned
         username = self.cleaned_data['username']
-        if not models.User.objects.filter(username=username).exists():
+        if not models.User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError(
                 _('There is no user with that username.'))
         return username

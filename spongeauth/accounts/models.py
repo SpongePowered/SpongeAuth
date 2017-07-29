@@ -43,6 +43,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def get_by_natural_key(self, username):
+        return self.get(username__iexact=username)
+
 
 def validate_username(username):
     errs = []

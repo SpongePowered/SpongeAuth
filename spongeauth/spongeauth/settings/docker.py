@@ -22,4 +22,4 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': __name__ + '.show_toolbar',
 }
 def show_toolbar(request):
-    return not request.is_ajax() and DEBUG
+    return DEBUG

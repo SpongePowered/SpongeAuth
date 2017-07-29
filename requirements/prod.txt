@@ -1,5 +1,4 @@
 -r base.txt
 
 raven==6.1.0
-psycopg2==2.7.3
 gunicorn==19.7.1

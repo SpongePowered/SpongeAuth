@@ -77,6 +77,16 @@ class TestUserManager:
         assert user.password != 'exciting'
         assert user.check_password('exciting')
 
+    def test_get_user_caseinsensitively(self):
+        user = models.User.objects.create_user(
+            username='foo', email='foo@example.com',
+            password='exciting', mc_username='bar')
+        assert models.User.objects.get_by_natural_key('FOO') == user
+        assert models.User.objects.get_by_natural_key('Foo') == user
+        assert models.User.objects.get_by_natural_key('fOo') == user
+        with pytest.raises(models.User.DoesNotExist):
+            models.User.objects.get_by_natural_key('bar')
+
 
 def _generate_image():
     from PIL import Image
