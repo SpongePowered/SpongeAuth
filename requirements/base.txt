@@ -7,4 +7,4 @@ django-model-utils==3.0.0
 qrcode==5.3
 pytz==2017.2
 requests==2.18.3
-psycopg2==2.7.3
+psycopg2==2.7.3.1
