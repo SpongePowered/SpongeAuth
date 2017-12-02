@@ -1,4 +1,4 @@
-Django==1.11.6
+Django==2.0
 django-user-sessions==1.5.3
 Pillow==4.3.0
 oauth2client==4.1.2
