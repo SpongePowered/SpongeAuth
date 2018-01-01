@@ -81,7 +81,7 @@ def _create_user(request):
     try:
         user.save()
         if dummy:
-            user.groups = [accounts.models.Group.objects.get(name='Dummy')]
+            user.groups.set([accounts.models.Group.objects.get(name='Dummy')])
     except django.db.IntegrityError as exc:
         return django.http.JsonResponse({
             'error': str(exc)}, status=422)
