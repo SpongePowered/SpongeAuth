@@ -122,7 +122,7 @@ def setup_totp(request):
             messages.error(request, _('Whoops - something went wrong. Please try again.'))
             return redirect('twofa:setup-totp')
     else:
-        b32_secret = base64.b32encode(secrets.token_bytes(10))
+        b32_secret = base64.b32encode(secrets.token_bytes(10)).decode('utf8')
     signed_secret = setup_signer.sign(b32_secret)
 
     url = 'otpauth://totp/Sponge:{}?{}'.format(
