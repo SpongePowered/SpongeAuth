@@ -61,7 +61,7 @@ class TestVerify(django.test.TestCase):
         resp = self.client.get(self.path())
         assert resp.status_code == 302
         user = django.contrib.auth.get_user(self.client)
-        assert user.is_authenticated()
+        assert user.is_authenticated
 
     def test_can_render_totp(self):
         self.device = models.TOTPDevice(
@@ -100,7 +100,7 @@ class TestVerify(django.test.TestCase):
         assert resp['Location'] == django.urls.reverse('index')
 
         user = django.contrib.auth.get_user(self.client)
-        assert user.is_authenticated()
+        assert user.is_authenticated
 
         code = models.PaperCode.objects.get(id=code.id)
         assert code.used_at is not None
@@ -132,7 +132,7 @@ class TestVerify(django.test.TestCase):
         resp = self.client.post(self.path(), {'response': 'aardvark'})
         assert resp.status_code == 200
         user = django.contrib.auth.get_user(self.client)
-        assert not user.is_authenticated()
+        assert not user.is_authenticated
 
         self.other_devices = [self.device]
         self.device = real_device
@@ -145,4 +145,4 @@ class TestVerify(django.test.TestCase):
         resp = self.client.post(self.path(real_device), {'response': 'aardvark'})
         assert resp.status_code == 302
         user = django.contrib.auth.get_user(self.client)
-        assert user.is_authenticated()
+        assert user.is_authenticated

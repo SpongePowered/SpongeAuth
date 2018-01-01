@@ -53,7 +53,7 @@ class TestLogout(django.test.TestCase):
         self.assertRedirects(resp, django.shortcuts.reverse('accounts:logout-success'))
         assert resp.status_code == 302
         user = django.contrib.auth.get_user(self.client)
-        assert not user.is_authenticated()
+        assert not user.is_authenticated
 
 
 class TestAvatarForUser(django.test.TestCase):

@@ -181,7 +181,7 @@ def _make_gravatar_url(user):
 
 @middleware.allow_without_verified_email
 def logout(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return redirect('index')
 
     if request.method != 'POST':
@@ -194,7 +194,7 @@ def logout(request):
 
 
 def logout_success(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect('index')
 
     resp = render(request, 'accounts/logout_success.html')
@@ -203,7 +203,7 @@ def logout_success(request):
 
 
 def login(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     # check if this is a Google login
@@ -224,7 +224,7 @@ def login(request):
 
 
 def register(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     form = forms.RegisterForm()
@@ -413,7 +413,7 @@ def verify_step2(request, uidb64, token):
 
 
 def forgot(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     form = forms.ForgotPasswordForm()
@@ -440,7 +440,7 @@ def forgot(request):
 
 
 def forgot_step1done(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     signer = Signer('accounts.views.forgot-email')
@@ -453,7 +453,7 @@ def forgot_step1done(request):
 
 
 def forgot_step2(request, uidb64, token):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     bytes_uid = urlsafe_base64_decode(uidb64)

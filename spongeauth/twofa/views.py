@@ -79,7 +79,7 @@ def _get_verify_device(user, device_id):
 
 
 def verify(request, device_id=None):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
     if 'twofa_target_user' not in request.session:
         return redirect(_login_redirect_url(request))
