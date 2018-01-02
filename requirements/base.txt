@@ -1,9 +1,9 @@
-Django==1.11.6
-django-user-sessions==1.5.3
+Django==2.0
+django-user-sessions==1.6.0
 Pillow==4.3.0
 oauth2client==4.1.2
 django-crispy-forms==1.7.0
-django-model-utils==3.0.0
+-e git://github.com/jazzband/django-model-utils.git@3.1.1#egg=django-model-utils
 qrcode==5.3
 pytz==2017.2
 requests==2.18.4

@@ -45,7 +45,7 @@ class TestRegister(django.test.TestCase):
         assert not models.User.objects.all().exists()
         mock_send_verify_email.assert_not_called()
         authed_user = django.contrib.auth.get_user(self.client)
-        assert not authed_user.is_authenticated()
+        assert not authed_user.is_authenticated
 
     @unittest.mock.patch('accounts.views._send_verify_email')
     def test_bad_password(self, mock_send_verify_email):
@@ -58,7 +58,7 @@ class TestRegister(django.test.TestCase):
         assert not models.User.objects.all().exists()
         mock_send_verify_email.assert_not_called()
         authed_user = django.contrib.auth.get_user(self.client)
-        assert not authed_user.is_authenticated()
+        assert not authed_user.is_authenticated
 
     @unittest.mock.patch('accounts.views._send_verify_email')
     def test_valid_user(self, mock_send_verify_email):

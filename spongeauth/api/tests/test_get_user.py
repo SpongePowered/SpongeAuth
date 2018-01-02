@@ -68,7 +68,7 @@ def test_existing_user_in_group(client, fake):
 
     user = accounts.tests.factories.UserFactory.create()
     group = accounts.tests.factories.GroupFactory.create()
-    user.groups = [group]
+    user.groups.set([group])
     user.save()
 
     resp = client.get(django.shortcuts.reverse(
