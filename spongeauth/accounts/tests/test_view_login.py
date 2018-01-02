@@ -51,7 +51,7 @@ class TestLogin(django.test.TestCase):
         assert isinstance(resp.context['form'], forms.AuthenticationForm)
         self.assertFormError(resp, 'form', 'username', 'There is no user with that username.')
         user = django.contrib.auth.get_user(self.client)
-        assert not user.is_authenticated()
+        assert not user.is_authenticated
 
     def test_errors_with_invalid_password(self):
         user = factories.UserFactory.create()
@@ -59,7 +59,7 @@ class TestLogin(django.test.TestCase):
         assert isinstance(resp.context['form'], forms.AuthenticationForm)
         self.assertFormError(resp, 'form', 'password', 'The provided password was incorrect.')
         user = django.contrib.auth.get_user(self.client)
-        assert not user.is_authenticated()
+        assert not user.is_authenticated
 
     @unittest.mock.patch('accounts.views._log_user_in')
     def test_logs_in_with_valid_password(self, mock_log_user_in):
