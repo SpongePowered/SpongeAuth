@@ -99,7 +99,7 @@ def _send_verify_email(request, user):
     template_kwargs = {
         'user': user,
         'link': request.build_absolute_uri(reverse('accounts:verify-step2', kwargs={
-            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
             'token': verify_token_generator.make_token(user),
         })),
     }
@@ -118,7 +118,7 @@ def _send_forgot_email(request, user):
     template_kwargs = {
         'user': user,
         'link': request.build_absolute_uri(reverse('accounts:forgot-step2', kwargs={
-            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
             'token': forgot_token_generator.make_token(user),
         })),
         'ip': request.META['REMOTE_ADDR'],
@@ -140,9 +140,9 @@ def _send_change_email(request, user, new_email):
     template_kwargs = {
         'user': user,
         'link': request.build_absolute_uri(reverse('accounts:change-email-step2', kwargs={
-            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
             'token': verify_token_generator.make_token(user),
-            'new_email': urlsafe_base64_encode(force_bytes(new_email)),
+            'new_email': urlsafe_base64_encode(force_bytes(new_email)).decode('utf8'),
         })),
     }
     user.email = old_email
@@ -181,7 +181,7 @@ def _make_gravatar_url(user):
 
 @middleware.allow_without_verified_email
 def logout(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return redirect('index')
 
     if request.method != 'POST':
@@ -194,7 +194,7 @@ def logout(request):
 
 
 def logout_success(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect('index')
 
     resp = render(request, 'accounts/logout_success.html')
@@ -203,7 +203,7 @@ def logout_success(request):
 
 
 def login(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     # check if this is a Google login
@@ -224,7 +224,7 @@ def login(request):
 
 
 def register(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     form = forms.RegisterForm()
@@ -318,7 +318,7 @@ def change_email(request):
         new_email = form.cleaned_data['new_email']
         _send_change_email(request, request.user, new_email)
         signer = Signer('accounts.views.change-email')
-        email_signed = urlsafe_base64_encode(signer.sign(new_email.encode('utf8')).encode('utf8'))
+        email_signed = urlsafe_base64_encode(signer.sign(new_email).encode('utf8'))
         return redirect(reverse('accounts:change-email-sent') + '?e=' + email_signed.decode('utf8'))
 
     return render(request, 'accounts/change_email/step1.html', {'form': form})
@@ -330,7 +330,7 @@ def change_email_step1done(request):
     signer = Signer('accounts.views.change-email')
     email_signed = urlsafe_base64_decode(request.GET.get('e', ''))
     try:
-        email = signer.unsign(email_signed)
+        email = signer.unsign(email_signed.decode('utf8'))
     except BadSignature:
         raise SuspiciousOperation('change_step1done received invalid signed email {}'.format(signer))
     return render(request, 'accounts/change_email/step1done.html', {'email': email})
@@ -413,7 +413,7 @@ def verify_step2(request, uidb64, token):
 
 
 def forgot(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     form = forms.ForgotPasswordForm()
@@ -434,26 +434,26 @@ def forgot(request):
             if user:
                 _send_forgot_email(request, user)
                 signer = Signer('accounts.views.forgot-email')
-                email_signed = urlsafe_base64_encode(signer.sign(user.email.encode('utf8')).encode('utf8'))
+                email_signed = urlsafe_base64_encode(signer.sign(user.email).encode('utf8'))
                 return redirect(reverse('accounts:forgot-sent') + '?e=' + email_signed.decode('utf8'))
     return render(request, 'accounts/forgot/step1.html', {'form': form})
 
 
 def forgot_step1done(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     signer = Signer('accounts.views.forgot-email')
     email_signed = urlsafe_base64_decode(request.GET.get('e', ''))
     try:
-        email = signer.unsign(email_signed)
+        email = signer.unsign(email_signed.decode('utf8'))
     except BadSignature:
-        raise SuspiciousOperation('forgot_step1done received invalid signed email {}'.format(signer))
+        raise SuspiciousOperation('forgot_step1done received invalid signed email {}'.format(email_signed))
     return render(request, 'accounts/forgot/step1done.html', {'email': email})
 
 
 def forgot_step2(request, uidb64, token):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
     bytes_uid = urlsafe_base64_decode(uidb64)

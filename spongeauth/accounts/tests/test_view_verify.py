@@ -71,7 +71,7 @@ class TestVerifyStep2(django.test.TestCase):
 
     def path(self, user, token, uidb64=None):
         return django.shortcuts.reverse('accounts:verify-step2', kwargs={
-            'uidb64': uidb64 or urlsafe_base64_encode(force_bytes(user.id)),
+            'uidb64': uidb64 or urlsafe_base64_encode(force_bytes(user.id)).decode('utf8'),
             'token': token})
 
     def test_redirects_if_logged_out(self):
