@@ -1,8 +1,9 @@
 import base64
 
+import django.core.signing
+import django.shortcuts
 import django.test
 from django.utils import timezone
-import django.core.signing
 
 import pytest
 
