@@ -2,6 +2,8 @@ from django.conf.urls import url
 
 import twofa.views
 
+app_name = 'twofa'
+
 urlpatterns = [
     url(r'^verify/$', twofa.views.verify, name='verify'),
     url(r'^verify/(?P<device_id>[0-9]+)/$', twofa.views.verify, name='verify'),
