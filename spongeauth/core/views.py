@@ -10,7 +10,7 @@ def index(request):
 
 
 def admin_login_redirect(request):
-    if request.user.is_authenticated() and not request.user.is_staff:
+    if request.user.is_authenticated and not request.user.is_staff:
         return redirect('index')
 
     return redirect('{}?{}'.format(

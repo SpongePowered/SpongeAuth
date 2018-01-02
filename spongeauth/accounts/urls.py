@@ -2,6 +2,8 @@ from django.conf.urls import url
 
 import accounts.views
 
+app_name = 'accounts'
+
 RESET_TOKEN_RE = (
     r'(?P<uidb64>[0-9A-Za-z_\-]+)/'
     r'(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/')
