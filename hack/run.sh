@@ -4,8 +4,8 @@ set -euxo pipefail
 
 cd /app
 
-groupadd -g "$(stat -c '%g' /app)" -o spongeauth
-useradd -u "$(stat -c '%u' /app)" -g spongeauth -o -m spongeauth
+groupadd -g "$(stat -c '%g' /app)" -o spongeauth || true
+useradd -u "$(stat -c '%u' /app)" -g spongeauth -o -m spongeauth || true
 
 # bootstrap node_modules, in case user has this directory mounted as a volume
 su -c "PYTHON=python2.7 npm install" spongeauth
