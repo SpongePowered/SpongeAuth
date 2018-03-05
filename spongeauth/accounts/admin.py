@@ -40,8 +40,8 @@ class UserAdmin(django.contrib.auth.admin.UserAdmin):
         }),
     )
     filter_horizontal = ()
-    list_display = ('username', 'email', 'is_active')
-    list_filter = ('is_admin',)
+    list_display = ('username', 'email', 'is_active', 'twofa_enabled')
+    list_filter = ('is_admin', 'twofa_enabled')
     search_fields = ['username', 'email']
     form = AdminUserChangeForm
 
