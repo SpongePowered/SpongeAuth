@@ -17,36 +17,6 @@ import spongemime
 logger = logging.getLogger(__name__)
 
 
-class Group(models.Model):
-    name = models.CharField(max_length=80, unique=True)
-
-    internal_only = models.BooleanField(null=False, default=True)
-
-    def __str__(self):
-        return self.name
-
-
-class UserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, **kwargs):
-        user = self.model(
-            username=username,
-            email=self.normalize_email(email),
-            **kwargs)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, username, email, password):
-        user = self.create_user(username, email, password)
-        user.is_active = True
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
-
-    def get_by_natural_key(self, username):
-        return self.get(username__iexact=username)
-
-
 def validate_username(username):
     errs = []
     if len(username) < 3:
@@ -77,6 +47,39 @@ def validate_username(username):
             code='username_file_suffix'))
     if errs:
         raise ValidationError(errs)
+
+
+class Group(models.Model):
+    name = models.CharField(max_length=80, unique=True)
+    internal_name = models.CharField(
+        max_length=20, unique=True, blank=False, null=False,
+        validators=[validate_username])
+
+    internal_only = models.BooleanField(null=False, default=True)
+
+    def __str__(self):
+        return self.name
+
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, email, password=None, **kwargs):
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+            **kwargs)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password):
+        user = self.create_user(username, email, password)
+        user.is_active = True
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+    def get_by_natural_key(self, username):
+        return self.get(username__iexact=username)
 
 
 class User(AbstractBaseUser):
