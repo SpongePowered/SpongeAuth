@@ -43,3 +43,4 @@ class GroupFactory(factory.django.DjangoModelFactory):
         model = models.Group
 
     name = factory.Faker('user_name')
+    internal_name = factory.Faker('user_name')
