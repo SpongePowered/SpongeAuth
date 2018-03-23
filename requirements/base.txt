@@ -4,7 +4,7 @@ Pillow==5.0.0
 oauth2client==4.1.2
 django-crispy-forms==1.7.2
 -e git://github.com/jazzband/django-model-utils.git@3.1.1#egg=django-model-utils
-qrcode==5.3
+qrcode==6.0
 pytz==2018.3
 requests==2.18.4
 psycopg2==2.7.4
