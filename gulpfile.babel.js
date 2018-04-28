@@ -70,7 +70,7 @@ gulp.task('scripts', () => {
     externs: buildExterns(),
     warningLevel: 'VERBOSE',
   }) : babel({
-    presets: ['es2015'],
+    presets: ['@babel/env'],
   });
 
   return gulp.src(paths.inBase + paths.appScript)
