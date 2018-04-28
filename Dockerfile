@@ -19,6 +19,7 @@ RUN apt-get update \
     libpng-dev \
     postgresql-client \
     libpq-dev \
+    git \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && npm install npm@latest -g

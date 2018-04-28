@@ -12,3 +12,4 @@ media/
 *.iml
 .DS_Store
 .pytest_cache
+venv/
