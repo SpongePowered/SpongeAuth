@@ -14,9 +14,11 @@ class TestList(django.test.TestCase):
         self.user = accounts.models.User.objects.create_user(
             username='fred', email='fred@secret.com', password='secret',
             email_verified=True, twofa_enabled=True)
+        self.user._test_agree_all_tos()
         self.other_user = accounts.models.User.objects.create_user(
             username='bob', email='bob@secret.com', password='secret',
             email_verified=True, twofa_enabled=True)
+        self.other_user._test_agree_all_tos()
 
         self.dead_backup_device = models.PaperDevice(
             owner=self.user, activated_at=timezone.now(),

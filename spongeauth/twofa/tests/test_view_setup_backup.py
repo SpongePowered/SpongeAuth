@@ -13,6 +13,7 @@ class TestSetupBackup(django.test.TestCase):
         self.user = accounts.models.User.objects.create_user(
             username='fred', email='fred@secret.com', password='secret',
             email_verified=True)
+        self.user._test_agree_all_tos()
 
     def login(self, c):
         assert c.login(username='fred', password='secret')

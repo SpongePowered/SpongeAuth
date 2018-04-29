@@ -128,9 +128,40 @@ class GroupAdmin(admin.ModelAdmin):
     form = GroupAdminForm
 
 
+class TermsOfServiceAdminForm(forms.ModelForm):
+    class Meta:
+        model = models.TermsOfService
+        fields = (
+            'name', 'tos_url', 'tos_date',
+            'current_tos')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            for f in self.fields.values():
+                f.readonly = True
+
+
+class TermsOfServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'tos_date', 'current_tos')
+    list_filter = ('current_tos',)
+    search_filters = ('name',)
+
+    form = TermsOfServiceAdminForm
+
+    fields = ('name', 'tos_date', 'tos_url', 'current_tos')
+
+    def get_readonly_fields(self, request, obj=None):
+        if not obj:
+            return self.readonly_fields
+        return self.readonly_fields + (
+            'name', 'tos_date', 'tos_url')
+
+
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Group, GroupAdmin)
 admin.site.register(models.Avatar, AvatarAdmin)
 admin.site.register(models.ExternalAuthenticator, ExternalAuthenticatorAdmin)
+admin.site.register(models.TermsOfService, TermsOfServiceAdmin)
 
 admin.site.unregister(django.contrib.auth.models.Group)

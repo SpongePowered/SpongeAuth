@@ -123,6 +123,14 @@ class User(AbstractBaseUser):
         related_name='user_set',
         related_query_name='user')
 
+    tos_accepted = models.ManyToManyField(
+        'TermsOfService',
+        verbose_name='terms of service',
+        blank=True,
+        related_name='agreed_users',
+        related_query_name='agreed_users',
+        through='TermsOfServiceAcceptance')
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
@@ -162,6 +170,18 @@ class User(AbstractBaseUser):
         if app_label == 'accounts':
             return True
         return False
+
+    def must_agree_tos(self):
+        return TermsOfService.objects.filter(current_tos=True).exclude(
+            agreed_users=self)
+
+    def _test_agree_all_tos(self):
+        if not self.pk:
+            return
+        for tos in self.must_agree_tos():
+            TermsOfServiceAcceptance(
+                tos=tos,
+                user=self).save()
 
 
 def _avatar_upload_path(instance, filename):
@@ -237,3 +257,28 @@ class ExternalAuthenticator(models.Model):
         return "{} credential for user {}".format(
             self.get_source_display(),
             self.user_id)
+
+
+class TermsOfService(models.Model):
+    name = models.CharField(max_length=60, blank=False, null=False, unique=True)
+    tos_date = models.DateField(blank=False, null=False)
+    tos_url = models.URLField(blank=False, null=False, unique=True)
+    current_tos = models.BooleanField(default=False, null=False)
+    group = models.ForeignKey(
+        Group, blank=False, null=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "TermsOfService: {}".format(self.name)
+
+
+class TermsOfServiceAcceptance(models.Model):
+    user = models.ForeignKey(
+        User, null=False, blank=False, on_delete=models.CASCADE)
+    tos = models.ForeignKey(
+        TermsOfService, null=False, blank=False, on_delete=models.CASCADE)
+    accepted_at = models.DateTimeField(
+        auto_now_add=True, null=False, blank=False)
+
+    def __str__(self):
+        return "TermsOfServiceAcceptance: {} accepted {} at {}".format(
+            self.user, self.tos, self.accepted_at)
