@@ -21,8 +21,8 @@ cache:
 
 install:
   - pip install tox
-  - nvm install node
-  - nvm use node
+  - nvm install 9
+  - nvm use 9
   - npm install
   - npm install gulp-cli
 script:
