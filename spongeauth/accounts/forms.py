@@ -47,6 +47,18 @@ class ProfileFieldsMixin(forms.Form):
 
 
 class RegistrationMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        toses = models.TermsOfService.objects.filter(current_tos=True)
+        self.tos_fields = {}
+        for tos in toses:
+            field_name = 'accept_tos_{}'.format(tos.id)
+            self.tos_fields[field_name] = tos
+            self.fields[field_name] = forms.BooleanField(
+                required=True,
+                label='I agree to the <a href="{}">{}</a>'.format(
+                    tos.tos_url, tos.name))
+
     def clean_username(self):
         username = self.cleaned_data['username']
         if models.User.objects.filter(
@@ -105,21 +117,26 @@ class RegisterForm(ProfileFieldsMixin, CoreFieldsMixin, RegistrationMixin, forms
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.layout = Layout(
+        fields = [
             Field('username'),
             Field('password'),
             Field('email'),
             Field('mc_username'),
             Field('irc_nick'),
             Field('gh_username'),
+        ]
+        for field in getattr(self, 'tos_fields', {}).keys():
+            fields.append(Field(field))
+        fields += [
             FormActions(
                 HTML("""<a href="{{% url 'accounts:login' %}}" """
                      """class="btn btn-default">{}</a> """.format(
                          _("Log in"))),
                 Submit('sign up', _("Sign up")),
                 css_class="pull-right"
-            )
-        )
+            ),
+        ]
+        self.helper.layout = Layout(*fields)
 
 
 class AuthenticationForm(forms.Form):

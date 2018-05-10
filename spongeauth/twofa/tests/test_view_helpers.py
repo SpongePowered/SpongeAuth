@@ -110,6 +110,7 @@ class TestGetVerifyDevice:
             username='fred', email='fred@example.com', password='secret',
             twofa_enabled=True,
         )
+        self.user._test_agree_all_tos()
 
     def test_works_without_devices(self):
         device, other_devices = views._get_verify_device(self.user, None)
@@ -135,6 +136,7 @@ class TestGetVerifyDevice:
     def test_404s_with_someone_elses_device(self):
         other_user = accounts.models.User.objects.create_user(
             username='bob', email='bob@example.com', password='secret')
+        other_user._test_agree_all_tos()
         other_user.save()
 
         device = models.PaperDevice(owner=other_user, activated_at=timezone.now())

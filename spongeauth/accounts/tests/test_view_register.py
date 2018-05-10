@@ -40,7 +40,7 @@ class TestRegister(django.test.TestCase):
         resp = self.client.post(
             self.path(),
             {'username': '', 'password': 'password4363',
-             'email': 'baz@example.com'})
+             'email': 'baz@example.com', 'accept_tos_1': 'accept_tos_1'})
         assert resp.status_code == 200
         assert not models.User.objects.all().exists()
         mock_send_verify_email.assert_not_called()
@@ -53,7 +53,7 @@ class TestRegister(django.test.TestCase):
         resp = self.client.post(
             self.path(),
             {'username': 'username', 'password': 'username',
-             'email': 'baz@example.com'})
+             'email': 'baz@example.com', 'accept_tos_1': 'accept_tos_1'})
         assert resp.status_code == 200
         assert not models.User.objects.all().exists()
         mock_send_verify_email.assert_not_called()
@@ -66,7 +66,7 @@ class TestRegister(django.test.TestCase):
         resp = self.client.post(
             self.path(),
             {'username': 'foobar', 'password': 'password4363',
-             'email': 'baz@example.com'})
+             'email': 'baz@example.com', 'accept_tos_1': 'accept_tos_1'})
         assert resp.status_code == 302
 
         assert models.User.objects.all().exists()
@@ -92,7 +92,7 @@ class TestRegister(django.test.TestCase):
         resp = self.client.post(
             self.path(),
             {'username': 'foobar', 'password': 'password4363',
-             'email': 'baz@example.com'})
+             'email': 'baz@example.com', 'accept_tos_1': 'accept_tos_1'})
         assert resp.status_code == 302
 
         assert models.User.objects.all().exists()
@@ -113,7 +113,7 @@ class TestRegister(django.test.TestCase):
         resp = self.client.post(
             self.path(),
             {'username': 'foobar', 'password': 'password4363',
-             'email': 'baz@example.com'})
+             'email': 'baz@example.com', 'accept_tos_1': 'accept_tos_1'})
         assert resp.status_code == 302
 
         assert len(django.core.mail.outbox) == 1
@@ -130,7 +130,7 @@ class TestRegister(django.test.TestCase):
         resp = self.client.post(
             self.path(),
             {'username': 'foobar', 'password': 'password4363',
-             'email': 'baz@example.com'})
+             'email': 'baz@example.com', 'accept_tos_1': 'accept_tos_1'})
         assert resp.status_code == 302
 
         assert len(django.core.mail.outbox) == 1
@@ -177,7 +177,8 @@ class TestRegisterGoogle(django.test.TestCase):
         self.client.post(self.path(), {
             'login_type': 'google', 'form_submitted': 'yes',
             'username': user.username, 'email': user.email,
-            'password': 'slartibartfast', 'google_id_token': 'baz'})
+            'password': 'slartibartfast', 'google_id_token': 'baz',
+            'accept_tos_1': 'accept_tos_1'})
         mock_log_user_in.assert_not_called()
 
     @unittest.mock.patch('accounts.views._log_user_in')
@@ -189,7 +190,8 @@ class TestRegisterGoogle(django.test.TestCase):
         resp = self.client.post(self.path(), {
             'login_type': 'google', 'form_submitted': 'yes',
             'username': 'baz', 'email': 'baz@example.org',
-            'password': 'slartibartfast', 'google_id_token': 'baz'})
+            'password': 'slartibartfast', 'google_id_token': 'baz',
+            'accept_tos_1': 'accept_tos_1'})
         assert models.User.objects.exists()
         user = models.User.objects.get()
         assert resp == mock_log_user_in.return_value
@@ -215,7 +217,8 @@ class TestRegisterGoogle(django.test.TestCase):
         resp = self.client.post(self.path(), {
             'login_type': 'google', 'form_submitted': 'yes',
             'username': 'baz', 'email': 'baz@evil.example.com',
-            'password': 'slartibartfast', 'google_id_token': 'baz'})
+            'password': 'slartibartfast', 'google_id_token': 'baz',
+            'accept_tos_1': 'accept_tos_1'})
         assert models.User.objects.exists()
         user = models.User.objects.get()
         assert resp == mock_log_user_in.return_value
@@ -238,7 +241,8 @@ class TestRegisterGoogle(django.test.TestCase):
         resp = self.client.post(self.path(), {
             'login_type': 'google', 'form_submitted': 'yes',
             'username': 'baz', 'email': 'baz@example.org',
-            'password': 'slartibartfast', 'google_id_token': 'baz'})
+            'password': 'slartibartfast', 'google_id_token': 'baz',
+            'accept_tos_1': 'accept_tos_1'})
         assert models.User.objects.exists()
         user = models.User.objects.get()
         assert not user.email_verified

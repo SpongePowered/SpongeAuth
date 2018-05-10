@@ -37,6 +37,8 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     joined_at = factory.Faker('date_time_this_decade')
 
+    tos_accepted = factory.PostGenerationMethodCall('_test_agree_all_tos')
+
 
 class GroupFactory(factory.django.DjangoModelFactory):
     class Meta:
