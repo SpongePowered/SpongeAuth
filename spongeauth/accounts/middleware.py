@@ -1,4 +1,6 @@
-from django.urls import resolve
+import urllib.parse
+
+from django.urls import resolve, reverse
 from django.shortcuts import redirect
 from django.conf import settings
 import django.urls.exceptions
@@ -12,7 +14,8 @@ class RedirectIfConditionUnmet:
 
     def __call__(self, request):
         if self.must_verify(request.user) and not self.may_pass(request.path):
-            return redirect(self.REDIRECT_TO)
+            params = urllib.parse.urlencode({'next': request.get_full_path()})
+            return redirect('{}?{}'.format(reverse(self.REDIRECT_TO), params))
 
         response = self.get_response(request)
         return response
