@@ -75,6 +75,7 @@ class UserManager(BaseUserManager):
         user = self.create_user(username, email, password)
         user.is_active = True
         user.is_admin = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
