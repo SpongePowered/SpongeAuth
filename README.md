@@ -24,7 +24,7 @@ docker-compose up
 and wait for a bit. When you see
 
 ```
-su -c '/env/bin/python spongeauth/manage.py runserver 0.0.0.0:8000' spongeauth
+su -c 'python3.6 spongeauth/manage.py runserver 0.0.0.0:8000' spongeauth
 ```
 
 then you should be able to visit http://localhost:8000 and have a working SpongeAuth install.
@@ -32,7 +32,7 @@ then you should be able to visit http://localhost:8000 and have a working Sponge
 If you need an administrator account, you should be able to run:
 
 ```
-docker-compose run app /env/bin/python spongeauth/manage.py createsuperuser
+docker-compose run app python3.6 spongeauth/manage.py createsuperuser
 ```
 
 and follow the prompts to get an administrator account. This must be done after the `up` command above.
