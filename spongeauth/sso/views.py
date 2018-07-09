@@ -10,13 +10,17 @@ from . import discourse_sso, utils
 
 @login_required
 def begin(request):
-    sso = discourse_sso.DiscourseSigner(settings.DISCOURSE_SSO_SECRET)
-
     raw_payload = request.GET.get('sso', '')
     raw_signature = request.GET.get('sig', '')
-    try:
-        payload = sso.unsign(raw_payload, raw_signature)
-    except discourse_sso.SignatureError:
+
+    for endpoint in settings.SSO_ENDPOINTS.values():
+        sso = discourse_sso.DiscourseSigner(endpoint['sso_secret'])
+        try:
+            payload = sso.unsign(raw_payload, raw_signature)
+            break
+        except discourse_sso.SignatureError:
+            pass
+    else:
         return HttpResponseForbidden()
 
     if b'return_sso_url' not in payload:

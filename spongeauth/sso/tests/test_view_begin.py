@@ -9,9 +9,18 @@ import pytest
 import accounts.tests.factories
 from .. import discourse_sso
 
+SSO_ENDPOINTS = {
+    'foo': {
+        'sso_secret': 'foo1',
+    },
+    'bar': {
+        'sso_secret': 'slartibartfast',
+    },
+}
+
 
 @pytest.mark.django_db
-@django.test.override_settings(DISCOURSE_SSO_SECRET='slartibartfast')
+@django.test.override_settings(SSO_ENDPOINTS=SSO_ENDPOINTS)
 class TestBegin(django.test.TestCase):
     def setUp(self):
         self.user = accounts.tests.factories.UserFactory.create()

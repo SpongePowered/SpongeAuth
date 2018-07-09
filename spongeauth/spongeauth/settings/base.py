@@ -157,8 +157,15 @@ AUTH_USER_MODEL = 'accounts.User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-DISCOURSE_SSO_SECRET = 'aardvark'
-DISCOURSE_API_KEY = None
-DISCOURSE_SERVER = None
+# e.g.
+# SSO_ENDPOINTS = {
+#     'discourse': {
+#         'sync_sso_endpoint': (
+#             'http://discourse.example.com/admin/users/sync_sso'),
+#         'sso_secret': 'discourse-sso-secret',
+#         'api_key': 'discourse-api-key',
+#     },
+# }
+SSO_ENDPOINTS = {}
 
 IS_TESTING = False
