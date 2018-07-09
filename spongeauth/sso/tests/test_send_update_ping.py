@@ -26,7 +26,7 @@ def test_send_update_ping(settings):
             'payload', 'signature')
         fake_group = unittest.mock.MagicMock()
         filt_group = (
-                fake_group.objects.filter.return_value.order_by.return_value)
+            fake_group.objects.filter.return_value.order_by.return_value)
         filt_group.filter.return_value.values_list.return_value = [
             'aardvark', 'banana', 'carrot']
         filt_group.exclude.return_value.values_list.return_value = [
