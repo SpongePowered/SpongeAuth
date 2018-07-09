@@ -32,4 +32,6 @@ urlpatterns = [
     url(r'^reset/sent/$', accounts.views.forgot_step1done, name='forgot-sent'),
     url(r'^reset/' + RESET_TOKEN_RE + r'$', accounts.views.forgot_step2,
         name='forgot-step2'),
+
+    url(r'^agree-tos/$', accounts.views.agree_tos, name='agree-tos'),
 ]

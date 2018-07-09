@@ -43,6 +43,20 @@ forgot_token_generator = ForgotTokenGenerator()
 
 
 def _log_user_in(request, user, skip_twofa=False):
+    # Resync groups with the TOS acceptances.
+    # XXX(lukegb): this is a hack, don't do this.
+    if user.pk:
+        all_tos_groups = set(
+            models.TermsOfService.objects.all().values_list('group', flat=True))
+        should_tos_groups = set(user.tos_accepted.all().values_list('group', flat=True))
+        current_tos_groups = set(user.groups.all().values_list('id', flat=True)) & all_tos_groups
+        add_tos_groups = should_tos_groups - current_tos_groups
+        remove_tos_groups = current_tos_groups - should_tos_groups
+        for group in add_tos_groups:
+            user.groups.add(group)
+        for group in remove_tos_groups:
+            user.groups.remove(group)
+
     if user.twofa_enabled and not skip_twofa:
         request.session['twofa_target_user'] = user.pk
         return redirect('{}?{}'.format(
@@ -223,6 +237,17 @@ def login(request):
         'next': _login_redirect_url(request)})
 
 
+def _create_tos_acceptances_from_form(form, user):
+    acceptances = []
+    for tos_key, tos in form.tos_fields.items():
+        if not form.cleaned_data.get(tos_key, False):
+            continue
+        acceptances.append(models.TermsOfServiceAcceptance(
+            user=user, tos=tos))
+    if acceptances:
+        models.TermsOfServiceAcceptance.objects.bulk_create(acceptances)
+
+
 def register(request):
     if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
@@ -240,6 +265,7 @@ def register(request):
                 irc_nick=form.cleaned_data['irc_nick'])
             user.set_password(form.cleaned_data['password'])
             user.save()
+            _create_tos_acceptances_from_form(form, user)
             # _log_user_in must happen before sending the email, since the token
             # will change after the user has been logged in.
             resp = _log_user_in(request, user)
@@ -290,6 +316,7 @@ def register_google(request):
             email_verified=idinfo.get('email_verified', False))
         user.set_unusable_password()
         user.save()
+        _create_tos_acceptances_from_form(form, user)
         ext_auth = models.ExternalAuthenticator(
             source=models.ExternalAuthenticator.GOOGLE,
             external_id=idinfo['sub'],
@@ -540,3 +567,32 @@ def settings(request):
 def avatar_for_user(request, username):
     user = get_object_or_404(models.User, username=username)
     return redirect(user.avatar.get_absolute_url())
+
+
+@middleware.allow_without_agreed_tos
+def agree_tos(request):
+    user = request.user
+    unagreed_tos = list(user.must_agree_tos())
+
+    if not unagreed_tos:
+        return redirect(_login_redirect_url(request))
+
+    if request.method == 'POST':
+        acceptances = []
+        for tos in unagreed_tos:
+            if request.POST.get('agree_to_tos_{}'.format(tos.id), False):
+                acceptances.append(models.TermsOfServiceAcceptance(
+                    user=user, tos=tos))
+        if acceptances:
+            models.TermsOfServiceAcceptance.objects.bulk_create(acceptances)
+            unagreed_tos = list(user.must_agree_tos())
+        if not unagreed_tos:
+            return redirect(_login_redirect_url(request))
+
+    has_previously_agreed_tos = models.TermsOfServiceAcceptance.objects.filter(
+        user=user).exists()
+
+    return render(request, 'accounts/agree_tos.html', {
+        'user': user,
+        'toses': unagreed_tos,
+        'has_previously_agreed_tos': has_previously_agreed_tos})

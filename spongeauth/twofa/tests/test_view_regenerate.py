@@ -14,6 +14,7 @@ class TestRegenerate(django.test.TestCase):
         self.user = accounts.models.User.objects.create_user(
             username='fred', email='fred@secret.com', password='secret',
             email_verified=True, twofa_enabled=True)
+        self.user._test_agree_all_tos()
 
         self.dead_backup_device = models.PaperDevice(
             owner=self.user, activated_at=timezone.now(),
@@ -49,9 +50,10 @@ class TestRegenerate(django.test.TestCase):
         assert resp.status_code == 405
 
     def test_regenerate_someone_elses_device(self):
-        accounts.models.User.objects.create_user(
+        bob = accounts.models.User.objects.create_user(
             username='bob', email='bob@secret.com', password='secret',
             email_verified=True)
+        bob._test_agree_all_tos()
         self.login(self.client, username='bob')
 
         resp = self.client.post(self.path(device=self.backup_device))

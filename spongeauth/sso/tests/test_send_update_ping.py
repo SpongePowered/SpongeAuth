@@ -1,5 +1,7 @@
 import unittest.mock
 
+import pytest
+
 from accounts.tests.factories import UserFactory
 from .. import discourse_sso
 from ..utils import send_update_ping
@@ -14,6 +16,7 @@ TEST_SSO_ENDPOINTS = {
 }
 
 
+@pytest.mark.django_db
 def test_send_update_ping(settings):
     with unittest.mock.patch.object(discourse_sso, 'DiscourseSigner') as \
             fake_discourse_signer_cls:
@@ -29,8 +32,7 @@ def test_send_update_ping(settings):
         filt_group.exclude.return_value.values_list.return_value = [
             'gingerbread', 'horseradish', 'indigo']
 
-        user = UserFactory.build(
-            pk=10101,
+        user = UserFactory.create(
             email='foo@example.com',
             username='foo_',
             mc_username='meep',
@@ -49,10 +51,10 @@ def test_send_update_ping(settings):
                 'api_key': 'discourse-api-key',
                 'api_username': 'system'})
         fake_discourse_signer.sign.assert_called_once_with({
-            'nonce': '10101',
+            'nonce': str(user.id),
             'email': 'foo@example.com',
             'require_activation': 'false',
-            'external_id': 10101,
+            'external_id': user.id,
             'username': 'foo_',
             'name': 'foo_',
             'custom.user_field_1': 'meep',

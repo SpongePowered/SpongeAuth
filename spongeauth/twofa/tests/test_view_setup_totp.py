@@ -18,6 +18,7 @@ class TestSetupTotp(django.test.TestCase):
         self.user = accounts.models.User.objects.create_user(
             username='fred', email='fred@secret.com', password='secret',
             email_verified=True)
+        self.user._test_agree_all_tos()
 
         self.client = django.test.Client()
         self.login(self.client)
@@ -96,6 +97,7 @@ class TestSetupTotp(django.test.TestCase):
         bob_user = accounts.models.User.objects.create_user(
             username='bob', email='bob@secret.com', password='secret',
             email_verified=True)
+        bob_user._test_agree_all_tos()
 
         someone_elses_token = self.signer(bob_user).sign('foobar')
         resp = self.client.post(self.path(), {'secret': someone_elses_token, 'response': '123123'})

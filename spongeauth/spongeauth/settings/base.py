@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'accounts.middleware.EnforceVerifiedEmails',
+    'accounts.middleware.EnforceToSAccepted',
 ]
 
 SESSION_ENGINE = 'user_sessions.backends.db'

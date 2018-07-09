@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block title %}{% trans "Terms of Service" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-default panel-signup">
+				<div class="panel-heading">
+          <h4 class="panel-title">{% trans "Terms of Service" %}</h4>
+				</div>
+
+				<div class="panel-body">
+          {% if has_previously_agreed_tos %}
+            <p>{% blocktrans %}Our terms of service have changed, so we need you to review the new terms of service and agree to the changes.{% endblocktrans %}</p>
+          {% else %}
+            <p>{% blocktrans %}One final thing! We need you to agree to the terms of service to begin using your Sponge account.{% endblocktrans %}</p>
+          {% endif %}
+          <form action="" method="POST">
+            {% csrf_token %}
+            {% for tos in toses %}
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="agree_to_tos_{{ tos.id }}"> {% blocktrans with name=tos.name url=tos.tos_url %}I agree to the <a href="{{ url }}">{{ name }}</a>.{% endblocktrans %}
+              </label>
+            </div>
+            {% endfor %}
+            <div class="pull-right">
+              <input type="submit" value="{% trans "Submit" %}" class="btn btn-primary">
+            </div>
+          </form>
+				</div><!-- .panel-body -->
+			</div><!-- .panel -->
+		</div><!-- .col-md-6 -->
+	</div><!-- .row -->
+</div><!-- .container -->
+{% endblock main %}

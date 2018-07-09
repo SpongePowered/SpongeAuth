@@ -14,6 +14,7 @@ class TestRemove(django.test.TestCase):
         self.user = accounts.models.User.objects.create_user(
             username='fred', email='fred@secret.com', password='secret',
             email_verified=True, twofa_enabled=True)
+        self.user._test_agree_all_tos()
 
         self.dead_totp_device = models.TOTPDevice(
             owner=self.user, last_t=0,
@@ -50,9 +51,10 @@ class TestRemove(django.test.TestCase):
         assert resp.status_code == 405
 
     def test_remove_someone_elses_device(self):
-        accounts.models.User.objects.create_user(
+        bob = accounts.models.User.objects.create_user(
             username='bob', email='bob@secret.com', password='secret',
             email_verified=True)
+        bob._test_agree_all_tos()
         self.login(self.client, username='bob')
 
         resp = self.client.post(self.path(device=self.totp_device))
