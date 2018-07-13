@@ -8,7 +8,7 @@ from .utils import send_update_ping
 
 
 def _can_ping():
-    return settings.DISCOURSE_SERVER and settings.DISCOURSE_API_KEY
+    return settings.SSO_ENDPOINTS
 
 
 @receiver(post_save, sender=User)

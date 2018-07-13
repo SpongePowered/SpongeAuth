@@ -39,19 +39,28 @@ def make_payload(user, nonce, request=None, group=None):
     return payload
 
 
-def send_update_ping(user, send_post=None, sso=None, group=None):
+def send_update_ping(user, send_post=None, group=None):
     send_post = send_post or requests.post
-    sso = sso or discourse_sso.DiscourseSigner(settings.DISCOURSE_SSO_SECRET)
 
-    out_payload, out_signature = sso.sign(make_payload(user, str(user.pk),
-                                                       group=group))
+    payload = make_payload(user, str(user.pk), group=group)
 
-    resp = send_post(
-        '{}/admin/users/sync_sso'.format(settings.DISCOURSE_SERVER),
-        data={
+    resps = []
+    for endpoint_settings in settings.SSO_ENDPOINTS.values():
+        if 'sync_sso_endpoint' not in endpoint_settings:
+            continue
+        # TODO(lukegb): make this asynchronous
+        sso = discourse_sso.DiscourseSigner(endpoint_settings['sso_secret'])
+        out_payload, out_signature = sso.sign(payload)
+        data = {
             'sso': out_payload,
             'sig': out_signature,
-            'api_key': settings.DISCOURSE_API_KEY,
-            'api_username': 'system'})
-    resp.raise_for_status()
-    return resp
+            'api_username': 'system',
+            'api_key': endpoint_settings['api_key'],
+        }
+        resp = send_post(
+            endpoint_settings['sync_sso_endpoint'],
+            data=data)
+        resps.append(resp)
+
+    for resp in resps:
+        resp.raise_for_status()
