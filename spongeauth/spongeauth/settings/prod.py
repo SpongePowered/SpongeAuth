@@ -55,7 +55,7 @@ INSTALLED_APPS += [
 ]
 
 SSO_ENDPOINTS = {}
-for k, v in os.environ.keys():
+for k, v in os.environ.items():
     if not k.startswith('SSO_ENDPOINT_'):
         continue
     k = k[len('SSO_ENDPOINT_'):]
