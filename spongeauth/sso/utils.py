@@ -62,5 +62,7 @@ def send_update_ping(user, send_post=None, group=None):
             data=data)
         resps.append(resp)
 
-    for resp in resps:
-        resp.raise_for_status()
+    # TODO(lukegb): reenable this once this is a background task.
+    # for resp in resps:
+    #     pass
+    #     resp.raise_for_status()
