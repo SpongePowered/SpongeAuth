@@ -38,6 +38,7 @@ class VerifyTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerato
 class ForgotTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerator):
     key_salt = 'accounts.views.forgot_token_generator'
 
+
 verify_token_generator = VerifyTokenGenerator()
 forgot_token_generator = ForgotTokenGenerator()
 
