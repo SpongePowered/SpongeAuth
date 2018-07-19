@@ -8,10 +8,9 @@ RUN apt-get update \
   && apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
      apt-get -y install \
-    python2.7 \
     python3.6 \
     python3.6-dev \
-    python3.6-venv \
+    python3-pip \
     build-essential \
     nodejs \
     libz3-dev \
@@ -27,8 +26,7 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY requirements /app/requirements
-RUN python3.6 -m venv /env \
-  && /env/bin/pip install \
+RUN pip3 install \
     -r /app/requirements/prod.txt \
     -r /app/requirements/dev.txt
 
