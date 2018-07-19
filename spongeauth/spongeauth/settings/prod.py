@@ -54,9 +54,14 @@ INSTALLED_APPS += [
     'raven.contrib.django.raven_compat',
 ]
 
-DISCOURSE_SSO_SECRET = os.environ['DISCOURSE_SSO_SECRET']
-DISCOURSE_API_KEY = os.environ['DISCOURSE_API_KEY']
-DISCOURSE_SERVER = os.environ['DISCOURSE_SERVER']
+SSO_ENDPOINTS = {}
+for k, v in os.environ.items():
+    if not k.startswith('SSO_ENDPOINT_'):
+        continue
+    k = k[len('SSO_ENDPOINT_'):]
+    name, _, key = k.partition('_')
+    d = SSO_ENDPOINTS.setdefault(name, {})
+    d[key.lower()] = v
 
 RAVEN_CONFIG = {
     'dsn': os.environ['RAVEN_DSN'],
