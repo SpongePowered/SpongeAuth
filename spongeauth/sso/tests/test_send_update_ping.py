@@ -86,6 +86,7 @@ def test_send_update_ping_better(settings):
             internal_only=True, internal_name='4-internal-in')
         not_in_internal_group = GroupFactory.create(
             internal_only=True, internal_name='5-internal-not-in')
+        del not_in_group, not_in_internal_group  # not used; names for documentation
 
         user = UserFactory.create(
             email='foo@example.com',
