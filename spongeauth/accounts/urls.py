@@ -34,4 +34,7 @@ urlpatterns = [
         name='forgot-step2'),
 
     url(r'^agree-tos/$', accounts.views.agree_tos, name='agree-tos'),
+
+    url(r'^__internal/autocomplete/users/$', accounts.views.UserAutocomplete.as_view(),
+        name='users-autocomplete'),
 ]

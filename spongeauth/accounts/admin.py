@@ -8,6 +8,8 @@ from django.utils import timezone
 
 from . import models
 
+from dal import autocomplete
+
 
 class AdminUserChangeForm(forms.ModelForm):
     password = django.contrib.auth.forms.ReadOnlyPasswordHashField(
@@ -102,8 +104,13 @@ class GroupAdminForm(forms.ModelForm):
 
     users = forms.ModelMultipleChoiceField(
         queryset=models.User.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='accounts:users-autocomplete',
+            attrs={
+                'data-minimum-input-length': 3,
+            },
+        ),
         required=False,
-        widget=widgets.FilteredSelectMultiple('users', False),
     )
 
     def __init__(self, *args, **kwargs):
