@@ -8,6 +8,8 @@ from django.utils import timezone
 
 from . import models
 
+from dal import autocomplete
+
 
 class AdminUserChangeForm(forms.ModelForm):
     password = django.contrib.auth.forms.ReadOnlyPasswordHashField(
@@ -26,6 +28,19 @@ class AdminUserChangeForm(forms.ModelForm):
         super(AdminUserChangeForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
             self.fields['groups'].initial = self.instance.groups.all()
+
+    def _get_validation_exclusions(self):
+        exclude = super()._get_validation_exclusions()
+        if self.instance:
+            # Don't validate the username if it isn't changing.
+            # We have some legacy usernames that now fail validation.
+            exclude_if_same = ('username',)
+            for field in exclude_if_same:
+                new_value = self.cleaned_data.get(field)
+                old_value = getattr(self.instance, field)
+                if new_value == old_value:
+                    exclude += [field]
+        return exclude
 
     def save_m2m(self):
         self.instance.groups.set(self.cleaned_data['groups'])
@@ -102,8 +117,13 @@ class GroupAdminForm(forms.ModelForm):
 
     users = forms.ModelMultipleChoiceField(
         queryset=models.User.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='accounts:users-autocomplete',
+            attrs={
+                'data-minimum-input-length': 3,
+            },
+        ),
         required=False,
-        widget=widgets.FilteredSelectMultiple('users', False),
     )
 
     def __init__(self, *args, **kwargs):

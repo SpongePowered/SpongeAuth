@@ -24,6 +24,7 @@ from . import forms
 from . import middleware
 
 from oauth2client import client, crypt
+from dal import autocomplete
 
 
 class VerifyTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerator):
@@ -600,3 +601,15 @@ def agree_tos(request):
         'user': user,
         'toses': unagreed_tos,
         'has_previously_agreed_tos': has_previously_agreed_tos})
+
+
+class UserAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        users = models.User.objects.all()
+        if (
+                not self.request.user.is_authenticated or
+                not self.request.user.has_perm('accounts.view_user')):
+            users = models.User.objects.none()
+        if self.q:
+            users = users.filter(username__istartswith=self.q)
+        return users.order_by('username')

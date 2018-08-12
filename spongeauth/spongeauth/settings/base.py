@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'api',
 
     'crispy_forms',
+    'dal',
+    'dal_select2',
 
     'django.contrib.admin',
     'django.contrib.auth',

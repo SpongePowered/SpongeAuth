@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 
 import requests
 
@@ -10,16 +11,18 @@ def _cast_bool(b):
     return str(bool(b)).lower()
 
 
-def make_payload(user, nonce, request=None, group=None):
+def make_payload(user, nonce, request=None, group=None, exclude_groups=None):
     group = group or Group
+    exclude_groups = set(exclude_groups or [])
     avatar_url = user.avatar.get_absolute_url()
     if request is not None:
         avatar_url = request.build_absolute_uri(avatar_url)
     relevant_groups = group.objects.filter(internal_only=False).order_by(
         'internal_name')
-    add_groups = relevant_groups.filter(user=user).values_list(
+    filter_q = Q(user=user) & ~Q(pk__in=exclude_groups)
+    add_groups = relevant_groups.filter(filter_q).values_list(
         'internal_name', flat=True)
-    remove_groups = relevant_groups.exclude(user=user).values_list(
+    remove_groups = relevant_groups.exclude(filter_q).values_list(
         'internal_name', flat=True)
     payload = {
         'nonce': nonce,
@@ -39,10 +42,13 @@ def make_payload(user, nonce, request=None, group=None):
     return payload
 
 
-def send_update_ping(user, send_post=None, group=None):
+def send_update_ping(user, send_post=None, group=None, exclude_groups=None):
     send_post = send_post or requests.post
+    exclude_groups = exclude_groups or []
 
-    payload = make_payload(user, str(user.pk), group=group)
+    payload = make_payload(
+        user, str(user.pk), group=group,
+        exclude_groups=exclude_groups)
 
     resps = []
     for endpoint_settings in settings.SSO_ENDPOINTS.values():

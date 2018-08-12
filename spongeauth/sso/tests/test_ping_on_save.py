@@ -3,7 +3,7 @@ import unittest.mock
 import faker
 import pytest
 
-from accounts.tests.factories import UserFactory, AvatarFactory
+from accounts.tests.factories import UserFactory, GroupFactory, AvatarFactory
 import sso.models
 
 TEST_SSO_ENDPOINTS = {
@@ -37,6 +37,56 @@ def test_pings_on_user_save(fake_send_update_ping, settings):
 
     user.save()
     fake_send_update_ping.assert_called_once_with(user)
+
+
+@unittest.mock.patch('sso.models.send_update_ping')
+@pytest.mark.django_db
+def test_pings_on_group_save_forward(fake_send_update_ping, settings):
+    user = UserFactory.create()
+    group = GroupFactory.create()
+    settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
+    fake_send_update_ping.assert_not_called()
+
+    user.groups.add(group)
+    fake_send_update_ping.assert_called_once_with(user)
+
+
+@unittest.mock.patch('sso.models.send_update_ping')
+@pytest.mark.django_db
+def test_pings_on_group_save(fake_send_update_ping, settings):
+    user = UserFactory.create()
+    group = GroupFactory.create()
+    settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
+    fake_send_update_ping.assert_not_called()
+
+    group.user_set.add(user)
+    fake_send_update_ping.assert_called_once_with(user)
+
+
+@unittest.mock.patch('sso.models.send_update_ping')
+@pytest.mark.django_db
+def test_pings_on_group_clear_forward(fake_send_update_ping, settings):
+    user = UserFactory.create()
+    group = GroupFactory.create()
+    user.groups.set([group])
+    settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
+    fake_send_update_ping.assert_not_called()
+
+    user.groups.clear()
+    assert list(fake_send_update_ping.call_args[1]['exclude_groups']) == [group.id]
+
+
+@unittest.mock.patch('sso.models.send_update_ping')
+@pytest.mark.django_db
+def test_pings_on_group_clear(fake_send_update_ping, settings):
+    user = UserFactory.create()
+    group = GroupFactory.create()
+    group.user_set.set([user])
+    settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
+    fake_send_update_ping.assert_not_called()
+
+    group.user_set.clear()
+    fake_send_update_ping.assert_called_once_with(user, exclude_groups=[group.id])
 
 
 @unittest.mock.patch('sso.models.send_update_ping')
