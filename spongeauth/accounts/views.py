@@ -605,11 +605,10 @@ def agree_tos(request):
 
 class UserAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return models.User.none()
-        if not self.request.user.has_perm('accounts.view_user'):
-            return models.User.none()
         users = models.User.objects.all()
+        if (not self.request.user.is_authenticated or
+            not self.request.user.has_perm('accounts.view_user')):
+            users = models.User.objects.none()
         if self.q:
             users = users.filter(username__istartswith=self.q)
-        return users
+        return users.order_by('username')
