@@ -570,8 +570,9 @@ def settings(request):
 
 
 def avatar_for_user(request, username):
+    size = request.GET.get('size', None)
     user = get_object_or_404(models.User, username=username)
-    return redirect(user.avatar.get_absolute_url())
+    return redirect(user.avatar.get_absolute_url(size=size))
 
 
 @middleware.allow_without_agreed_tos

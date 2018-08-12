@@ -226,15 +226,23 @@ class Avatar(models.Model):
         max_length=10, choices=AVATAR_CHOICES, default=UPLOAD,
         blank=False, null=False)
 
-    def get_absolute_url(self):
-        url = self.remote_url
-        if self.source == self.UPLOAD:
+    def get_absolute_url(self, size=None):
+        if size:
+            size_qs = '?size={}'.format(size)
+        else:
+            size_qs = ''
+        url = None
+        if self.remote_url:
+            url = self.remote_url + size_qs
+        elif self.source == self.UPLOAD:
             try:
                 url = self.image_file.url
             except ValueError:
                 # this avatar is invalid!
                 logger.error('Invalid avatar', exc_info=True)
-        return url or letter_avatar.LetterAvatar(self.user.username).get_absolute_url()
+        if url is None:
+            url = letter_avatar.LetterAvatar(self.user.username, size).get_absolute_url()
+        return url
 
     def __str__(self):
         return "Avatar for {} from {}".format(self.user_id, self.get_absolute_url())

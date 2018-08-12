@@ -72,3 +72,8 @@ class TestAvatarForUser(django.test.TestCase):
         resp = self.client.get(self.path(self.user.username))
         assert resp.status_code == 302
         assert resp['Location'] == self.user.avatar.get_absolute_url()
+
+    def test_redirects_with_size(self):
+        resp = self.client.get(self.path(self.user.username) + '?size=1337')
+        assert resp.status_code == 302
+        assert resp['Location'] == self.user.avatar.get_absolute_url(size=1337)
