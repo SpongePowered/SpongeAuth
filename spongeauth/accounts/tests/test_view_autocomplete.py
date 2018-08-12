@@ -2,8 +2,6 @@ import django.test
 import django.shortcuts
 
 from . import factories
-from . import test_models
-from .. import models
 
 import json
 

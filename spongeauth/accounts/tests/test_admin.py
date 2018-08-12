@@ -13,6 +13,41 @@ class TestAdminUserChangeForm:
         assert form.clean_password() == user.password
 
 
+@pytest.mark.django_db
+class TestAdminUserChangeFormWithDatabase:
+    def make_post_data(self, user, **kwargs):
+        post_data = {
+            'username': user.username,
+            'email': user.email,
+        }
+        bool_fields = ['email_verified', 'is_active']
+        for bool_field in bool_fields:
+            if getattr(user, bool_field):
+                post_data[bool_field] = 'on'
+        post_data.update(**kwargs)
+        return post_data
+
+    def test_does_not_validate_username_if_it_is_unchanged(self):
+        user = factories.UserFactory.create(username='ewoutvs_')
+        post_data = self.make_post_data(user)
+        form = admin.AdminUserChangeForm(post_data, instance=user)
+        form.save()
+
+    def test_does_validate_username_if_it_changes(self):
+        user = factories.UserFactory.create(username='ewoutvs_')
+        post_data = self.make_post_data(user, username='ewoutvs__')
+        form = admin.AdminUserChangeForm(post_data, instance=user)
+        with pytest.raises(ValueError):
+            form.save()
+
+    def test_validates_username(self):
+        user = factories.UserFactory.create()
+        post_data = self.make_post_data(user, username='ewoutvs_')
+        form = admin.AdminUserChangeForm(post_data, instance=user)
+        with pytest.raises(ValueError):
+            form.save()
+
+
 class TestUserAdmin:
     def test_get_readonly_fields(self):
         admin_user = factories.UserFactory.build(is_admin=True, is_staff=True)
@@ -45,39 +80,3 @@ class TestUserAdmin:
         obj.delete_model(None, user)
         assert user.deleted_at is not None
         assert not user.is_active
-
-
-@pytest.mark.django_db
-class TestAdminUserChangeForm:
-
-    def make_post_data(self, user, **kwargs):
-        post_data = {
-            'username': user.username,
-            'email': user.email,
-        }
-        bool_fields = ['email_verified', 'is_active']
-        for bool_field in bool_fields:
-            if getattr(user, bool_field):
-                post_data[bool_field] = 'on'
-        post_data.update(**kwargs)
-        return post_data
-
-    def test_does_not_validate_username_if_it_is_unchanged(self):
-        user = factories.UserFactory.create(username='ewoutvs_')
-        post_data = self.make_post_data(user)
-        form = admin.AdminUserChangeForm(post_data, instance=user)
-        form.save()
-
-    def test_does_validate_username_if_it_changes(self):
-        user = factories.UserFactory.create(username='ewoutvs_')
-        post_data = self.make_post_data(user, username='ewoutvs__')
-        form = admin.AdminUserChangeForm(post_data, instance=user)
-        with pytest.raises(ValueError):
-            form.save()
-
-    def test_validates_username(self):
-        user = factories.UserFactory.create()
-        post_data = self.make_post_data(user, username='ewoutvs_')
-        form = admin.AdminUserChangeForm(post_data, instance=user)
-        with pytest.raises(ValueError):
-            form.save()
