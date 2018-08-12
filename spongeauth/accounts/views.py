@@ -70,7 +70,10 @@ def _log_user_in(request, user, skip_twofa=False):
 
 def _login_redirect_url(request, fallback_to=None):
     redirect_to = request.POST.get('next', request.GET.get('next', ''))
-    if not redirect_to or not is_safe_url(url=redirect_to, host=request.get_host()):
+    if not redirect_to or not is_safe_url(
+            url=redirect_to,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure()):
         return fallback_to or django_settings.LOGIN_REDIRECT_URL
     return redirect_to
 
