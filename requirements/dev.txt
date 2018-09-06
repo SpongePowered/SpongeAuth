@@ -4,5 +4,5 @@ pytest-django==3.4.2
 prospector==1.1.2
 factory_boy==2.11.1
 Faker==0.8.18
-django-debug-toolbar==1.9.1
+django-debug-toolbar==1.10
 pylint==2.1.1
