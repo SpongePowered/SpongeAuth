@@ -11,7 +11,7 @@ import cleanCSS from 'gulp-clean-css';
 import moduleImporter from 'sass-module-importer';
 import babel from 'gulp-babel';
 import merge from 'merge-stream';
-import { gulp as closureGulp } from 'google-closure-compiler-js';
+import { gulp as closureGulp } from 'google-closure-compiler';
 
 const closureCompiler = closureGulp();
 
