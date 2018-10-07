@@ -28,7 +28,7 @@ EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 TEMPLATES = [
-    {   
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
@@ -81,6 +81,7 @@ STATICFILES_STORAGE = 'core.staticfiles.SourcemapManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(PARENT_ROOT, 'public_html', 'static')
 MEDIA_ROOT = os.path.join(PARENT_ROOT, 'public_html', 'media')
 
+ACCOUNTS_AVATAR_CHANGE_GROUPS = ['dummy', 'Ore_Organization']
 
 if not os.environ.get('DJANGO_SETTINGS_SKIP_LOCAL', False):
     try:

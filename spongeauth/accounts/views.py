@@ -658,7 +658,10 @@ def change_other_avatar_key(request, for_username):
         return HttpResponse('bad request; need request_username', status=400)
     request_username = request.POST['request_username']
     for_user = get_object_or_404(
-        models.User, username=for_username, groups__internal_name='dummy')
+        models.User,
+        username=for_username,
+        groups__internal_name__in=django_settings.
+        ACCOUNTS_AVATAR_CHANGE_GROUPS)
     request_user = models.User.objects.get(username=request_username)
     data = {
         'target_username': for_user.username,
@@ -695,7 +698,9 @@ def change_other_avatar(request, for_username):
     # Make sure that this user is in the 'dummy' group.
     try:
         for_user = models.User.objects.get(
-            username=for_username, groups__internal_name='dummy')
+            username=for_username,
+            groups__internal_name__in=django_settings.
+            ACCOUNTS_AVATAR_CHANGE_GROUPS)
     except models.User.DoesNotExist:
         return unauthorized
     if for_user.id != for_user_data['target_user_id']:
