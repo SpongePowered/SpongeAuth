@@ -762,7 +762,8 @@ def avatar_for_user(request, username):
                 # fit using width
                 size_h = size_w * orig_ratio
 
-            pil_image = pil_image.resize((int(size_w), int(size_h)))
+            pil_image = pil_image.resize((int(size_w), int(size_h)),
+                                         Image.LANCZOS)
             if canvas_w != size_w or canvas_h != size_h:
                 paste_x = (canvas_w - size_w) / 2
                 paste_y = (canvas_h - size_h) / 2
