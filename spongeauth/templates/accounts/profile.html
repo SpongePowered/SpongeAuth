@@ -31,7 +31,7 @@
     </div>
 </div>
 
-{% include "accounts/_avatar_block.html" %}
+{% with avatar_user=user %}{% include "accounts/_avatar_block.html" %}{% endwith %}
 
 <div class="container top-level">
     <div class="row">

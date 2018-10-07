@@ -284,7 +284,7 @@ class SetAvatarForm(forms.Form):
     SOURCE_CHOICES = (
         (LETTER, _("Default avatar")),
         (UPLOAD, _("Uploaded avatar")),
-        (GRAVATAR, _("Use my Gravatar")),
+        (GRAVATAR, _("Use Gravatar")),
     )
 
     avatar_from = forms.ChoiceField(

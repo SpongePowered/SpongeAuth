@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% blocktrans %}Change {{ for_user }}'s Avatar{% endblocktrans %}{% endblock %}
+{% block main %}
+{% with avatar_user=for_user %}
+    {% include "accounts/_avatar_block.html" %}
+{% endwith %}
+{% endblock %}
