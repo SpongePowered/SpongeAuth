@@ -648,14 +648,17 @@ def settings(request):
         })
 
 
+_CHANGE_OTHER_AVATAR_SALT = 'spongeauth.accounts.change_other_Avatar'
+
+
 @csrf_exempt
 @require_POST
 def change_other_avatar_key(request, for_username):
     if 'request_username' not in request.POST:
         return HttpResponse('bad request; need request_username', status=400)
     request_username = request.POST['request_username']
-    for_user = models.User.objects.get(
-        username=for_username, groups__internal_name='dummy')
+    for_user = get_object_or_404(
+        models.User, username=for_username, groups__internal_name='dummy')
     request_user = models.User.objects.get(username=request_username)
     data = {
         'target_username': for_user.username,
@@ -663,18 +666,22 @@ def change_other_avatar_key(request, for_username):
         'request_user_id': request_user.id,
     }
     return JsonResponse({
-        'signed_data': dumps(data),
-        'raw_data': data,
+        'signed_data':
+        dumps(data, salt=_CHANGE_OTHER_AVATAR_SALT),
+        'raw_data':
+        data,
     })
 
 
 @login_required
 def change_other_avatar(request, for_username):
     for_user_key = request.GET.get('key', '')
+    unauthorized = HttpResponse('Unauthorized', status=401)
     # Verify for_user_key against for_username first.
     try:
         for_user_data = loads(
             for_user_key,
+            salt=_CHANGE_OTHER_AVATAR_SALT,
             max_age=django_settings.ACCOUNTS_AVATAR_CHANGE_MAX_AGE)
         all_matches = all([
             for_user_data['target_username'] == for_username,
@@ -683,13 +690,16 @@ def change_other_avatar(request, for_username):
         if not all_matches:
             raise BadSignature('data does not match')
     except BadSignature:
-        return HttpResponse('Unauthorized', status=401)
+        return unauthorized
 
     # Make sure that this user is in the 'dummy' group.
-    for_user = models.User.objects.get(
-        username=for_username, groups__internal_name='dummy')
+    try:
+        for_user = models.User.objects.get(
+            username=for_username, groups__internal_name='dummy')
+    except models.User.DoesNotExist:
+        return unauthorized
     if for_user.id != for_user_data['target_user_id']:
-        return HttpResponse('Unauthorized', status=401)
+        return unauthorized
 
     avatar_form = forms.SetAvatarForm(user=for_user)
     if request.method == 'POST':
