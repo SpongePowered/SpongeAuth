@@ -296,9 +296,12 @@ class SetAvatarForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('avatar-save', _("Set avatar"),
-                              css_class='pull-right'))
-        self.helper.add_input(Hidden('form', 'avatar'))
+        self.helper.layout = Layout(
+            Field('avatar_from'),
+            Field('avatar_image', css_class='avatar-image-upload'),
+            Submit('avatar-save', _("Set avatar"), css_class='pull-right'),
+            Hidden('form', 'avatar'),
+        )
 
     def clean(self):
         cleaned_data = super().clean()

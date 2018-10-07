@@ -31,21 +31,7 @@
     </div>
 </div>
 
-<div class="container top-level">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <div class="panel panel-default panel-signup">
-                <div class="panel-heading">
-                    <h4 class="panel-title">{% trans "Avatar" %}</h4>
-                </div>
-                <div class="panel-body">
-                    <img src="{{ user.avatar.get_absolute_url }}" class="pull-right avatar-view" alt="{{ user.username }}'s avatar">
-                    {% crispy avatar_form %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% include "accounts/_avatar_block.html" %}
 
 <div class="container top-level">
     <div class="row">
