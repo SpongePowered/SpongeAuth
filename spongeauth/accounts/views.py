@@ -27,6 +27,7 @@ from . import middleware
 
 from oauth2client import client, crypt
 from dal import autocomplete
+from PIL import Image
 
 
 class VerifyTokenGenerator(
@@ -702,8 +703,65 @@ def change_other_avatar(request, for_username):
     })
 
 
+def _read_filefield_to_pil(filefield):
+    fh = filefield.file
+    if hasattr(fh, 'read') and hasattr(fh, 'seek') and hasattr(fh, 'tell'):
+        return Image.open(fh)
+    fh = io.BytesIO(filefield.read())
+    return Image.open(fh)
+
+
 def avatar_for_user(request, username):
     user = get_object_or_404(models.User, username=username)
+    avatar = user.avatar
+    size = request.GET.get('size', None)
+    if size:
+        size_w, x, size_h = size.partition('x')
+        max_dim = django_settings.ACCOUNTS_AVATAR_RESIZE_MAX_DIMENSION
+        if x == '' or size_h == '':
+            size_h = size_w
+        try:
+            size_w, size_h = int(size_w), int(size_h)
+        except ValueError:
+            size_w = size_h = max_dim / 2
+        biggest_dim = max(size_w, size_h)
+        if biggest_dim > max_dim:
+            mult = max_dim / biggest_dim
+            size_w = size_w * mult
+            size_h = size_h * mult
+        canvas_w, canvas_h = size_w, size_h
+
+        output_format = ('PNG', 'image/png')
+        if 'image/webp' in request.META.get('HTTP_ACCEPT'):
+            output_format = ('WEBP', 'image/webp')
+
+        if avatar.source == models.Avatar.UPLOAD:
+            pil_image = _read_filefield_to_pil(avatar.image_file)
+            orig_w, orig_h = pil_image.size
+            orig_ratio = orig_h / orig_w
+            size_ratio = size_h / size_w
+            if size_ratio < orig_ratio:
+                # fit using height
+                size_w = size_h / orig_ratio
+            else:
+                # fit using width
+                size_h = size_w * orig_ratio
+
+            pil_image = pil_image.resize((int(size_w), int(size_h)))
+            if canvas_w != size_w or canvas_h != size_h:
+                paste_x = (canvas_w - size_w) / 2
+                paste_y = (canvas_h - size_h) / 2
+                canvas_image = Image.new(
+                    'RGBA', (int(canvas_w), int(canvas_h)), color=(0, 0, 0, 0))
+                canvas_image.paste(pil_image, (int(paste_x), int(paste_y)))
+                pil_image = canvas_image
+            out = io.BytesIO()
+            pil_image.save(out, format=output_format[0])
+            return HttpResponse(out.getvalue(), output_format[1])
+        elif avatar.source == models.Avatar.URL:
+            # This scheme works for Gravatar *shrug*
+            return redirect(user.avatar.get_absolute_url() + '?s=' +
+                            str(int(max((size_w, size_h)))))
     return redirect(user.avatar.get_absolute_url())
 
 

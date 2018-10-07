@@ -172,3 +172,4 @@ IS_TESTING = False
 # The period for which an avatar change token for an organisation is valid.
 # Default: 30 minutes in seconds
 ACCOUNTS_AVATAR_CHANGE_MAX_AGE = 1800
+ACCOUNTS_AVATAR_RESIZE_MAX_DIMENSION = 240
