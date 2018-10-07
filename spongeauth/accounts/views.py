@@ -1,9 +1,11 @@
 import hashlib
+import io
 
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 from django.conf import settings as django_settings
-from django.http import Http404
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
@@ -17,7 +19,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, urlencode
-from django.core.signing import Signer, BadSignature
+from django.core.signing import Signer, BadSignature, loads, dumps
 
 from . import models
 from . import forms
@@ -25,9 +27,11 @@ from . import middleware
 
 from oauth2client import client, crypt
 from dal import autocomplete
+from PIL import Image
 
 
-class VerifyTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerator):
+class VerifyTokenGenerator(
+        django.contrib.auth.tokens.PasswordResetTokenGenerator):
     key_salt = 'accounts.views.verify_token_generator'
 
     def _make_hash_value(self, user, timestamp):
@@ -36,7 +40,8 @@ class VerifyTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerato
         return hash_value
 
 
-class ForgotTokenGenerator(django.contrib.auth.tokens.PasswordResetTokenGenerator):
+class ForgotTokenGenerator(
+        django.contrib.auth.tokens.PasswordResetTokenGenerator):
     key_salt = 'accounts.views.forgot_token_generator'
 
 
@@ -48,10 +53,12 @@ def _log_user_in(request, user, skip_twofa=False):
     # Resync groups with the TOS acceptances.
     # XXX(lukegb): this is a hack, don't do this.
     if user.pk:
-        all_tos_groups = set(
-            models.TermsOfService.objects.all().values_list('group', flat=True))
-        should_tos_groups = set(user.tos_accepted.all().values_list('group', flat=True))
-        current_tos_groups = set(user.groups.all().values_list('id', flat=True)) & all_tos_groups
+        all_tos_groups = set(models.TermsOfService.objects.all().values_list(
+            'group', flat=True))
+        should_tos_groups = set(user.tos_accepted.all().values_list(
+            'group', flat=True))
+        current_tos_groups = set(user.groups.all().values_list(
+            'id', flat=True)) & all_tos_groups
         add_tos_groups = should_tos_groups - current_tos_groups
         remove_tos_groups = current_tos_groups - should_tos_groups
         for group in add_tos_groups:
@@ -63,7 +70,9 @@ def _log_user_in(request, user, skip_twofa=False):
         request.session['twofa_target_user'] = user.pk
         return redirect('{}?{}'.format(
             reverse('twofa:verify'),
-            urlencode({'next': _login_redirect_url(request)})))
+            urlencode({
+                'next': _login_redirect_url(request)
+            })))
 
     django.contrib.auth.login(request, user)
     return redirect(_login_redirect_url(request))
@@ -108,7 +117,9 @@ def _verify_google_id_token(request):
     token = request.POST.get('google_id_token', None)
 
     idinfo = client.verify_id_token(token, django_settings.GOOGLE_CLIENT_ID)
-    if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+    if idinfo['iss'] not in [
+            'accounts.google.com', 'https://accounts.google.com'
+    ]:
         raise crypt.AppIdentityError("Invalid issuer.")
 
     return token, idinfo
@@ -116,11 +127,18 @@ def _verify_google_id_token(request):
 
 def _send_verify_email(request, user):
     template_kwargs = {
-        'user': user,
-        'link': request.build_absolute_uri(reverse('accounts:verify-step2', kwargs={
-            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
-            'token': verify_token_generator.make_token(user),
-        })),
+        'user':
+        user,
+        'link':
+        request.build_absolute_uri(
+            reverse(
+                'accounts:verify-step2',
+                kwargs={
+                    'uidb64':
+                    urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
+                    'token':
+                    verify_token_generator.make_token(user),
+                })),
     }
     msg_html = render_to_string('accounts/verify/email.html', template_kwargs)
     msg_text = render_to_string('accounts/verify/email.txt', template_kwargs)
@@ -135,12 +153,20 @@ def _send_verify_email(request, user):
 
 def _send_forgot_email(request, user):
     template_kwargs = {
-        'user': user,
-        'link': request.build_absolute_uri(reverse('accounts:forgot-step2', kwargs={
-            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
-            'token': forgot_token_generator.make_token(user),
-        })),
-        'ip': request.META['REMOTE_ADDR'],
+        'user':
+        user,
+        'link':
+        request.build_absolute_uri(
+            reverse(
+                'accounts:forgot-step2',
+                kwargs={
+                    'uidb64':
+                    urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
+                    'token':
+                    forgot_token_generator.make_token(user),
+                })),
+        'ip':
+        request.META['REMOTE_ADDR'],
     }
     msg_html = render_to_string('accounts/forgot/email.html', template_kwargs)
     msg_text = render_to_string('accounts/forgot/email.txt', template_kwargs)
@@ -157,16 +183,27 @@ def _send_change_email(request, user, new_email):
     old_email = user.email
     user.email = new_email
     template_kwargs = {
-        'user': user,
-        'link': request.build_absolute_uri(reverse('accounts:change-email-step2', kwargs={
-            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
-            'token': verify_token_generator.make_token(user),
-            'new_email': urlsafe_base64_encode(force_bytes(new_email)).decode('utf8'),
-        })),
+        'user':
+        user,
+        'link':
+        request.build_absolute_uri(
+            reverse(
+                'accounts:change-email-step2',
+                kwargs={
+                    'uidb64':
+                    urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
+                    'token':
+                    verify_token_generator.make_token(user),
+                    'new_email':
+                    urlsafe_base64_encode(
+                        force_bytes(new_email)).decode('utf8'),
+                })),
     }
     user.email = old_email
-    msg_html = render_to_string('accounts/change_email/email.html', template_kwargs)
-    msg_text = render_to_string('accounts/change_email/email.txt', template_kwargs)
+    msg_html = render_to_string('accounts/change_email/email.html',
+                                template_kwargs)
+    msg_text = render_to_string('accounts/change_email/email.txt',
+                                template_kwargs)
     send_mail(
         '[Sponge] Confirm your new email address',
         msg_text,
@@ -181,8 +218,10 @@ def _send_email_changed_email(request, user, old_email):
         'user': user,
         'new_email': user.email,
     }
-    msg_html = render_to_string('accounts/change_email/confirmation_email.html', template_kwargs)
-    msg_text = render_to_string('accounts/change_email/confirmation_email.txt', template_kwargs)
+    msg_html = render_to_string(
+        'accounts/change_email/confirmation_email.html', template_kwargs)
+    msg_text = render_to_string('accounts/change_email/confirmation_email.txt',
+                                template_kwargs)
     send_mail(
         '[Sponge] Your email address has been changed',
         msg_text,
@@ -217,7 +256,8 @@ def logout_success(request):
         return redirect('index')
 
     resp = render(request, 'accounts/logout_success.html')
-    resp['Clear-Site-Data'] = '"cache", "cookies", "storage", "executionContexts"'
+    resp[
+        'Clear-Site-Data'] = '"cache", "cookies", "storage", "executionContexts"'
     return resp
 
 
@@ -239,7 +279,8 @@ def login(request):
 
     return render(request, 'accounts/login.html', {
         'form': form,
-        'next': _login_redirect_url(request)})
+        'next': _login_redirect_url(request)
+    })
 
 
 def _create_tos_acceptances_from_form(form, user):
@@ -247,8 +288,7 @@ def _create_tos_acceptances_from_form(form, user):
     for tos_key, tos in form.tos_fields.items():
         if not form.cleaned_data.get(tos_key, False):
             continue
-        acceptances.append(models.TermsOfServiceAcceptance(
-            user=user, tos=tos))
+        acceptances.append(models.TermsOfServiceAcceptance(user=user, tos=tos))
     if acceptances:
         models.TermsOfServiceAcceptance.objects.bulk_create(acceptances)
 
@@ -280,7 +320,8 @@ def register(request):
 
     return render(request, 'accounts/register.html', {
         'form': form,
-        'next': _login_redirect_url(request)})
+        'next': _login_redirect_url(request)
+    })
 
 
 @require_POST
@@ -335,7 +376,10 @@ def register_google(request):
             _send_verify_email(request, user)
         return resp
 
-    return render(request, 'accounts/register.html', {'form': form, 'login_type': 'google'})
+    return render(request, 'accounts/register.html', {
+        'form': form,
+        'login_type': 'google'
+    })
 
 
 @middleware.allow_without_verified_email
@@ -350,8 +394,11 @@ def change_email(request):
         new_email = form.cleaned_data['new_email']
         _send_change_email(request, request.user, new_email)
         signer = Signer('accounts.views.change-email')
-        email_signed = urlsafe_base64_encode(signer.sign(new_email).encode('utf8'))
-        return redirect(reverse('accounts:change-email-sent') + '?e=' + email_signed.decode('utf8'))
+        email_signed = urlsafe_base64_encode(
+            signer.sign(new_email).encode('utf8'))
+        return redirect(
+            reverse('accounts:change-email-sent') + '?e=' +
+            email_signed.decode('utf8'))
 
     return render(request, 'accounts/change_email/step1.html', {'form': form})
 
@@ -364,8 +411,10 @@ def change_email_step1done(request):
     try:
         email = signer.unsign(email_signed.decode('utf8'))
     except BadSignature:
-        raise SuspiciousOperation('change_step1done received invalid signed email {}'.format(signer))
-    return render(request, 'accounts/change_email/step1done.html', {'email': email})
+        raise SuspiciousOperation(
+            'change_step1done received invalid signed email {}'.format(signer))
+    return render(request, 'accounts/change_email/step1done.html',
+                  {'email': email})
 
 
 @middleware.allow_without_verified_email
@@ -375,12 +424,14 @@ def change_email_step2(request, uidb64, token, new_email):
     try:
         uid = int(bytes_uid)
     except ValueError:
-        raise SuspiciousOperation('change_email_step2 received invalid base64 user ID: {}'.format(
-            bytes_uid))
+        raise SuspiciousOperation(
+            'change_email_step2 received invalid base64 user ID: {}'.format(
+                bytes_uid))
 
     if uid != request.user.id:
-        raise PermissionDenied('UID mismatch - user is {}, request was for {}'.format(
-            request.user.id, uid))
+        raise PermissionDenied(
+            'UID mismatch - user is {}, request was for {}'.format(
+                request.user.id, uid))
 
     user = get_object_or_404(models.User, pk=uid)
     old_email = user.email
@@ -391,7 +442,8 @@ def change_email_step2(request, uidb64, token, new_email):
         raise Http404('token invalid')
 
     if old_email == new_email:
-        messages.info(request, _('Your email address has already been changed.'))
+        messages.info(request,
+                      _('Your email address has already been changed.'))
     else:
         was_verified = user.email_verified
         user.email_verified = True
@@ -401,7 +453,8 @@ def change_email_step2(request, uidb64, token, new_email):
         if was_verified:
             _send_email_changed_email(request, user, old_email)
 
-        messages.success(request, _('Your email address has been changed successfully.'))
+        messages.success(
+            request, _('Your email address has been changed successfully.'))
 
     return redirect('index')
 
@@ -410,7 +463,8 @@ def change_email_step2(request, uidb64, token, new_email):
 @login_required
 def verify(request):
     if request.user.email_verified:
-        messages.info(request, _('Your email address has already been verified.'))
+        messages.info(request,
+                      _('Your email address has already been verified.'))
         return redirect('index')
 
     if request.method == 'POST':
@@ -426,11 +480,13 @@ def verify_step2(request, uidb64, token):
     try:
         uid = int(bytes_uid)
     except ValueError:
-        raise SuspiciousOperation('verify_step2 received invalid base64 user ID: {}'.format(
-            bytes_uid))
+        raise SuspiciousOperation(
+            'verify_step2 received invalid base64 user ID: {}'.format(
+                bytes_uid))
     if uid != request.user.id:
-        raise PermissionDenied('UID mismatch - user is {}, request was for {}'.format(
-            request.user.id, uid))
+        raise PermissionDenied(
+            'UID mismatch - user is {}, request was for {}'.format(
+                request.user.id, uid))
     user = get_object_or_404(models.User, pk=uid)
     if not verify_token_generator.check_token(user, token):
         raise Http404('token invalid')
@@ -438,9 +494,11 @@ def verify_step2(request, uidb64, token):
     if not user.email_verified:
         user.email_verified = True
         user.save()
-        messages.success(request, _('Your email has been verified successfully. Thanks!'))
+        messages.success(
+            request, _('Your email has been verified successfully. Thanks!'))
     else:
-        messages.info(request, _('Your email address has already been verified.'))
+        messages.info(request,
+                      _('Your email address has already been verified.'))
     return redirect('index')
 
 
@@ -453,7 +511,8 @@ def forgot(request):
         form = forms.ForgotPasswordForm(request.POST)
         if form.is_valid():
             try:
-                user = models.User.objects.get(email__iexact=form.cleaned_data['email'])
+                user = models.User.objects.get(
+                    email__iexact=form.cleaned_data['email'])
                 if not user.has_usable_password():
                     form.add_error(
                         'email',
@@ -461,13 +520,18 @@ def forgot(request):
                           'Did you sign up with a Google account?'))
                     user = None
             except models.User.DoesNotExist:
-                form.add_error('email', _('Sorry, there is no user with that email address.'))
+                form.add_error(
+                    'email',
+                    _('Sorry, there is no user with that email address.'))
                 user = None
             if user:
                 _send_forgot_email(request, user)
                 signer = Signer('accounts.views.forgot-email')
-                email_signed = urlsafe_base64_encode(signer.sign(user.email).encode('utf8'))
-                return redirect(reverse('accounts:forgot-sent') + '?e=' + email_signed.decode('utf8'))
+                email_signed = urlsafe_base64_encode(
+                    signer.sign(user.email).encode('utf8'))
+                return redirect(
+                    reverse('accounts:forgot-sent') + '?e=' +
+                    email_signed.decode('utf8'))
     return render(request, 'accounts/forgot/step1.html', {'form': form})
 
 
@@ -480,7 +544,9 @@ def forgot_step1done(request):
     try:
         email = signer.unsign(email_signed.decode('utf8'))
     except BadSignature:
-        raise SuspiciousOperation('forgot_step1done received invalid signed email {}'.format(email_signed))
+        raise SuspiciousOperation(
+            'forgot_step1done received invalid signed email {}'.format(
+                email_signed))
     return render(request, 'accounts/forgot/step1done.html', {'email': email})
 
 
@@ -492,8 +558,9 @@ def forgot_step2(request, uidb64, token):
     try:
         uid = int(bytes_uid)
     except ValueError:
-        raise SuspiciousOperation('forgot_step2 received invalid base64 user ID: {}'.format(
-            bytes_uid))
+        raise SuspiciousOperation(
+            'forgot_step2 received invalid base64 user ID: {}'.format(
+                bytes_uid))
     user = get_object_or_404(models.User, pk=uid)
     if not forgot_token_generator.check_token(user, token):
         raise Http404('token invalid')
@@ -505,11 +572,43 @@ def forgot_step2(request, uidb64, token):
             user.set_password(form.cleaned_data['password'])
             user.save()
             messages.success(
-                request, _('Your password has been reset, '
-                           'and you have been logged in.'))
+                request,
+                _('Your password has been reset, '
+                  'and you have been logged in.'))
             return _log_user_in(request, user)
-    return render(
-        request, 'accounts/forgot/step2.html', {'form': form, 'user': user})
+    return render(request, 'accounts/forgot/step2.html', {
+        'form': form,
+        'user': user
+    })
+
+
+def _set_avatar(request, for_user):
+    avatar_form = (forms.SetAvatarForm(
+        request.POST, request.FILES, user=for_user))
+    if avatar_form.is_valid():
+        src = avatar_form.cleaned_data['avatar_from']
+        avatar_kwargs = {
+            'user': for_user,
+        }
+        if src == forms.SetAvatarForm.UPLOAD:
+            avatar_kwargs['source'] = models.Avatar.UPLOAD
+            avatar_kwargs['image_file'] = (
+                avatar_form.cleaned_data['avatar_image'])
+        elif src == forms.SetAvatarForm.GRAVATAR:
+            avatar_kwargs['source'] = models.Avatar.URL
+            avatar_kwargs['remote_url'] = _make_gravatar_url(for_user)
+
+        if src == forms.SetAvatarForm.LETTER:
+            # special case: just unset user.current_avatar
+            for_user.current_avatar = None
+        else:
+            avatar, created = (models.Avatar.objects.get_or_create(
+                **avatar_kwargs))
+            for_user.current_avatar = avatar
+        for_user.save()
+
+        return True, avatar_form
+    return False, avatar_form
 
 
 @login_required
@@ -535,42 +634,144 @@ def settings(request):
 
     avatar_form = forms.SetAvatarForm(user=user)
     if request.method == 'POST' and request.POST.get('form', '') == 'avatar':
-        avatar_form = (
-            forms.SetAvatarForm(request.POST, request.FILES, user=user))
-        if avatar_form.is_valid():
-            src = avatar_form.cleaned_data['avatar_from']
-            avatar_kwargs = {
-                'user': user,
-            }
-            if src == forms.SetAvatarForm.UPLOAD:
-                avatar_kwargs['source'] = models.Avatar.UPLOAD
-                avatar_kwargs['image_file'] = (
-                    avatar_form.cleaned_data['avatar_image'])
-            elif src == forms.SetAvatarForm.GRAVATAR:
-                avatar_kwargs['source'] = models.Avatar.URL
-                avatar_kwargs['remote_url'] = _make_gravatar_url(user)
-
-            if src == forms.SetAvatarForm.LETTER:
-                # special case: just unset user.current_avatar
-                user.current_avatar = None
-            else:
-                avatar, created = (
-                    models.Avatar.objects.get_or_create(**avatar_kwargs))
-                user.current_avatar = avatar
-            user.save()
-
+        did_set_avatar, avatar_form = _set_avatar(request, user)
+        if did_set_avatar:
             messages.success(request, _('Your avatar has been changed.'))
             return redirect('accounts:settings')
 
-    return render(request, 'accounts/profile.html', {
-        'profile_form': profile_form,
-        'password_form': password_form,
+    return render(
+        request, 'accounts/profile.html', {
+            'profile_form': profile_form,
+            'password_form': password_form,
+            'avatar_form': avatar_form,
+            'user': request.user
+        })
+
+
+_CHANGE_OTHER_AVATAR_SALT = 'spongeauth.accounts.change_other_Avatar'
+
+
+@csrf_exempt
+@require_POST
+def change_other_avatar_key(request, for_username):
+    if 'request_username' not in request.POST:
+        return HttpResponse('bad request; need request_username', status=400)
+    request_username = request.POST['request_username']
+    for_user = get_object_or_404(
+        models.User, username=for_username, groups__internal_name='dummy')
+    request_user = models.User.objects.get(username=request_username)
+    data = {
+        'target_username': for_user.username,
+        'target_user_id': for_user.id,
+        'request_user_id': request_user.id,
+    }
+    return JsonResponse({
+        'signed_data':
+        dumps(data, salt=_CHANGE_OTHER_AVATAR_SALT),
+        'raw_data':
+        data,
+    })
+
+
+@login_required
+def change_other_avatar(request, for_username):
+    for_user_key = request.GET.get('key', '')
+    unauthorized = HttpResponse('Unauthorized', status=401)
+    # Verify for_user_key against for_username first.
+    try:
+        for_user_data = loads(
+            for_user_key,
+            salt=_CHANGE_OTHER_AVATAR_SALT,
+            max_age=django_settings.ACCOUNTS_AVATAR_CHANGE_MAX_AGE)
+        all_matches = all([
+            for_user_data['target_username'] == for_username,
+            for_user_data['request_user_id'] == request.user.id,
+        ])
+        if not all_matches:
+            raise BadSignature('data does not match')
+    except BadSignature:
+        return unauthorized
+
+    # Make sure that this user is in the 'dummy' group.
+    try:
+        for_user = models.User.objects.get(
+            username=for_username, groups__internal_name='dummy')
+    except models.User.DoesNotExist:
+        return unauthorized
+    if for_user.id != for_user_data['target_user_id']:
+        return unauthorized
+
+    avatar_form = forms.SetAvatarForm(user=for_user)
+    if request.method == 'POST':
+        did_set_avatar, avatar_form = _set_avatar(request, for_user)
+        if did_set_avatar:
+            messages.success(request, _('The avatar has been changed.'))
+
+    return render(request, 'accounts/change_other_avatar.html', {
         'avatar_form': avatar_form,
-        'user': request.user})
+        'for_user': for_user
+    })
+
+
+def _read_filefield_to_pil(filefield):
+    fh = filefield.file
+    if hasattr(fh, 'read') and hasattr(fh, 'seek') and hasattr(fh, 'tell'):
+        return Image.open(fh)
+    fh = io.BytesIO(filefield.read())
+    return Image.open(fh)
 
 
 def avatar_for_user(request, username):
     user = get_object_or_404(models.User, username=username)
+    avatar = user.avatar
+    size = request.GET.get('size', None)
+    if size:
+        size_w, x, size_h = size.partition('x')
+        max_dim = django_settings.ACCOUNTS_AVATAR_RESIZE_MAX_DIMENSION
+        if x == '' or size_h == '':
+            size_h = size_w
+        try:
+            size_w, size_h = int(size_w), int(size_h)
+        except ValueError:
+            size_w = size_h = max_dim / 2
+        biggest_dim = max(size_w, size_h)
+        if biggest_dim > max_dim:
+            mult = max_dim / biggest_dim
+            size_w = size_w * mult
+            size_h = size_h * mult
+        canvas_w, canvas_h = size_w, size_h
+
+        output_format = ('PNG', 'image/png')
+        if 'image/webp' in request.META.get('HTTP_ACCEPT'):
+            output_format = ('WEBP', 'image/webp')
+
+        if avatar.source == models.Avatar.UPLOAD:
+            pil_image = _read_filefield_to_pil(avatar.image_file)
+            orig_w, orig_h = pil_image.size
+            orig_ratio = orig_h / orig_w
+            size_ratio = size_h / size_w
+            if size_ratio < orig_ratio:
+                # fit using height
+                size_w = size_h / orig_ratio
+            else:
+                # fit using width
+                size_h = size_w * orig_ratio
+
+            pil_image = pil_image.resize((int(size_w), int(size_h)))
+            if canvas_w != size_w or canvas_h != size_h:
+                paste_x = (canvas_w - size_w) / 2
+                paste_y = (canvas_h - size_h) / 2
+                canvas_image = Image.new(
+                    'RGBA', (int(canvas_w), int(canvas_h)), color=(0, 0, 0, 0))
+                canvas_image.paste(pil_image, (int(paste_x), int(paste_y)))
+                pil_image = canvas_image
+            out = io.BytesIO()
+            pil_image.save(out, format=output_format[0])
+            return HttpResponse(out.getvalue(), output_format[1])
+        elif avatar.source == models.Avatar.URL:
+            # This scheme works for Gravatar *shrug*
+            return redirect(user.avatar.get_absolute_url() + '?s=' +
+                            str(int(max((size_w, size_h)))))
     return redirect(user.avatar.get_absolute_url())
 
 
@@ -586,8 +787,8 @@ def agree_tos(request):
         acceptances = []
         for tos in unagreed_tos:
             if request.POST.get('agree_to_tos_{}'.format(tos.id), False):
-                acceptances.append(models.TermsOfServiceAcceptance(
-                    user=user, tos=tos))
+                acceptances.append(
+                    models.TermsOfServiceAcceptance(user=user, tos=tos))
         if acceptances:
             models.TermsOfServiceAcceptance.objects.bulk_create(acceptances)
             unagreed_tos = list(user.must_agree_tos())
@@ -597,18 +798,19 @@ def agree_tos(request):
     has_previously_agreed_tos = models.TermsOfServiceAcceptance.objects.filter(
         user=user).exists()
 
-    return render(request, 'accounts/agree_tos.html', {
-        'user': user,
-        'toses': unagreed_tos,
-        'has_previously_agreed_tos': has_previously_agreed_tos})
+    return render(
+        request, 'accounts/agree_tos.html', {
+            'user': user,
+            'toses': unagreed_tos,
+            'has_previously_agreed_tos': has_previously_agreed_tos
+        })
 
 
 class UserAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         users = models.User.objects.all()
-        if (
-                not self.request.user.is_authenticated or
-                not self.request.user.has_perm('accounts.view_user')):
+        if (not self.request.user.is_authenticated
+                or not self.request.user.has_perm('accounts.view_user')):
             users = models.User.objects.none()
         if self.q:
             users = users.filter(username__istartswith=self.q)

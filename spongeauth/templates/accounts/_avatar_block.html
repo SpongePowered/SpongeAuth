@@ -1,0 +1,18 @@
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default panel-signup">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% if avatar_user == user %}{% trans "Avatar" %}{% else %}{% blocktrans %}{{ avatar_user }}'s Avatar{% endblocktrans %}{% endif %}</h4>
+                </div>
+                <div class="panel-body">
+                    <img src="{{ avatar_user.avatar.get_absolute_url }}" class="pull-right avatar-view" alt="{% blocktrans %}{{ avatar_user.username }}'s avatar{% endblocktrans %}">
+                    {% crispy avatar_form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

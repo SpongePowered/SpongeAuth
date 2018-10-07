@@ -13,9 +13,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
-    __file__))))
-
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -31,7 +30,6 @@ ALLOWED_HOSTS = [
 
 REQUIRE_EMAIL_CONFIRM = True
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,11 +39,9 @@ INSTALLED_APPS = [
     'sso',
     'migrator',
     'api',
-
     'crispy_forms',
     'dal',
     'dal_select2',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -91,7 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'spongeauth.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -103,25 +98,27 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -135,7 +132,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -172,3 +168,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SSO_ENDPOINTS = {}
 
 IS_TESTING = False
+
+# The period for which an avatar change token for an organisation is valid.
+# Default: 30 minutes in seconds
+ACCOUNTS_AVATAR_CHANGE_MAX_AGE = 1800
+ACCOUNTS_AVATAR_RESIZE_MAX_DIMENSION = 240
