@@ -6,6 +6,6 @@ django-crispy-forms==1.7.2
 django-model-utils==3.1.2
 qrcode==6.0
 pytz==2018.5
-requests==2.19.1
+requests==2.20.1
 psycopg2-binary==2.7.5
 django-autocomplete-light==3.3.1
