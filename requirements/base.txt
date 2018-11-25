@@ -8,4 +8,4 @@ qrcode==6.0
 pytz==2018.7
 requests==2.20.1
 psycopg2-binary==2.7.6.1
-django-autocomplete-light==3.3.1
+django-autocomplete-light==3.3.2
