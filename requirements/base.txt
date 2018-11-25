@@ -7,5 +7,5 @@ django-model-utils==3.1.2
 qrcode==6.0
 pytz==2018.5
 requests==2.19.1
-psycopg2-binary==2.7.5
+psycopg2-binary==2.7.6.1
 django-autocomplete-light==3.3.1
