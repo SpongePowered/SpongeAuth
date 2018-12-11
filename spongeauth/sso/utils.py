@@ -34,7 +34,7 @@ def make_payload(user, nonce, request=None, group=None, exclude_groups=None):
         'custom.user_field_1': user.mc_username,
         'custom.user_field_2': user.irc_nick,
         'custom.user_field_3': user.gh_username,
-	'verified': user.email_verified, 
+	  'verified': user.email_verified,
         'admin': user.is_admin,
         'moderator': user.is_admin or user.is_staff,
         'add_groups': ','.join(add_groups),
