@@ -726,6 +726,7 @@ def _read_filefield_to_pil(filefield):
     return Image.open(fh)
 
 
+@middleware.allow_without_verified_email
 def avatar_for_user(request, username):
     user = get_object_or_404(models.User, username=username)
     avatar = user.avatar
