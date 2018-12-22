@@ -1,4 +1,4 @@
 -r base.txt
 
-raven==6.9.0
+sentry-sdk==0.6.5
 gunicorn==19.9.0

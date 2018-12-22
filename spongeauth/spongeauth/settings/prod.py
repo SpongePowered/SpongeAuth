@@ -1,7 +1,7 @@
-import os
-import os.path
-import raven
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
+from spongeauth.spongeauth.settings.utils import fetch_git_sha
 from .base import *
 
 GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
@@ -50,10 +50,6 @@ TEMPLATES = [
     },
 ]
 
-INSTALLED_APPS += [
-    'raven.contrib.django.raven_compat',
-]
-
 SSO_ENDPOINTS = {}
 for k, v in os.environ.items():
     if not k.startswith('SSO_ENDPOINT_'):
@@ -63,10 +59,11 @@ for k, v in os.environ.items():
     d = SSO_ENDPOINTS.setdefault(name, {})
     d[key.lower()] = v
 
-RAVEN_CONFIG = {
-    'dsn': os.environ['RAVEN_DSN'],
-    'release': raven.fetch_git_sha(GIT_REPO_ROOT),
-}
+sentry_sdk.init(
+    dsn=os.environ['RAVEN_DSN'],
+    integrations=[DjangoIntegration()],
+    release=fetch_git_sha(GIT_REPO_ROOT)
+)
 
 DATABASES = {
     'default': {
@@ -88,3 +85,4 @@ if not os.environ.get('DJANGO_SETTINGS_SKIP_LOCAL', False):
         from .local_settings import *
     except ImportError:
         pass
+
