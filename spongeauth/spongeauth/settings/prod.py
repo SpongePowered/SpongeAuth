@@ -1,7 +1,7 @@
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from spongeauth.spongeauth.settings.utils import fetch_git_sha
+from .utils import fetch_git_sha
 from .base import *
 
 GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
@@ -60,9 +60,10 @@ for k, v in os.environ.items():
     d[key.lower()] = v
 
 sentry_sdk.init(
-    dsn=os.environ['RAVEN_DSN'],
+    dsn=os.environ.get('RAVEN_DSN'),
     integrations=[DjangoIntegration()],
-    release=fetch_git_sha(GIT_REPO_ROOT)
+    release=fetch_git_sha(GIT_REPO_ROOT),
+    send_default_pii=True,
 )
 
 DATABASES = {
