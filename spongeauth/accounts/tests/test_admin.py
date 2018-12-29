@@ -28,7 +28,7 @@ class TestAdminUserChangeFormWithDatabase:
         return post_data
 
     def test_does_not_validate_username_if_it_is_unchanged(self):
-        user = factories.UserFactory.create(username='ewoutvs_')
+        user = factories.UserFactory.create(username='ewoutvs__')
         post_data = self.make_post_data(user)
         form = admin.AdminUserChangeForm(post_data, instance=user)
         form.save()
@@ -42,7 +42,7 @@ class TestAdminUserChangeFormWithDatabase:
 
     def test_validates_username(self):
         user = factories.UserFactory.create()
-        post_data = self.make_post_data(user, username='ewoutvs_')
+        post_data = self.make_post_data(user, username='ewoutvs__')
         form = admin.AdminUserChangeForm(post_data, instance=user)
         with pytest.raises(ValueError):
             form.save()
