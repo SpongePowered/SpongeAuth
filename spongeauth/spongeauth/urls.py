@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include(accounts.urls, 'accounts')),
     url(r'^2fa/', include(twofa.urls, 'twofa')),
-    url(r'^avatar/(?P<username>[A-Za-z_0-9]+)/?$', avatar_for_user, name='avatar-for-user'),
+    url(r'^avatar/(?P<username>[^/]+)/?$', avatar_for_user, name='avatar-for-user'),
     url(r'^sso/', include(sso.urls, 'sso')),
     url(r'^$', index, name='index'),
     url(r'^api/', include(api.urls, 'api')),
