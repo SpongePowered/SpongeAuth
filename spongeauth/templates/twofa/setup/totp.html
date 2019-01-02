@@ -16,7 +16,11 @@
                     <ol>
                         <li>
                             <p>{% trans "Scan the QR code below to add Sponge to your authenticator." %}</p>
-                            <p class="text-center"><img src="data:image/svg+xml;utf8,{{ qr_code_svg|urlencode:"" }}" alt="TOTP Authenticator QR Code for secret {{ b32_secret }}"></p>
+                            <p class="text-center">
+                                <img src="data:image/svg+xml;utf8,{{ qr_code_svg|urlencode:"" }}" alt="TOTP Authenticator QR Code for secret {{ b32_secret }}" />
+                                <br />
+                                <span>({% trans "or alternatively use your secret" %} <code>{{ b32_secret }}</code>)</span>
+                            </p>
                         </li>
                         <li>
                             {% trans "Enter the 6 digit code that it displays to verify that your authenticator is set up correctly. You'll need to do this every time you log in from now on." %}
