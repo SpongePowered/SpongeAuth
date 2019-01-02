@@ -95,6 +95,8 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False, null=False)
     is_admin = models.BooleanField(default=False, null=False)
 
+    full_name = models.CharField(
+        max_length=255, unique=True, blank=True, null=True)
     mc_username = models.CharField(
         max_length=255, blank=True, null=True,
         verbose_name=_('Minecraft Username'))
@@ -144,7 +146,7 @@ class User(AbstractBaseUser):
         return letter_avatar.LetterAvatar(self.username)
 
     def get_full_name(self):
-        return self.username
+        return self.full_name
 
     def get_short_name(self):
         return self.username

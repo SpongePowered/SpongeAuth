@@ -30,7 +30,7 @@ def make_payload(user, nonce, request=None, group=None, exclude_groups=None):
         'require_activation': _cast_bool(not user.email_verified),
         'external_id': user.pk,
         'username': user.username,
-        'name': user.username,
+        'name': user.full_name,
         'custom.user_field_1': user.mc_username,
         'custom.user_field_2': user.irc_nick,
         'custom.user_field_3': user.gh_username,
