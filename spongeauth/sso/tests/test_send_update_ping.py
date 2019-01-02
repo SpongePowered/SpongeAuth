@@ -35,6 +35,7 @@ def test_send_update_ping(settings):
         user = UserFactory.create(
             email='foo@example.com',
             username='foo_',
+            full_name='Foo Bar',
             mc_username='meep',
             gh_username='meeep',
             irc_nick='XxXmeepXxX')
@@ -56,7 +57,7 @@ def test_send_update_ping(settings):
             'require_activation': 'false',
             'external_id': user.id,
             'username': 'foo_',
-            'name': 'foo_',
+            'name': 'Foo Bar',
             'custom.user_field_1': 'meep',
             'custom.user_field_2': 'XxXmeepXxX',
             'custom.user_field_3': 'meeep',
@@ -91,6 +92,7 @@ def test_send_update_ping_better(settings):
         user = UserFactory.create(
             email='foo@example.com',
             username='foo_',
+            full_name='Foo Bar',
             mc_username='meep',
             gh_username='meeep',
             irc_nick='XxXmeepXxX')
@@ -113,7 +115,7 @@ def test_send_update_ping_better(settings):
             'require_activation': 'false',
             'external_id': user.id,
             'username': 'foo_',
-            'name': 'foo_',
+            'name': 'Foo Bar',
             'custom.user_field_1': 'meep',
             'custom.user_field_2': 'XxXmeepXxX',
             'custom.user_field_3': 'meeep',
@@ -130,7 +132,7 @@ def test_send_update_ping_better(settings):
             'require_activation': 'false',
             'external_id': user.id,
             'username': 'foo_',
-            'name': 'foo_',
+            'name': 'Foo Bar',
             'custom.user_field_1': 'meep',
             'custom.user_field_2': 'XxXmeepXxX',
             'custom.user_field_3': 'meeep',

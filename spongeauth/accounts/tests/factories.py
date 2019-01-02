@@ -31,6 +31,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Faker('user_name')
     password = factory.PostGenerationMethodCall('set_password', 'secret')
 
+    full_name = factory.Faker('name')
     mc_username = factory.Faker('user_name')
     gh_username = factory.Faker('user_name')
     irc_nick = factory.Faker('user_name')
