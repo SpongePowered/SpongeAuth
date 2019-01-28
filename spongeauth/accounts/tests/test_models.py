@@ -26,7 +26,7 @@ class TestUser:
 
     def test_interface_getters(self):
         user = factories.UserFactory.build()
-        assert user.get_full_name() == user.username
+        assert user.get_full_name() == user.full_name
         assert user.get_short_name() == user.username
         assert str(user) == user.username
 
@@ -54,10 +54,11 @@ class TestUserManager:
     def test_create_user(self):
         user = models.User.objects.create_user(
             username='foo', email='foo@example.com',
-            password='exciting', mc_username='bar')
+            password='exciting', full_name='Foo Bar', mc_username='bar')
         assert isinstance(user, models.User)
         assert user.username == 'foo'
         assert user.email == 'foo@example.com'
+        assert user.full_name == 'Foo Bar'
         assert user.mc_username == 'bar'
         assert not user.is_admin
 

@@ -34,6 +34,9 @@ class CoreFieldsMixin(forms.Form):
 
 
 class ProfileFieldsMixin(forms.Form):
+    full_name = forms.CharField(
+        label=_('Full Name'), max_length=255, required=False,
+        help_text=_('Enter your full name here'))
     mc_username = forms.CharField(
         label=_('Minecraft Username'), max_length=255, required=False,
         help_text=_('Enter the username you use for Minecraft here'))
@@ -121,6 +124,7 @@ class RegisterForm(ProfileFieldsMixin, CoreFieldsMixin, RegistrationMixin, forms
             Field('username'),
             Field('password'),
             Field('email'),
+            Field('full_name'),
             Field('mc_username'),
             Field('irc_nick'),
             Field('gh_username'),
@@ -243,7 +247,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = models.User
-        fields = ['mc_username', 'irc_nick', 'gh_username']
+        fields = ['full_name', 'mc_username', 'irc_nick', 'gh_username']
 
 
 class ChangePasswordForm(forms.Form):
