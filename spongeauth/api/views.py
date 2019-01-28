@@ -1,10 +1,12 @@
 import functools
+import http
 
 from django.shortcuts import get_object_or_404, reverse
 import django.core.exceptions
 import django.http
 import django.views.decorators.csrf
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from accounts.views import change_other_avatar_key as base_change_other_avatar_key
 
@@ -50,7 +52,7 @@ def _four_oh_five(allowed):
         allowed_methods = ', '.join(allowed)
         resp = django.http.HttpResponse(
             'Request method not allowed. Use one of {}.'.format(allowed),
-            status=405,
+            status=http.HTTPStatus.METHOD_NOT_ALLOWED,
             content_type='text/plain')
         resp['Allow'] = allowed_methods
         return resp
@@ -76,13 +78,19 @@ def _create_user(request):
     user = accounts.models.User(
         username=username, email=email, email_verified=verified)
     user.set_password(password)
+
+    try:
+        user.full_clean()
+    except ValidationError as exc:
+        return django.http.JsonResponse({'error': exc.messages}, status=http.HTTPStatus.UNPROCESSABLE_ENTITY)
+
     try:
         user.save()
         if dummy:
             user.groups.set([accounts.models.Group.objects.get(name='Dummy')])
     except django.db.IntegrityError as exc:
-        return django.http.JsonResponse({'error': str(exc)}, status=422)
-    resp = django.http.JsonResponse(_encode_user(request, user), status=201)
+        return django.http.JsonResponse({'error': [str(exc)]}, status=http.HTTPStatus.UNPROCESSABLE_ENTITY)
+    resp = django.http.JsonResponse(_encode_user(request, user), status=http.HTTPStatus.CREATED)
     resp['Location'] = reverse(
         'api:users-detail', kwargs={'username': user.username})
     return resp
@@ -96,7 +104,7 @@ def _delete_user(request):
     user.is_active = False
     user.deleted_at = timezone.now()
     user.save()
-    return django.http.JsonResponse(_encode_user(request, user), status=200)
+    return django.http.JsonResponse(_encode_user(request, user), status=http.HTTPStatus.OK)
 
 
 @_require_api_key
@@ -109,7 +117,7 @@ def user_detail(request, username):
 def _user_detail(request, username):
     qs = accounts.models.User.objects.all().prefetch_related('groups')
     user = get_object_or_404(qs, is_active=True, username=username)
-    return django.http.JsonResponse(_encode_user(request, user), status=200)
+    return django.http.JsonResponse(_encode_user(request, user), status=http.HTTPStatus.OK)
 
 
 change_other_avatar_key = _require_api_key(base_change_other_avatar_key)
