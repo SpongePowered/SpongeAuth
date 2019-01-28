@@ -27,6 +27,19 @@ def test_invalid_api_key(client, fake):
 
 
 @pytest.mark.django_db
+def test_invalid_username(client, fake):
+    api.models.APIKey.objects.create(key='foobar')
+    resp = client.post(django.shortcuts.reverse('api:users-list'), {
+        'api-key': 'foobar',
+        'username': '<I*am#a,bad:username>',
+        'password': 'barfoo',
+        'email': fake.safe_email(),
+        'verified': 'true',
+        'dummy': 'false'})
+    assert resp.status_code == 422
+
+
+@pytest.mark.django_db
 def test_works(client, fake):
     api.models.APIKey.objects.create(key='foobar')
     assert not accounts.models.User.objects.exists()
