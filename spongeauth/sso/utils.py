@@ -11,12 +11,9 @@ def _cast_bool(b):
     return str(bool(b)).lower()
 
 
-def make_payload(user, nonce, request=None, group=None, exclude_groups=None):
+def make_payload(user, nonce, group=None, exclude_groups=None):
     group = group or Group
     exclude_groups = set(exclude_groups or [])
-    avatar_url = user.avatar.get_absolute_url()
-    if request is not None:
-        avatar_url = request.build_absolute_uri(avatar_url)
     relevant_groups = group.objects.filter(internal_only=False).order_by(
         'internal_name')
     filter_q = Q(user=user) & ~Q(pk__in=exclude_groups)
@@ -34,6 +31,7 @@ def make_payload(user, nonce, request=None, group=None, exclude_groups=None):
         'custom.user_field_1': user.mc_username,
         'custom.user_field_2': user.irc_nick,
         'custom.user_field_3': user.gh_username,
+        'custom.user_field_4': user.discord_id,
         'admin': user.is_admin,
         'moderator': user.is_admin or user.is_staff,
         'add_groups': ','.join(add_groups),
