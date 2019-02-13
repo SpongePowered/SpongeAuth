@@ -51,7 +51,7 @@ def validate_username(username):
 
 def validate_discord_id(discord_id):
     if not re.match(r'^(.*)#(\d{4})$', discord_id):
-        raise ValidationError(['The Discord ID has to match the pattern username#1234.'])
+        raise ValidationError('The Discord ID has to match the pattern username#1234.', 'wrong_pattern')
 
 
 class Group(models.Model):

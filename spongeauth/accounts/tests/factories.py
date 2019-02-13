@@ -35,6 +35,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     mc_username = factory.Faker('user_name')
     gh_username = factory.Faker('user_name')
     irc_nick = factory.Faker('user_name')
+    discord_id = factory.Faker('username#1234')
 
     joined_at = factory.Faker('date_time_this_decade')
 
