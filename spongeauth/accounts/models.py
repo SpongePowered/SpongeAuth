@@ -50,9 +50,8 @@ def validate_username(username):
 
 
 def validate_discord_id(discord_id):
-    print("test")
     if not re.match(r'^(.*)#(\d{4})$', discord_id):
-        raise ValidationError(['The Discord ID must be entered in the pattern username#1234.'])
+        raise ValidationError(['The Discord ID has to match the pattern username#1234.'])
 
 
 class Group(models.Model):
@@ -114,7 +113,7 @@ class User(AbstractBaseUser):
         max_length=255, blank=True, null=True,
         verbose_name=_('GitHub Username'))
     discord_id = models.CharField(
-        max_length=255, blank=False, null=True,
+        max_length=255, blank=True, null=False,
         verbose_name=_('Discord ID'), validators=[validate_discord_id])
 
     joined_at = models.DateTimeField(
