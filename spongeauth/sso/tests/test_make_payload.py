@@ -21,7 +21,7 @@ class TestMakePayload:
     def test_builds_payload(self):
         user = accounts.tests.factories.UserFactory.build()
 
-        payload = utils.make_payload(user, 'nonce-nce', self.request)
+        payload = utils.make_payload(user, 'nonce-nce')
         assert payload == {
             'nonce': 'nonce-nce',
             'email': user.email,
@@ -29,6 +29,7 @@ class TestMakePayload:
             'custom.user_field_1': user.mc_username,
             'custom.user_field_2': user.irc_nick,
             'custom.user_field_3': user.gh_username,
+            'custom.user_field_4': user.discord_id,
             'name': user.full_name,
             'username': user.username,
             'external_id': user.id,
@@ -42,7 +43,7 @@ class TestMakePayload:
         user = accounts.tests.factories.UserFactory.build(
             email_verified=False)
 
-        payload = utils.make_payload(user, 'nonce-nce', self.request)
+        payload = utils.make_payload(user, 'nonce-nce')
         assert payload == {
             'nonce': 'nonce-nce',
             'email': user.email,
@@ -50,6 +51,7 @@ class TestMakePayload:
             'custom.user_field_1': user.mc_username,
             'custom.user_field_2': user.irc_nick,
             'custom.user_field_3': user.gh_username,
+            'custom.user_field_4': user.discord_id,
             'name': user.full_name,
             'username': user.username,
             'external_id': user.id,
@@ -78,7 +80,7 @@ class TestMakePayload:
 
         del int_group_not_in  # Unused.
 
-        payload = utils.make_payload(user, 'nonce-nce', self.request)
+        payload = utils.make_payload(user, 'nonce-nce')
         assert payload == {
             'nonce': 'nonce-nce',
             'email': user.email,
@@ -86,6 +88,7 @@ class TestMakePayload:
             'custom.user_field_1': user.mc_username,
             'custom.user_field_2': user.irc_nick,
             'custom.user_field_3': user.gh_username,
+            'custom.user_field_4': user.discord_id,
             'name': user.full_name,
             'username': user.username,
             'external_id': user.id,

@@ -54,12 +54,13 @@ class TestUserManager:
     def test_create_user(self):
         user = models.User.objects.create_user(
             username='foo', email='foo@example.com',
-            password='exciting', full_name='Foo Bar', mc_username='bar')
+            password='exciting', full_name='Foo Bar', mc_username='bar', discord_id='foobar#1234')
         assert isinstance(user, models.User)
         assert user.username == 'foo'
         assert user.email == 'foo@example.com'
         assert user.full_name == 'Foo Bar'
         assert user.mc_username == 'bar'
+        assert user.discord_id == 'foobar#1234'
         assert not user.is_admin
 
         assert user.password != 'exciting'

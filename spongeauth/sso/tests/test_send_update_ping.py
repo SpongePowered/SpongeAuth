@@ -38,7 +38,8 @@ def test_send_update_ping(settings):
             full_name='Foo Bar',
             mc_username='meep',
             gh_username='meeep',
-            irc_nick='XxXmeepXxX')
+            irc_nick='XxXmeepXxX',
+            discord_id='foobar#1234')
 
         settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
         send_update_ping(user, send_post=fake_send_post,
@@ -61,6 +62,7 @@ def test_send_update_ping(settings):
             'custom.user_field_1': 'meep',
             'custom.user_field_2': 'XxXmeepXxX',
             'custom.user_field_3': 'meeep',
+            'custom.user_field_4': 'foobar#1234',
             'moderator': False,
             'admin': False,
             'add_groups': 'aardvark,banana,carrot',
@@ -95,7 +97,8 @@ def test_send_update_ping_better(settings):
             full_name='Foo Bar',
             mc_username='meep',
             gh_username='meeep',
-            irc_nick='XxXmeepXxX')
+            irc_nick='XxXmeepXxX',
+            discord_id='foobar#1234')
         user.groups.set([excluded_group, in_group, in_internal_group])
 
         settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
@@ -119,6 +122,7 @@ def test_send_update_ping_better(settings):
             'custom.user_field_1': 'meep',
             'custom.user_field_2': 'XxXmeepXxX',
             'custom.user_field_3': 'meeep',
+            'custom.user_field_4': 'foobar#1234',
             'moderator': False,
             'admin': False,
             'add_groups': '2-in',
@@ -136,6 +140,7 @@ def test_send_update_ping_better(settings):
             'custom.user_field_1': 'meep',
             'custom.user_field_2': 'XxXmeepXxX',
             'custom.user_field_3': 'meeep',
+            'custom.user_field_4': 'foobar#1234',
             'moderator': False,
             'admin': False,
             'add_groups': '1-excluded,2-in',
