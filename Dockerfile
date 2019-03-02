@@ -2,11 +2,6 @@ FROM debian:testing
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
-     apt-get -y install curl apt-transport-https gnupg2 \
-  && curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
-  && echo 'deb https://deb.nodesource.com/node_8.x stretch main' > /etc/apt/sources.list.d/nodesource.list \
-  && apt-get update \
-  && DEBIAN_FRONTEND=noninteractive \
      apt-get -y install \
     python2.7 \
     python3 \
@@ -14,6 +9,7 @@ RUN apt-get update \
     python3-venv \
     build-essential \
     nodejs \
+    npm \
     libz3-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
