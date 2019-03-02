@@ -11,6 +11,7 @@ BAD_EXAMPLES = [
     ("testaccountxyz#9872", []),
     ("foobar#12345", ['wrong_pattern']),
     ("ewoutvs_", ['wrong_pattern']),
+    ("#1234", ['wrong_pattern']),
 ]
 
 
