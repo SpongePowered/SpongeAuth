@@ -58,19 +58,14 @@ const buildExterns = () => {
     const externsFiles = fs.readdirSync(externsDir);
     return externsFiles
         .filter((fn) => fn.endsWith('.js'))
-        .map((fn) => path.join(externsDir, fn))
-        .map((fp) => ({
-            src: fs.readFileSync(fp, 'utf8'),
-            path: fp,
-        }));
+        .map((fn) => path.join(externsDir, fn));
 };
 
 function scripts() {
     const compiler = production ? closureCompiler({
         compilationLevel: 'ADVANCED',
-        languageIn: 'ES6',
-        languageOut: 'ES5',
-        createSourceMap: true,
+        languageIn: 'STABLE',
+        languageOut: 'ECMASCRIPT5_STRICT',
         jsOutputFile: 'app.js',
         assumeFunctionWrapper: true,
         outputWrapper: '(function(){%output%}).call(this)',
@@ -80,7 +75,7 @@ function scripts() {
         presets: ['@babel/env'],
     });
 
-    return gulp.src(paths.inBase + paths.appScript)
+    return gulp.src(paths.inBase + paths.appScript, {base: './'})
         .pipe(sourcemaps.init())
         .pipe(compiler)
         .pipe(sourcemaps.write('../maps/'))
