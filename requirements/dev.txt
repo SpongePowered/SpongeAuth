@@ -1,8 +1,8 @@
 -r base.txt
 
-pytest-django==3.4.8
-prospector==1.1.6.2
-factory_boy==2.11.1
-Faker==1.0.4
-django-debug-toolbar==1.11
+pytest-django==3.5.1
+prospector==1.1.7
+factory_boy==2.12.0
+Faker==2.0.0
+django-debug-toolbar==2.0
 pylint==2.3.1
