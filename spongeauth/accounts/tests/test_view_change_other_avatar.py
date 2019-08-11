@@ -22,20 +22,21 @@ class TestChangeOtherAvatar(django.test.TestCase):
         assert c.login(username=user.username, password='secret')
 
     def path(self, for_username, key=None):
-        url = django.shortcuts.reverse(
-            'accounts:change-avatar', kwargs={'for_username': for_username})
+        url = django.shortcuts.reverse('accounts:change-avatar',
+                                       kwargs={'for_username': for_username})
         if key:
             url += '?key=' + key
         return url
 
     def key_for(self, for_user, req_user,
                 salt=views._CHANGE_OTHER_AVATAR_SALT):
-        return dumps({
-            'target_username': for_user.username,
-            'target_user_id': for_user.id,
-            'request_user_id': req_user.id,
-        },
-                     salt=salt)
+        return dumps(
+            {
+                'target_username': for_user.username,
+                'target_user_id': for_user.id,
+                'request_user_id': req_user.id,
+            },
+            salt=salt)
 
     def test_redirects_if_logged_out(self):
         client = django.test.Client()
@@ -123,8 +124,8 @@ class TestChangeOtherAvatarKey(django.test.TestCase):
             models.Group.objects.get(internal_name='dummy'))
 
     def path(self, for_username, key='pew'):
-        url = django.shortcuts.reverse(
-            'api:change-avatar-token', kwargs={'for_username': for_username})
+        url = django.shortcuts.reverse('api:change-avatar-token',
+                                       kwargs={'for_username': for_username})
         if key:
             url += '?apiKey=' + key
         return url
@@ -138,26 +139,26 @@ class TestChangeOtherAvatarKey(django.test.TestCase):
         assert resp.status_code == 405
 
     def test_non_dummy_user(self):
-        resp = self.client.post(
-            self.path(self.user), {'request_username': self.user.username})
+        resp = self.client.post(self.path(self.user),
+                                {'request_username': self.user.username})
         assert resp.status_code == 404
 
     def test_org_user(self):
-        resp = self.client.post(
-            self.path(self.org_user), {'request_username': self.user.username})
+        resp = self.client.post(self.path(self.org_user),
+                                {'request_username': self.user.username})
         assert resp.status_code == 200
         resp_data = json.loads(resp.content)
         raw_data = resp_data['raw_data']
         assert raw_data['target_username'] == self.org_user.username
         assert raw_data['target_user_id'] == self.org_user.id
         assert raw_data['request_user_id'] == self.user.id
-        dec_data = loads(
-            resp_data['signed_data'], salt=views._CHANGE_OTHER_AVATAR_SALT)
+        dec_data = loads(resp_data['signed_data'],
+                         salt=views._CHANGE_OTHER_AVATAR_SALT)
         assert dec_data == raw_data
 
     def test_use_against_change(self):
-        resp = self.client.post(
-            self.path(self.org_user), {'request_username': self.user.username})
+        resp = self.client.post(self.path(self.org_user),
+                                {'request_username': self.user.username})
         assert resp.status_code == 200
         resp_data = json.loads(resp.content)
 
