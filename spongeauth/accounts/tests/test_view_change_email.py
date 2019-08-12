@@ -80,7 +80,7 @@ class TestChangeEmailStep1Done(django.test.TestCase):
     def path(self, e=None):
         path = django.shortcuts.reverse('accounts:change-email-sent')
         if e:
-            path += '?e=' + urlsafe_base64_encode(e.encode('utf8')).decode('utf8')
+            path += '?e=' + urlsafe_base64_encode(e.encode('utf8'))
         return path
 
     def test_redirects_if_logged_out(self):
@@ -126,9 +126,9 @@ class TestChangeEmailStep2(django.test.TestCase):
 
     def path(self, user, token, uidb64=None, new_email=None):
         return django.shortcuts.reverse('accounts:change-email-step2', kwargs={
-            'uidb64': uidb64 or urlsafe_base64_encode(force_bytes(user.id)).decode('utf8'),
+            'uidb64': uidb64 or urlsafe_base64_encode(force_bytes(user.id)),
             'token': token,
-            'new_email': new_email or urlsafe_base64_encode(force_bytes(user.email)).decode('utf8')})
+            'new_email': new_email or urlsafe_base64_encode(force_bytes(user.email))})
 
     def test_redirects_if_logged_out(self):
         client = django.test.Client()
@@ -150,7 +150,7 @@ class TestChangeEmailStep2(django.test.TestCase):
 
     def test_bad_user_id(self):
         resp = self.client.get(self.path(None, 'deadbeef-cafe', uidb64='foo',
-                                         new_email=urlsafe_base64_encode(b'a@example.com').decode('utf8')))
+                                         new_email=urlsafe_base64_encode(b'a@example.com')))
         assert resp.status_code == 400
 
     def test_bad_token(self):
@@ -161,7 +161,7 @@ class TestChangeEmailStep2(django.test.TestCase):
     def test_activates_if_not_active(self):
         assert not self.user.email_verified
         resp = self.client.get(self.path(self.user, 'deadbeef-cafe',
-                                         new_email=urlsafe_base64_encode(b'a@example.com').decode('utf8')))
+                                         new_email=urlsafe_base64_encode(b'a@example.com')))
         assert resp.status_code == 302
         user = models.User.objects.get(id=self.user.id)
         assert user.email_verified
@@ -172,7 +172,7 @@ class TestChangeEmailStep2(django.test.TestCase):
         self.user.email_verified = True
         self.user.save()
         resp = self.client.get(self.path(self.user, 'deadbeef-cafe',
-                                         new_email=urlsafe_base64_encode(b'a@example.com').decode('utf8')))
+                                         new_email=urlsafe_base64_encode(b'a@example.com')))
         assert resp.status_code == 302
         user = models.User.objects.get(id=self.user.id)
         assert user.email_verified

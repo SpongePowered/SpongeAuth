@@ -80,7 +80,7 @@ class TestForgotStep1Done(django.test.TestCase):
     def path(self, e=None):
         path = django.shortcuts.reverse('accounts:forgot-sent')
         if e:
-            path += '?e=' + urlsafe_base64_encode(e.encode('utf8')).decode('utf8')
+            path += '?e=' + urlsafe_base64_encode(e.encode('utf8'))
         return path
 
     @unittest.mock.patch('accounts.views.Signer')
@@ -122,7 +122,7 @@ class TestForgotStep2(django.test.TestCase):
 
     def path(self, user, token, uidb64=None):
         return django.shortcuts.reverse('accounts:forgot-step2', kwargs={
-            'uidb64': uidb64 or urlsafe_base64_encode(force_bytes(user.id)).decode('utf8'),
+            'uidb64': uidb64 or urlsafe_base64_encode(force_bytes(user.id)),
             'token': token})
 
     def test_redirects_if_logged_in(self):
