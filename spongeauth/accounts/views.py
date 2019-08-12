@@ -135,7 +135,7 @@ def _send_verify_email(request, user):
                 'accounts:verify-step2',
                 kwargs={
                     'uidb64':
-                    urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
+                    urlsafe_base64_encode(force_bytes(user.pk)),
                     'token':
                     verify_token_generator.make_token(user),
                 })),
@@ -161,7 +161,7 @@ def _send_forgot_email(request, user):
                 'accounts:forgot-step2',
                 kwargs={
                     'uidb64':
-                    urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
+                    urlsafe_base64_encode(force_bytes(user.pk)),
                     'token':
                     forgot_token_generator.make_token(user),
                 })),
@@ -191,12 +191,12 @@ def _send_change_email(request, user, new_email):
                 'accounts:change-email-step2',
                 kwargs={
                     'uidb64':
-                    urlsafe_base64_encode(force_bytes(user.pk)).decode('utf8'),
+                    urlsafe_base64_encode(force_bytes(user.pk)),
                     'token':
                     verify_token_generator.make_token(user),
                     'new_email':
                     urlsafe_base64_encode(
-                        force_bytes(new_email)).decode('utf8'),
+                        force_bytes(new_email)),
                 })),
     }
     user.email = old_email
@@ -398,7 +398,7 @@ def change_email(request):
             signer.sign(new_email).encode('utf8'))
         return redirect(
             reverse('accounts:change-email-sent') + '?e=' +
-            email_signed.decode('utf8'))
+            email_signed)
 
     return render(request, 'accounts/change_email/step1.html', {'form': form})
 
@@ -531,7 +531,7 @@ def forgot(request):
                     signer.sign(user.email).encode('utf8'))
                 return redirect(
                     reverse('accounts:forgot-sent') + '?e=' +
-                    email_signed.decode('utf8'))
+                    email_signed)
     return render(request, 'accounts/forgot/step1.html', {'form': form})
 
 
