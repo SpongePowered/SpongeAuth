@@ -9,15 +9,16 @@ import accounts.tests.factories
 BAD_EXAMPLES = [
     ("lukegb", []),
     ("_lukegb", []),
+    ("_lukegb_", []),
     ("a", ['username_min_length']),
-    ("__", ['username_double_special', 'username_min_length', 'username_ending_charset']),
-    ("._", ['username_double_special', 'username_min_length', 'username_ending_charset', 'username_initial_charset']),
+    ("__", ['username_double_special', 'username_min_length']),
+    ("._", ['username_double_special', 'username_min_length', 'username_charset', 'username_initial_charset']),
     ("\N{SNOWMAN}", ['username_charset', 'username_min_length', 'username_ending_charset', 'username_initial_charset']),
-    (".png", ['username_file_suffix', 'username_initial_charset']),
-    ("lukegb.png", ['username_file_suffix']),
+    (".png", ['username_charset', 'username_initial_charset']),
+    ("lukegb.png", ['username_charset']),
     ("luke__gb", ['username_double_special']),
-    ("luke_.gb", ['username_double_special']),
-    ("lukegb_", ['username_ending_charset']),
+    ("luke_.gb", ['username_charset', 'username_double_special']),
+    ("lukegb-", ['username_ending_charset']),
     ("-lukegb", ['username_initial_charset']),
 ]
 

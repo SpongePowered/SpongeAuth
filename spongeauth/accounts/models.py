@@ -23,28 +23,22 @@ def validate_username(username):
         errs.append(ValidationError(
             _('Username must be at least 3 characters long.'),
             code='username_min_length'))
-    if re.search(r'[^\w.-]', username):
+    if re.search(r'[^\w-]', username):
         errs.append(ValidationError(
-            _('Username must only include numbers, letters, and underscores.'),
+            _('Username must only include numbers, letters, underscores and dashes.'),
             code='username_charset'))
     if re.search(r'\W', username[0]):
         errs.append(ValidationError(
-            _('Username must begin with a number, letter or underscore.'),
+            _('Username must begin with a letter, number or underscore.'),
             code='username_initial_charset'))
-    if re.search(r'[^A-Za-z0-9]', username[-1]):
+    if re.search(r'\W', username[-1]):
         errs.append(ValidationError(
-            _('Username must end with a letter or number.'),
+            _('Username must end with a letter, number or underscore.'),
             code='username_ending_charset'))
-    if re.search(r'[-_.]{2,}', username):
+    if re.search(r'[^A-Za-z0-9]{2,}', username):
         errs.append(ValidationError(
             _('Username must not contain two special characters in a row.'),
             code='username_double_special'))
-    if re.search(
-            r'\.(js|json|css|htm|html|xml|jpg|jpeg|png|gif|bmp|ico|tif|tiff|woff)$',
-            username):
-        errs.append(ValidationError(
-            _('Username must not end with a confusing file suffix.'),
-            code='username_file_suffix'))
     if errs:
         raise ValidationError(errs)
 
