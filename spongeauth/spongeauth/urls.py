@@ -24,6 +24,7 @@ import twofa.urls
 import sso.urls
 
 from core.views import index, admin_login_redirect
+from analytics.views import index as analytics_index
 
 from accounts.views import avatar_for_user
 
@@ -38,6 +39,7 @@ urlpatterns = [
     url(r'^sso/', include(sso.urls, 'sso')),
     url(r'^$', index, name='index'),
     url(r'^api/', include(api.urls, 'api')),
+    url(r'^analytics/$', analytics_index, name='analytics')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

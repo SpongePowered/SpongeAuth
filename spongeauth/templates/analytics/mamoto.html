@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Analytics Settings" %}{% endblock %}
+{% block main %}
+<div class="container top-level">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">{% trans "Analytics Settings" %}</h4>
+                </div>
+                <div class="panel-body">
+                    <iframe style="border: 0; width: 100%;" src="https://analytics.spongepowered.org/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=&fontColor=&fontSize=&fontFamily=Helvetica Neue, Helvetica" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
