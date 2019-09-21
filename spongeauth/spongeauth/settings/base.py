@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "user_sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_rq",
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,6 @@ IS_TESTING = False
 ACCOUNTS_AVATAR_CHANGE_MAX_AGE = 1800
 ACCOUNTS_AVATAR_RESIZE_MAX_DIMENSION = 240
 ACCOUNTS_AVATAR_CHANGE_GROUPS = ["dummy"]
+
+# Redis queue settings.
+RQ_QUEUES = {"default": {"HOST": "localhost", "PORT": 6379, "DB": 0, "DEFAULT_TIMEOUT": 300}}

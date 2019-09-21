@@ -1,8 +1,11 @@
 import unittest.mock
 
+import django_rq
 import pytest
+import requests
 
 from accounts.tests.factories import UserFactory, GroupFactory
+from accounts.models import Group
 from .. import discourse_sso
 from ..utils import send_update_ping
 
@@ -17,14 +20,11 @@ TEST_SSO_ENDPOINTS = {
 
 @pytest.mark.django_db
 def test_send_update_ping(settings):
-    with unittest.mock.patch.object(discourse_sso, "DiscourseSigner") as fake_discourse_signer_cls:
-        fake_send_post = unittest.mock.MagicMock()
+    with unittest.mock.patch.object(
+        discourse_sso, "DiscourseSigner"
+    ) as fake_discourse_signer_cls, unittest.mock.patch.object(requests, "post") as fake_send_post:
         fake_discourse_signer = fake_discourse_signer_cls.return_value
         fake_discourse_signer.sign.return_value = ("payload", "signature")
-        fake_group = unittest.mock.MagicMock()
-        filt_group = fake_group.objects.filter.return_value.order_by.return_value
-        filt_group.filter.return_value.values_list.return_value = ["aardvark", "banana", "carrot"]
-        filt_group.exclude.return_value.values_list.return_value = ["gingerbread", "horseradish", "indigo"]
 
         user = UserFactory.create(
             email="foo@example.com",
@@ -36,8 +36,17 @@ def test_send_update_ping(settings):
             discord_id="foobar#1234",
         )
 
+        groups = {
+            n: Group(name=n, internal_name=n, internal_only=False)
+            for n in ["aardvark", "banana", "carrot", "gingerbread", "horseradish", "indigo"]
+        }
+        Group.objects.bulk_create(groups.values())
+        user.groups.set(groups[a] for a in ["aardvark", "banana", "carrot"])
+        user.save()
+
         settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
-        send_update_ping(user, send_post=fake_send_post, group=fake_group)
+        send_update_ping(user)
+        django_rq.get_worker().work(burst=True)
 
         fake_send_post.assert_called_once_with(
             "http://discourse.example.com/admin/users/sync_sso",
@@ -65,8 +74,9 @@ def test_send_update_ping(settings):
 
 @pytest.mark.django_db
 def test_send_update_ping_better(settings):
-    with unittest.mock.patch.object(discourse_sso, "DiscourseSigner") as fake_discourse_signer_cls:
-        fake_send_post = unittest.mock.MagicMock()
+    with unittest.mock.patch.object(
+        discourse_sso, "DiscourseSigner"
+    ) as fake_discourse_signer_cls, unittest.mock.patch.object(requests, "post") as fake_send_post:
         fake_discourse_signer = fake_discourse_signer_cls.return_value
         fake_discourse_signer.sign.return_value = ("payload", "signature")
 
@@ -89,7 +99,8 @@ def test_send_update_ping_better(settings):
         user.groups.set([excluded_group, in_group, in_internal_group])
 
         settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
-        send_update_ping(user, send_post=fake_send_post, exclude_groups=[excluded_group.id])
+        send_update_ping(user, exclude_groups=[excluded_group.id])
+        django_rq.get_worker().work(burst=True)
 
         fake_send_post.assert_called_once_with(
             "http://discourse.example.com/admin/users/sync_sso",
@@ -114,7 +125,8 @@ def test_send_update_ping_better(settings):
             }
         )
 
-        send_update_ping(user, send_post=fake_send_post)
+        send_update_ping(user)
+        django_rq.get_worker().work(burst=True)
         fake_discourse_signer.sign.assert_called_with(
             {
                 "nonce": str(user.id),
