@@ -2,8 +2,9 @@
 import os
 import sys
 
-assert sys.version_info >= (3, 6), (
-    "SpongeAuth needs at least Python 3.6 to operate. You are running {}".format(sys.version))
+assert sys.version_info >= (3, 6), "SpongeAuth needs at least Python 3.6 to operate. You are running {}".format(
+    sys.version
+)
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spongeauth.settings.dev")
@@ -15,6 +16,7 @@ if __name__ == "__main__":
         # exceptions on Python 2.
         try:
             import django
+
             assert django
         except ImportError:
             raise ImportError(

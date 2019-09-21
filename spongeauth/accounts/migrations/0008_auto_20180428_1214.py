@@ -7,33 +7,38 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0007_group_add_internal_name'),
-    ]
+    dependencies = [("accounts", "0007_group_add_internal_name")]
 
     operations = [
         migrations.CreateModel(
-            name='TermsOfService',
+            name="TermsOfService",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=60, unique=True)),
-                ('tos_date', models.DateField()),
-                ('tos_url', models.URLField(unique=True)),
-                ('current_tos', models.BooleanField(default=False)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=60, unique=True)),
+                ("tos_date", models.DateField()),
+                ("tos_url", models.URLField(unique=True)),
+                ("current_tos", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='TermsOfServiceAcceptance',
+            name="TermsOfServiceAcceptance",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('accepted_at', models.DateTimeField(auto_now_add=True)),
-                ('tos', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.TermsOfService')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("accepted_at", models.DateTimeField(auto_now_add=True)),
+                ("tos", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="accounts.TermsOfService")),
+                ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
-            model_name='user',
-            name='tos_accepted',
-            field=models.ManyToManyField(blank=True, related_name='agreed_users', related_query_name='agreed_users', through='accounts.TermsOfServiceAcceptance', to='accounts.TermsOfService', verbose_name='terms of service'),
+            model_name="user",
+            name="tos_accepted",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="agreed_users",
+                related_query_name="agreed_users",
+                through="accounts.TermsOfServiceAcceptance",
+                to="accounts.TermsOfService",
+                verbose_name="terms of service",
+            ),
         ),
     ]

@@ -7,22 +7,26 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0002_add_username_validator'),
-    ]
+    dependencies = [("accounts", "0002_add_username_validator")]
 
     operations = [
         migrations.CreateModel(
-            name='Group',
+            name="Group",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=80, unique=True)),
-                ('internal_only', models.BooleanField(default=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=80, unique=True)),
+                ("internal_only", models.BooleanField(default=True)),
             ],
         ),
         migrations.AddField(
-            model_name='user',
-            name='groups',
-            field=models.ManyToManyField(blank=True, related_name='user_set', related_query_name='user', to='accounts.Group', verbose_name='groups'),
+            model_name="user",
+            name="groups",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="user_set",
+                related_query_name="user",
+                to="accounts.Group",
+                verbose_name="groups",
+            ),
         ),
     ]
