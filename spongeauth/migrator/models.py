@@ -23,5 +23,5 @@ class User(models.Model):
     google_id = models.CharField(max_length=255)
 
     class Meta:
-        db_table = 'users'
+        db_table = "users"
         managed = settings.IS_TESTING

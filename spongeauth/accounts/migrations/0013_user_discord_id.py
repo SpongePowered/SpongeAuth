@@ -6,14 +6,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0012_auto_20190102_1545'),
-    ]
+    dependencies = [("accounts", "0012_auto_20190102_1545")]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='discord_id',
-            field=models.CharField(blank=True, max_length=255, validators=[accounts.models.validate_discord_id], verbose_name='Discord ID'),
-        ),
+            model_name="user",
+            name="discord_id",
+            field=models.CharField(
+                blank=True, max_length=255, validators=[accounts.models.validate_discord_id], verbose_name="Discord ID"
+            ),
+        )
     ]

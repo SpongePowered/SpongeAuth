@@ -7,14 +7,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0001_initial'),
-    ]
+    dependencies = [("api", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='apikey',
-            name='description',
-            field=models.CharField(blank=True, default='', max_length=255),
-        ),
+            model_name="apikey", name="description", field=models.CharField(blank=True, default="", max_length=255)
+        )
     ]

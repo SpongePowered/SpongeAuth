@@ -5,28 +5,28 @@ from django.db import migrations, models
 
 
 def populate_internal_name(apps, schema_editor):
-    Group = apps.get_model('accounts', 'Group')
+    Group = apps.get_model("accounts", "Group")
     for group in Group.objects.all():
-        group.internal_name = group.name.lower().replace(' ', '_')
+        group.internal_name = group.name.lower().replace(" ", "_")
         group.save()
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0006_add_username_insensitive_index'),
-    ]
+    dependencies = [("accounts", "0006_add_username_insensitive_index")]
 
     operations = [
         migrations.AddField(
-            model_name='group',
-            name='internal_name',
-            field=models.CharField(default='', max_length=20, unique=True, validators=[accounts.models.validate_username]),
+            model_name="group",
+            name="internal_name",
+            field=models.CharField(
+                default="", max_length=20, unique=True, validators=[accounts.models.validate_username]
+            ),
         ),
         migrations.RunPython(populate_internal_name),
         migrations.AlterField(
-            model_name='group',
-            name='internal_name',
+            model_name="group",
+            name="internal_name",
             field=models.CharField(max_length=20, unique=True, validators=[accounts.models.validate_username]),
         ),
     ]
