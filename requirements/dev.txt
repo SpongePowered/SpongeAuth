@@ -1,6 +1,6 @@
 -r base.txt
 
-pytest-django==3.5.1
+pytest-django==3.7.0
 prospector==1.1.7
 factory_boy==2.12.0
 Faker==2.0.0
