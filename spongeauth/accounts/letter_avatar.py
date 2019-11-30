@@ -1,6 +1,5 @@
 import hashlib
-
-LETTER_AVATAR_BASE = "https://forums-cdn.spongepowered.org/" "letter_avatar_proxy/v2/letter/{}/{}/240.png"
+from django.conf import settings
 
 
 class LetterAvatar(object):
@@ -19,7 +18,7 @@ class LetterAvatar(object):
         return "".join(hex(c)[2:].rjust(2, "0") for c in colour)
 
     def get_absolute_url(self):
-        return LETTER_AVATAR_BASE.format(self.username[0].lower(), self.colour)
+        return settings.LETTER_AVATAR_BASE.format(self.username[0].lower(), self.colour)
 
 
 # palette of optimally disctinct colors
