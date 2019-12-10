@@ -9,4 +9,4 @@ pytz==2019.3
 requests==2.22.0
 psycopg2-binary==2.8.4
 django-autocomplete-light==3.4.1
-django-rq==2.1.0
+django-rq==2.2.0
