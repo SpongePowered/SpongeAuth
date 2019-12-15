@@ -7,10 +7,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0005_user_is_staff'),
-    ]
+    dependencies = [("accounts", "0005_user_is_staff")]
 
     operations = [
-        migrations.RunSQL("CREATE UNIQUE INDEX accounts_user_unique_username ON accounts_user (UPPER(username))", "DROP INDEX IF EXISTS accounts_user_unique_username"),
+        migrations.RunSQL(
+            "CREATE UNIQUE INDEX accounts_user_unique_username ON accounts_user (UPPER(username))",
+            "DROP INDEX IF EXISTS accounts_user_unique_username",
+        )
     ]

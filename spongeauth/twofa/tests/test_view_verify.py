@@ -15,27 +15,26 @@ from .. import models
 class TestVerify(django.test.TestCase):
     def setUp(self):
         self.user = accounts.models.User.objects.create_user(
-            username='bob', email='bob@secret.com', password='secret',
-            email_verified=True)
+            username="bob", email="bob@secret.com", password="secret", email_verified=True
+        )
 
         self.client = django.test.Client()
         session = self.client.session
-        session['twofa_target_user'] = self.user.id
+        session["twofa_target_user"] = self.user.id
         session.save()
 
         self.device = None
         self.other_devices = []
 
-        patcher = unittest.mock.patch(
-            'twofa.views._get_verify_device', self.patch_get_verify_device)
+        patcher = unittest.mock.patch("twofa.views._get_verify_device", self.patch_get_verify_device)
         patcher.start()
         self.addCleanup(patcher.stop)
 
     def path(self, device=None):
         kwargs = {}
         if device:
-            kwargs['device_id'] = device.id
-        return django.shortcuts.reverse('twofa:verify', kwargs=kwargs)
+            kwargs["device_id"] = device.id
+        return django.shortcuts.reverse("twofa:verify", kwargs=kwargs)
 
     def patch_get_verify_device(self, user, device_id):
         self.requested_user = user
@@ -44,11 +43,11 @@ class TestVerify(django.test.TestCase):
 
     def test_redirects_if_logged_in(self):
         accounts.models.User.objects.create_user(
-            username='fred', email='fred@secret.com', password='secret',
-            email_verified=True)
+            username="fred", email="fred@secret.com", password="secret", email_verified=True
+        )
 
         client = django.test.Client()
-        assert client.login(username='fred', password='secret')
+        assert client.login(username="fred", password="secret")
         resp = client.get(self.path())
         assert resp.status_code == 302
 
@@ -65,39 +64,35 @@ class TestVerify(django.test.TestCase):
 
     def test_can_render_totp(self):
         self.device = models.TOTPDevice(
-            owner=self.user, activated_at=timezone.now(),
-            last_t=0, base32_secret='GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ')
+            owner=self.user, activated_at=timezone.now(), last_t=0, base32_secret="GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
+        )
         self.device.save()
 
         self.client.get(self.path())
 
     def test_full_login_flow_default_device(self):
-        self.device = models.PaperDevice(
-            owner=self.user)
+        self.device = models.PaperDevice(owner=self.user)
         self.device.save()
         assert self.device.last_used_at is None
 
-        used_code = models.PaperCode(
-            device=self.device, code='deadbeef',
-            used_at=timezone.now())
+        used_code = models.PaperCode(device=self.device, code="deadbeef", used_at=timezone.now())
         used_code.save()
 
-        code = models.PaperCode(
-            device=self.device, code='aardvark')
+        code = models.PaperCode(device=self.device, code="aardvark")
         code.save()
 
         resp = self.client.get(self.path())
         assert self.requested_user == self.user
         assert self.requested_device_id is None
         assert resp.status_code == 200
-        self.assertTemplateUsed(resp, 'twofa/verify/base.html')
+        self.assertTemplateUsed(resp, "twofa/verify/base.html")
 
-        resp = self.client.post(self.path(), {'response': 'deadbeef'})
+        resp = self.client.post(self.path(), {"response": "deadbeef"})
         assert resp.status_code == 200
 
-        resp = self.client.post(self.path(), {'response': 'aardvark'})
+        resp = self.client.post(self.path(), {"response": "aardvark"})
         assert resp.status_code == 302
-        assert resp['Location'] == django.urls.reverse('index')
+        assert resp["Location"] == django.urls.reverse("index")
 
         user = django.contrib.auth.get_user(self.client)
         assert user.is_authenticated
@@ -109,27 +104,24 @@ class TestVerify(django.test.TestCase):
         assert device.last_used_at is not None
 
     def test_full_login_flow_different_device(self):
-        self.device = models.PaperDevice(
-            owner=self.user)
+        self.device = models.PaperDevice(owner=self.user)
         self.device.save()
 
-        real_device = models.PaperDevice(
-            owner=self.user)
+        real_device = models.PaperDevice(owner=self.user)
         real_device.save()
         self.other_devices = [real_device]
 
-        code = models.PaperCode(
-            device=real_device, code='aardvark')
+        code = models.PaperCode(device=real_device, code="aardvark")
         code.save()
 
         resp = self.client.get(self.path())
         assert self.requested_user == self.user
         assert self.requested_device_id is None
         assert resp.status_code == 200
-        self.assertTemplateUsed(resp, 'twofa/verify/base.html')
-        assert set(resp.context[-1]['other_devices']) == {real_device}
+        self.assertTemplateUsed(resp, "twofa/verify/base.html")
+        assert set(resp.context[-1]["other_devices"]) == {real_device}
 
-        resp = self.client.post(self.path(), {'response': 'aardvark'})
+        resp = self.client.post(self.path(), {"response": "aardvark"})
         assert resp.status_code == 200
         user = django.contrib.auth.get_user(self.client)
         assert not user.is_authenticated
@@ -142,7 +134,7 @@ class TestVerify(django.test.TestCase):
         assert self.requested_device_id == str(real_device.id)
         assert resp.status_code == 200
 
-        resp = self.client.post(self.path(real_device), {'response': 'aardvark'})
+        resp = self.client.post(self.path(real_device), {"response": "aardvark"})
         assert resp.status_code == 302
         user = django.contrib.auth.get_user(self.client)
         assert user.is_authenticated

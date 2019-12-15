@@ -20,7 +20,7 @@ def on_user_save(sender, instance=None, **kwargs):
 
 @receiver(m2m_changed, sender=User.groups.through)
 def on_group_change(sender, instance=None, pk_set=None, action=None, reverse=None, **kwargs):
-    if action not in ('post_add', 'post_remove'):
+    if action not in ("post_add", "post_remove"):
         return
     if not _can_ping():
         return  # do nothing, again
@@ -34,7 +34,7 @@ def on_group_change(sender, instance=None, pk_set=None, action=None, reverse=Non
 
 @receiver(m2m_changed, sender=User.groups.through)
 def on_group_clear(sender, instance=None, pk_set=None, action=None, reverse=None, **kwargs):
-    if action != 'pre_clear':
+    if action != "pre_clear":
         return
     if not _can_ping():
         return  # do nothing, again
@@ -43,7 +43,7 @@ def on_group_clear(sender, instance=None, pk_set=None, action=None, reverse=None
         groups = [instance.id]
     else:
         instances = [instance]
-        groups = list(instance.groups.values_list('id', flat=True))
+        groups = list(instance.groups.values_list("id", flat=True))
     for instance in instances:
         send_update_ping(instance, exclude_groups=groups)
 

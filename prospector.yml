@@ -16,6 +16,8 @@ ignore-patterns:
 
 pep8:
   full: true
+  disable:
+    - E203
   options:
     max-line-length: 120
 

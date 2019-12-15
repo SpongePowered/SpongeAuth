@@ -17,7 +17,7 @@ class DeviceQuerySetMixin(object):
         return self.filter(owner=user, deleted_at=None).exclude(activated_at=None)
 
     def best_authenticator(self):
-        return self.exclude_backup().order_by('last_used_at').first()
+        return self.exclude_backup().order_by("last_used_at").first()
 
     def exclude_backup(self):
         return self.exclude(id__in=PaperDevice.objects.filter(id__in=self))
@@ -37,7 +37,7 @@ class DeviceManager(InheritanceManager.from_queryset(DeviceQuerySet)):
 
 
 class Device(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='twofa_totp_devices')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="twofa_totp_devices")
     added_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     last_used_at = models.DateTimeField(null=True, blank=True)
     activated_at = models.DateTimeField(null=True, blank=True)
@@ -78,11 +78,11 @@ class TOTPDevice(Device):
         return _("Google Authenticator (TOTP)")
 
     def verify_form(self, *args, **kwargs):
-        kwargs['device'] = self
+        kwargs["device"] = self
         return forms.TOTPVerifyForm(*args, **kwargs)
 
     def verify_template(self):
-        return 'twofa/verify/totp.html'
+        return "twofa/verify/totp.html"
 
     def can_delete(self):
         return True
@@ -97,20 +97,14 @@ class PaperDevice(Device):
 
     def extra_info(self):
         count = self.codes.filter(used_at=None).count()
-        return ungettext(
-            "%(count)d code remaining",
-            "%(count)d codes remaining",
-            count
-        ) % {
-            'count': count,
-        }
+        return ungettext("%(count)d code remaining", "%(count)d codes remaining", count) % {"count": count}
 
     def verify_form(self, *args, **kwargs):
-        kwargs['device'] = self
+        kwargs["device"] = self
         return forms.PaperVerifyForm(*args, **kwargs)
 
     def verify_template(self):
-        return 'twofa/verify/paper.html'
+        return "twofa/verify/paper.html"
 
     def can_regenerate(self):
         return True
@@ -125,7 +119,7 @@ class PaperDevice(Device):
 
 
 class PaperCode(models.Model):
-    device = models.ForeignKey(PaperDevice, on_delete=models.CASCADE, related_name='codes')
+    device = models.ForeignKey(PaperDevice, on_delete=models.CASCADE, related_name="codes")
 
     code = models.CharField(max_length=8, blank=False, null=False)
     used_at = models.DateTimeField(null=True, blank=True)

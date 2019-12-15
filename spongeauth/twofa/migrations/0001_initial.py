@@ -11,54 +11,78 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
 
     operations = [
         migrations.CreateModel(
-            name='Device',
+            name="Device",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('added_at', models.DateTimeField(auto_now_add=True)),
-                ('last_used_at', models.DateTimeField(blank=True, null=True)),
-                ('activated_at', models.DateTimeField(blank=True, null=True)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("added_at", models.DateTimeField(auto_now_add=True)),
+                ("last_used_at", models.DateTimeField(blank=True, null=True)),
+                ("activated_at", models.DateTimeField(blank=True, null=True)),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='PaperCode',
+            name="PaperCode",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=8)),
-                ('used_at', models.DateTimeField(blank=True, null=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("code", models.CharField(max_length=8)),
+                ("used_at", models.DateTimeField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='PaperDevice',
+            name="PaperDevice",
             fields=[
-                ('device_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='twofa.Device')),
+                (
+                    "device_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="twofa.Device",
+                    ),
+                )
             ],
-            bases=('twofa.device',),
+            bases=("twofa.device",),
         ),
         migrations.CreateModel(
-            name='TOTPDevice',
+            name="TOTPDevice",
             fields=[
-                ('device_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='twofa.Device')),
-                ('base32_secret', models.CharField(max_length=32)),
-                ('last_t', models.PositiveIntegerField()),
-                ('drift', models.IntegerField(default=0)),
+                (
+                    "device_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="twofa.Device",
+                    ),
+                ),
+                ("base32_secret", models.CharField(max_length=32)),
+                ("last_t", models.PositiveIntegerField()),
+                ("drift", models.IntegerField(default=0)),
             ],
-            bases=('twofa.device',),
+            bases=("twofa.device",),
         ),
         migrations.AddField(
-            model_name='device',
-            name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='twofa_totp_devices', to=settings.AUTH_USER_MODEL),
+            model_name="device",
+            name="owner",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="twofa_totp_devices",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='papercode',
-            name='device',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='codes', to='twofa.PaperDevice'),
+            model_name="papercode",
+            name="device",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="codes", to="twofa.PaperDevice"
+            ),
         ),
     ]

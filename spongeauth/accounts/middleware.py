@@ -14,8 +14,8 @@ class RedirectIfConditionUnmet:
 
     def __call__(self, request):
         if self.must_verify(request.user) and not self.may_pass(request.path):
-            params = urllib.parse.urlencode({'next': request.get_full_path()})
-            return redirect('{}?{}'.format(reverse(self.REDIRECT_TO), params))
+            params = urllib.parse.urlencode({"next": request.get_full_path()})
+            return redirect("{}?{}".format(reverse(self.REDIRECT_TO), params))
 
         response = self.get_response(request)
         return response
@@ -30,17 +30,14 @@ class RedirectIfConditionUnmet:
             func = resolve(url).func
         except django.urls.exceptions.Resolver404:
             return False
-        for f in [
-            'allow_without_verified_email',
-            'allow_without_agreed_tos',
-        ]:
+        for f in ["allow_without_verified_email", "allow_without_agreed_tos"]:
             if getattr(func, f, False):
                 return True
         return False
 
 
 class EnforceVerifiedEmails(RedirectIfConditionUnmet):
-    REDIRECT_TO = 'accounts:verify'
+    REDIRECT_TO = "accounts:verify"
 
     @staticmethod
     def must_verify(user):
@@ -53,7 +50,7 @@ def allow_without_verified_email(f):
 
 
 class EnforceToSAccepted(RedirectIfConditionUnmet):
-    REDIRECT_TO = 'accounts:agree-tos'
+    REDIRECT_TO = "accounts:agree-tos"
 
     @staticmethod
     def must_verify(user):
