@@ -1,8 +1,8 @@
 import secrets
 
 from django.db import models
-from django.utils.translation import ugettext as _
-from django.utils.translation import ungettext
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from django.utils import timezone
 
 from model_utils.managers import InheritanceQuerySet, InheritanceManager
@@ -97,7 +97,7 @@ class PaperDevice(Device):
 
     def extra_info(self):
         count = self.codes.filter(used_at=None).count()
-        return ungettext("%(count)d code remaining", "%(count)d codes remaining", count) % {"count": count}
+        return ngettext("%(count)d code remaining", "%(count)d codes remaining", count) % {"count": count}
 
     def verify_form(self, *args, **kwargs):
         kwargs["device"] = self

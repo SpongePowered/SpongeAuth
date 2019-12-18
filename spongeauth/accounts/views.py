@@ -3,7 +3,7 @@ import io
 
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.conf import settings as django_settings
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -14,7 +14,7 @@ import django.contrib.auth
 import django.contrib.auth.views
 import django.contrib.auth.tokens
 from django.contrib.auth.decorators import login_required
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
@@ -71,7 +71,7 @@ def _log_user_in(request, user, skip_twofa=False):
 
 def _login_redirect_url(request, fallback_to=None):
     redirect_to = request.POST.get("next", request.GET.get("next", ""))
-    if not redirect_to or not is_safe_url(
+    if not redirect_to or not url_has_allowed_host_and_scheme(
         url=redirect_to, allowed_hosts={request.get_host()}, require_https=request.is_secure()
     ):
         return fallback_to or django_settings.LOGIN_REDIRECT_URL
