@@ -51,9 +51,9 @@ def test_js_sourcemap(smsf_storage):
     list(smsf_storage.post_process(smsf_storage.paths()))
 
     assert "maps/blah2.ae359e87985b.map" in smsf_storage._files
-    assert "blah.89cb2015a170.js" in smsf_storage._files
+    assert "blah.ba512a3f6190.js" in smsf_storage._files
     assert (
-        smsf_storage._files["blah.89cb2015a170.js"]
+        smsf_storage._files["blah.ba512a3f6190.js"]
         == b"\n(function() { some js here })();\n//# sourceMappingURL=maps/blah2.ae359e87985b.map\n"
     )
 
@@ -70,8 +70,8 @@ somecss { transition: none; }
     list(smsf_storage.post_process(smsf_storage.paths()))
 
     assert "maps/blah2.ae359e87985b.map" in smsf_storage._files
-    assert "blah.99cd30dca034.css" in smsf_storage._files
+    assert "blah.6315db321095.css" in smsf_storage._files
     assert (
-        smsf_storage._files["blah.99cd30dca034.css"]
+        smsf_storage._files["blah.6315db321095.css"]
         == b"\nsomecss { transition: none; }\n/*# sourceMappingURL=maps/blah2.ae359e87985b.map */\n"
     )
