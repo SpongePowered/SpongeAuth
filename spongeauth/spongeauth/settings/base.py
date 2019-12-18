@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "core.middleware.XRealIPMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "user_sessions.middleware.SessionMiddleware",
+    "sso.middleware.UserSessionsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
