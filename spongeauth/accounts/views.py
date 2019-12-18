@@ -3,7 +3,7 @@ import io
 
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.conf import settings as django_settings
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
