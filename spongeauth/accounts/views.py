@@ -649,7 +649,7 @@ def avatar_for_user(request, username):
         canvas_w, canvas_h = size_w, size_h
 
         output_format = ("PNG", "image/png")
-        if "image/webp" in request.META.get("HTTP_ACCEPT"):
+        if "image/webp" in request.META.get("HTTP_ACCEPT", ""):
             output_format = ("WEBP", "image/webp")
 
         if avatar.source == models.Avatar.UPLOAD:
