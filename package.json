@@ -18,7 +18,7 @@
         "gulp-cli": "^2.2.0",
         "gulp-sass": "^4.0.2",
         "gulp-sourcemaps": "^2.6.5",
-        "minimist": "^1.2.0",
+        "minimist": "^1.2.2",
         "sass-module-importer": "^1.4.0"
     },
     "resolutions": {
