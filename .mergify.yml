@@ -1,0 +1,28 @@
+pull_request_rules:
+  - name: Pyup automatic merge on CI passing
+    conditions:
+      - "author=pyup-bot"
+      - "-merged"
+      - "status-success=continuous-integration/travis-ci/pr"
+    actions:
+      merge:
+        method: merge
+      delete_head_branch: {}
+  - name: Pyup flag for human review on CI failing
+    conditions:
+      - "author=pyup-bot"
+      - "-merged"
+      - "status-failure=continuous-integration/travis-ci/pr"
+    actions:
+      request_reviews:
+        users: [lukegb]
+      comment:
+        message: "This PR failed Travis; please review."
+  - name: Automatic merge on approval
+    conditions:
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+    actions:
+      merge:
+        method: merge
+      delete_head_branch: {}
