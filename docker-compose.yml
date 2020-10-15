@@ -5,7 +5,7 @@ volumes:
   redis:
   static:
   swag:
-  
+
 services:
   db:
     image: postgres:12.4
