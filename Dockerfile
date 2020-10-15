@@ -16,6 +16,8 @@ RUN apt-get update \
     postgresql-client \
     libpq-dev \
     git \
+    nano \
+    tree \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && npm install npm@latest -g
@@ -34,6 +36,12 @@ RUN npm install \
 
 COPY . /app
 
-ENV DJANGO_SETTINGS_MODULE=spongeauth.settings.docker
+RUN node_modules/.bin/gulp build \
+    && chmod 777 /app/entrypoint/run.sh
 
-CMD ["/app/hack/run.sh"]
+RUN groupadd -g "$(stat -c '%g' /app)" -o spongeauth && \
+    useradd -u "$(stat -c '%u' /app)" -g spongeauth -o -m spongeauth
+
+ENV DJANGO_SETTINGS_MODULE=spongeauth.settings.prod
+
+CMD ["/app/entrypoint/run.sh"]
