@@ -1,27 +1,50 @@
-version: "2"
+version: "3.8"
 
 volumes:
   spongeauth-db:
+  static-content:
+  media-content:
 
 services:
   db:
-    image: postgres:9.6
+    image: postgres:13.0
     volumes:
       - spongeauth-db:/var/lib/postgresql
     environment:
-      POSTGRES_USER: spongeauth
-      POSTGRES_PASSWORD: spongeauth
-      POSTGRES_DB: spongeauth
-  mail:
-    image: mailhog/mailhog:latest
-    ports:
-      - "8025:8025"
+      POSTGRES_USER: "spongeauth"
+      POSTGRES_PASSWORD: "spongeauth"
+      POSTGRES_DB: "spongeauth"
+  redis:
+    image: redis:6.0.6
   app:
     build: .
+    volumes:
+      - static-content:/public_html/static
+      - media-content:/public_html/media
     ports:
       - "8000:8000"
     links:
       - "db"
-      - "mail"
+      - "redis"
+    environment:
+      SECRET_KEY: "23ri32rk32rn32rkn32nkr32krl2k"
+      EMAIL_HOST: "mail"
+      EMAIL_PORT: "1025"
+      EMAIL_SSL: "false"
+      EMAIL_TLS: "false"
+      EMAIL_HOST_USER: "dum"
+      EMAIL_HOST_PASSWORD: "dum"
+      DB_NAME: "spongeauth"
+      DB_USER: "spongeauth"
+      DB_PASSWORD: "spongeauth"
+      DB_HOST: "db"
+      REDIS_HOST: "redis"
+  nginx:
+    build: ./nginx
     volumes:
-      - .:/app
+      - static-content:/srv/http/static
+      - media-content:/srv/http/media
+    ports:
+      - 1337:80
+    depends_on:
+      - app
