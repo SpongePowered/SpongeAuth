@@ -7,7 +7,7 @@ from .base import *
 GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
 PARENT_ROOT = os.path.dirname(GIT_REPO_ROOT)
 
-DEBUG = True
+DEBUG = False
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
@@ -85,7 +85,7 @@ ACCOUNTS_AVATAR_CHANGE_GROUPS = ["dummy", "Ore_Organization"]
 
 RQ_QUEUES = {"default": {"HOST": os.environ["REDIS_HOST"], "PORT": 6379, "DB": 0, "DEFAULT_TIMEOUT": 300}}
 
-LETTER_AVATAR_BASE = os.getenv("LETTER_AVATAR_BASE", "https://forums-cdn.spongepowered.org/" "letter_avatar_proxy/v2/letter/{}/{}/240.png")
+LETTER_AVATAR_BASE = os.getenv("LETTER_AVATAR_BASE") or "https://forums-cdn.spongepowered.org/" "letter_avatar_proxy/v2/letter/{}/{}/240.png"
 
 if not os.environ.get("DJANGO_SETTINGS_SKIP_LOCAL", False):
     try:

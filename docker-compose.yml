@@ -3,7 +3,7 @@ version: "3.8"
 volumes:
   spongeauth-db:
   static-content:
-  media-content:
+  letsencrypt:
 
 services:
   db:
@@ -20,31 +20,44 @@ services:
     build: .
     volumes:
       - static-content:/public_html/static
-      - media-content:/public_html/media
-    ports:
-      - "8000:8000"
+      - ./data/media:/public_html/media
+    expose:
+      - "8000"
     links:
       - "db"
       - "redis"
     environment:
-      SECRET_KEY: "23ri32rk32rn32rkn32nkr32krl2k"
-      EMAIL_HOST: "mail"
-      EMAIL_PORT: "1025"
-      EMAIL_SSL: "false"
-      EMAIL_TLS: "false"
-      EMAIL_HOST_USER: "dum"
-      EMAIL_HOST_PASSWORD: "dum"
+      SECRET_KEY: "${SECRET_KEY:?You must set the secret key}"
+      EMAIL_HOST: "${EMAIL_HOST:?You must set the email server host}"
+      EMAIL_PORT: "${EMAIL_PORT:?You must set the email server port}"
+      EMAIL_SSL: "${EMAIL_SSL:-false}"
+      EMAIL_TLS: "${EMAIL_TLS:-true}"
+      EMAIL_HOST_USER: "${EMAIL_HOST_USER:?You must set the email user}"
+      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD:?You must set the password for the email user}"
       DB_NAME: "spongeauth"
       DB_USER: "spongeauth"
       DB_PASSWORD: "spongeauth"
       DB_HOST: "db"
       REDIS_HOST: "redis"
-  nginx:
-    build: ./nginx
-    volumes:
-      - static-content:/srv/http/static
-      - media-content:/srv/http/media
-    ports:
-      - 1337:80
+      LETTER_AVATAR_BASE: ${LETTER_AVATAR_BASE:-}
     depends_on:
-      - app
+      - "redis"
+      - "db"
+  nginx:
+    restart: unless-stopped
+    image: staticfloat/nginx-certbot
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+      - "1337:1337/tcp"
+    environment:
+      CERTBOT_EMAIL: "${CERTBOT_EMAIL:?You must set an email for certbot}"
+      ENVSUBST_VARS: FQDN
+      FQDN: "${FQDN:?You must set a full qualified domain name}"
+    volumes:
+      - ./data/nginx/nginx.conf:/etc/nginx/user.conf.d/auth.conf:ro
+      - letsencrypt:/etc/letsencrypt
+      - static-content:/srv/http/static:ro
+      - ./data/media:/srv/http/media:ro
+    depends_on:
+      - "app"
