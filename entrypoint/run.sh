@@ -17,7 +17,7 @@ echo "Postgres ready, continuing" >&2
 # migrate database
 su -c "/env/bin/python spongeauth/manage.py migrate --no-input" spongeauth
 
-su -c "/env/bin/python spongeauth/manage.py collectstatic --no-input --clear" spongeauth
+su -c "/env/bin/python spongeauth/manage.py collectstatic --no-input" spongeauth
 
 set +euxo pipefail
 
