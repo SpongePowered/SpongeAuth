@@ -23,7 +23,7 @@ SECRET_KEY = "tr2#$_hu73wp2p&jt@%u#d%xx859%32o)8f(dy1+&o!z2o=c1)"
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["auth.spongepowered.org", "localhost", "auth", "spongeauth_auth"]
+ALLOWED_HOSTS = ["auth.spongepowered.org", "staging-auth.spongeproject.net", "localhost"]
 
 REQUIRE_EMAIL_CONFIRM = True
 
