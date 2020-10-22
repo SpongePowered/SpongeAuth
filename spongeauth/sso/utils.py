@@ -52,8 +52,9 @@ def send_update_ping_to_endpoint(user_id, endpoint_name, exclude_groups):
     payload = make_payload(user, str(user.pk), exclude_groups=exclude_groups)
     sso = discourse_sso.DiscourseSigner(endpoint_settings["sso_secret"])
     out_payload, out_signature = sso.sign(payload)
-    data = {"sso": out_payload, "sig": out_signature, "api_username": "system", "api_key": endpoint_settings["api_key"]}
-    resp = requests.post(endpoint_settings["sync_sso_endpoint"], data=data)
+    headers = {"Api-Username": "system", "Api-Key": endpoint_settings["api_key"]}
+    data = {"sso": out_payload, "sig": out_signature}
+    resp = requests.post(endpoint_settings["sync_sso_endpoint"], data=data, headers=headers)
     if resp.status_code >= 400:
         logging.warning("SSO Sync error: " + resp.text)
     resp.raise_for_status()
