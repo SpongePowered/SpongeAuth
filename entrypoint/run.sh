@@ -26,5 +26,5 @@ set +euxo pipefail
 
 # run
 while true; do
-	su -c "/env/bin/gunicorn --bind 0.0.0.0:8000 --chdir "./spongeauth" spongeauth.wsgi:application"
+	su -c "/env/bin/gunicorn --bind 0.0.0.0:8000 --chdir "./spongeauth" --capture-output --enable-stdio-inheritance spongeauth.wsgi:application"
 done
