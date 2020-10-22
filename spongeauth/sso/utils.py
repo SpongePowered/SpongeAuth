@@ -3,6 +3,7 @@ from django.db.models import Q
 
 import django_rq
 import requests
+import logging
 
 from accounts.models import Group, User
 from . import discourse_sso
@@ -53,6 +54,8 @@ def send_update_ping_to_endpoint(user_id, endpoint_name, exclude_groups):
     out_payload, out_signature = sso.sign(payload)
     data = {"sso": out_payload, "sig": out_signature, "api_username": "system", "api_key": endpoint_settings["api_key"]}
     resp = requests.post(endpoint_settings["sync_sso_endpoint"], data=data)
+    if resp.status_code >= 400:
+        logging.warning("SSO Sync error: " + resp.text)
     resp.raise_for_status()
 
 

@@ -1,13 +1,16 @@
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.rq import RqIntegration
 
 from .utils import fetch_git_sha
 from .base import *
+import ast
 
 GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
 PARENT_ROOT = os.path.dirname(GIT_REPO_ROOT)
 
-DEBUG = False
+DEBUG = True
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
@@ -60,10 +63,11 @@ for k, v in os.environ.items():
     d[key.lower()] = v
 
 sentry_sdk.init(
-    dsn=os.environ.get("RAVEN_DSN"),
-    integrations=[DjangoIntegration()],
+    dsn=os.environ.get("SENTRY_DSN"),
+    integrations=[RedisIntegration(),RqIntegration(),DjangoIntegration()],
     release=fetch_git_sha(GIT_REPO_ROOT),
     send_default_pii=True,
+    environment=os.environ.get("SENTRY_ENVIRONMENT")
 )
 
 DATABASES = {
