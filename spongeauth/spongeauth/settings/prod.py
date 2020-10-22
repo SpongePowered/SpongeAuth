@@ -10,7 +10,7 @@ import ast
 GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
 PARENT_ROOT = os.path.dirname(GIT_REPO_ROOT)
 
-DEBUG = True
+DEBUG = False
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
