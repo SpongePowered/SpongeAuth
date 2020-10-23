@@ -1,12 +1,12 @@
 Django==3.0.8
 -e git+https://github.com/lukegb/django-user-sessions.git#egg=django-user-sessions
-Pillow==7.2.0
+Pillow==8.0.1
 oauth2client==4.1.3
 django-crispy-forms==1.9.2
 django-model-utils==4.0.0
 qrcode==6.1
 pytz==2020.1
-requests==2.23.0
+requests==2.24.0
 psycopg2-binary==2.8.6
-django-autocomplete-light==3.5.1
+django-autocomplete-light==3.8.1
 django-rq==2.3.2
