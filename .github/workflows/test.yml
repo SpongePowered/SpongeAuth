@@ -66,3 +66,4 @@ jobs:
         DB_PASSWORD: postgres
         DB_NAME: postgres
         DB_HOST: localhost
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
