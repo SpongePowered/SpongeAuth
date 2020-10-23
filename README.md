@@ -1,7 +1,7 @@
 SpongeAuth
 ==========
 
-[![build](https://github.com/SpongePowered/SpongeAuth/workflows/Test/badge.svg?branch=master)](https://github.com/SpongePowered/SpongeAuth/actions?query=branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/SpongePowered/SpongeAuth/badge.svg?branch=master)](https://coveralls.io/github/SpongePowered/SpongeAuth?branch=master)
+[![build](https://github.com/SpongePowered/SpongeAuth/workflows/build/badge.svg?branch=master)](https://github.com/SpongePowered/SpongeAuth/actions?query=branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/SpongePowered/SpongeAuth/badge.svg?branch=master)](https://coveralls.io/github/SpongePowered/SpongeAuth?branch=master)
 
 An authentication portal for shared user accounts between Sponge services.
 
