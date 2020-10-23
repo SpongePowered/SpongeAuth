@@ -64,10 +64,6 @@ sentry_sdk.init(
     send_default_pii=True,
 )
 
-DATABASES = {
-    "default": {"ENGINE": "django.db.backends.postgresql", "NAME": "spongeauth", "HOST": "", "ATOMIC_REQUESTS": True}
-}
-
 STATICFILES_STORAGE = "core.staticfiles.SourcemapManifestStaticFilesStorage"
 STATIC_ROOT = os.path.join(PARENT_ROOT, "public_html", "static")
 MEDIA_ROOT = os.path.join(PARENT_ROOT, "public_html", "media")
