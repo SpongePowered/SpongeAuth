@@ -3,7 +3,7 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
     strategy:
@@ -55,7 +55,7 @@ jobs:
         pip install tox
         npm ci
         npm install gulp-cli
-    - name: Build 
+    - name: Gulp build
       run: |
         node_modules/.bin/gulp build
     - name: Test with tox ${{ matrix.tox-env }}
