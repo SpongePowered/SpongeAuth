@@ -86,10 +86,6 @@ WSGI_APPLICATION = "spongeauth.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-print("==== DEBUG ====")
-print(os.getenv("DB_NAME", "spongeauth"))
-print("===============")
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
