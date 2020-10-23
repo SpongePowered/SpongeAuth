@@ -48,6 +48,8 @@ TEMPLATES = [
     }
 ]
 
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
+
 SSO_ENDPOINTS = {}
 for k, v in os.environ.items():
     if not k.startswith("SSO_ENDPOINT_"):
@@ -63,10 +65,6 @@ sentry_sdk.init(
     release=fetch_git_sha(GIT_REPO_ROOT),
     send_default_pii=True,
 )
-
-DATABASES = {
-    "default": {"ENGINE": "django.db.backends.postgresql", "NAME": "spongeauth", "HOST": "", "ATOMIC_REQUESTS": True}
-}
 
 STATICFILES_STORAGE = "core.staticfiles.SourcemapManifestStaticFilesStorage"
 STATIC_ROOT = os.path.join(PARENT_ROOT, "public_html", "static")
