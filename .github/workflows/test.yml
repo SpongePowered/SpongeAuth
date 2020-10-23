@@ -61,7 +61,7 @@ jobs:
     - name: Test with tox ${{ matrix.tox-env }}
       run: |
         tox -e ${{ matrix.tox-env }}
-      with:
+      env:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_NAME: postgres
