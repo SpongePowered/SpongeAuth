@@ -27,13 +27,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Cache multiple paths
+    - name: Cache npm dependencies
       uses: actions/cache@v2
       with:
-        path: |
-          ~/.cache/pip
-          **/node_modules
-        key: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.node-version }}-${{ matrix.tox-env }}-${{ hashFiles('**/lockfiles') }}
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Cache pip dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -46,7 +53,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install tox
-        npm install
+        npm ci
         npm install gulp-cli
     - name: Build 
       run: |
