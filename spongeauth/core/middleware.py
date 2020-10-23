@@ -3,8 +3,9 @@ class XRealIPMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.META.get("X-Forwarded-For", ",").split(",")[0]:
-            request.META["REMOTE_ADDR"] = request.META["HTTP_X_REAL_IP"]
+        real_ip = request.META.get("X-Forwarded-For", ",").split(",")[0]
+        if real_ip:
+            request.META["REMOTE_ADDR"] = real_ip
 
         response = self.get_response(request)
         return response
