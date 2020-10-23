@@ -48,6 +48,8 @@ TEMPLATES = [
     }
 ]
 
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
+
 SSO_ENDPOINTS = {}
 for k, v in os.environ.items():
     if not k.startswith("SSO_ENDPOINT_"):
