@@ -52,7 +52,7 @@ services:
       - SUBDOMAINS=
       - VALIDATION=http
       - EMAIL="${CERTBOT_EMAIL:?You must set an email for certbot}"
-      - STAGING=true
+      - STAGING=${STAGING=-false}
     volumes:
       - swag:/config
       - ./conf/nginx.conf:/config/nginx/site-confs/default
