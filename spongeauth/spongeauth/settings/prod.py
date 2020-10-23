@@ -5,17 +5,11 @@ from sentry_sdk.integrations.rq import RqIntegration
 
 from .utils import fetch_git_sha
 from .base import *
-import ast
 
 GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
 PARENT_ROOT = os.path.dirname(GIT_REPO_ROOT)
 
-DEBUG = True
-
 SECRET_KEY = os.environ["SECRET_KEY"]
-
-DEFAULT_FROM_EMAIL = "admin@spongepowered.org"
-SERVER_EMAIL = "admin@spongepowered.org"
 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -23,8 +17,8 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = os.environ["EMAIL_TLS"] == 'true'
-EMAIL_USE_SSL = os.environ["EMAIL_SSL"] == 'true'
+EMAIL_USE_TLS = os.environ["EMAIL_TLS"].lower() == 'true'
+EMAIL_USE_SSL = os.environ["EMAIL_SSL"].lower() == 'true'
 EMAIL_HOST = os.environ["EMAIL_HOST"]
 EMAIL_PORT = int(os.environ["EMAIL_PORT"])
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
@@ -64,7 +58,7 @@ for k, v in os.environ.items():
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
-    integrations=[RedisIntegration(),RqIntegration(),DjangoIntegration()],
+    integrations=[RedisIntegration(), RqIntegration(), DjangoIntegration()],
     release=fetch_git_sha(GIT_REPO_ROOT),
     send_default_pii=True,
     environment=os.environ.get("SENTRY_ENVIRONMENT")
