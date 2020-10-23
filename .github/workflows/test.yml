@@ -14,7 +14,7 @@ jobs:
         
     services:
       postgres:
-        image: postgres:12.2
+        image: postgres:latest
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -27,6 +27,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/pip
+          **/node_modules
+        key: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.node-version }}-${{ matrix.tox-env }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
