@@ -17,9 +17,9 @@ pull_request_rules:
       - "status-failure=continuous-integration/travis-ci/pr"
     actions:
       request_reviews:
-        users: [lukegb]
+        users: [lukegb, felixoi]
       comment:
-        message: "This PR failed Travis; please review."
+        message: "This PR failed tests; please review."
   - name: Dependency updater - flag for human review on CI push failing
     conditions:
       - "author~=^(pyup-bot|dependabot)$"
@@ -28,9 +28,9 @@ pull_request_rules:
       - "-status-failure=continuous-integration/travis-ci/pr"
     actions:
       request_reviews:
-        users: [lukegb]
+        users: [lukegb, felixoi]
       comment:
-        message: "This PR failed Travis; please review."
+        message: "This PR failed tests; please review."
   - name: Automatic merge on approval
     conditions:
       - "#approved-reviews-by>=1"
