@@ -126,7 +126,7 @@ def _send_verify_email(request, user):
     msg_html = render_to_string("accounts/verify/email.html", template_kwargs)
     msg_text = render_to_string("accounts/verify/email.txt", template_kwargs)
     send_mail(
-        "[Sponge] Confirm your email address", msg_text, "admin@spongepowered.org", [user.email], html_message=msg_html
+        "[Sponge] Confirm your email address", msg_text, django_settings.EMAIL_FROM, [user.email], html_message=msg_html
     )
 
 
@@ -146,7 +146,7 @@ def _send_forgot_email(request, user):
     }
     msg_html = render_to_string("accounts/forgot/email.html", template_kwargs)
     msg_text = render_to_string("accounts/forgot/email.txt", template_kwargs)
-    send_mail("[Sponge] Reset your password", msg_text, "admin@spongepowered.org", [user.email], html_message=msg_html)
+    send_mail("[Sponge] Reset your password", msg_text, django_settings.EMAIL_FROM, [user.email], html_message=msg_html)
 
 
 def _send_change_email(request, user, new_email):

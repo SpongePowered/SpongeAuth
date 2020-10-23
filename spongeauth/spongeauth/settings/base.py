@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "tr2#$_hu73wp2p&jt@%u#d%xx859%32o)8f(dy1+&o!z2o=c1)"
 
-DEBUG = False
+DEBUG = os.getenv("DEBUG").lower() == 'true' if os.getenv("DEBUG") else False
 
 ALLOWED_HOSTS = ["auth.spongepowered.org", "staging-auth.spongeproject.net"]
 
@@ -139,6 +139,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap3"
 AUTH_USER_MODEL = "accounts.User"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_FROM = os.getenv("EMAIL_FROM", os.getenv("EMAIL_HOST_USER", "admin@spongepowered.org"))
 
 # e.g.
 # SSO_ENDPOINTS = {
