@@ -65,4 +65,4 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_NAME: postgres
-        DB_HOST: postgres
+        DB_HOST: localhost
