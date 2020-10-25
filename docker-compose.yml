@@ -2,7 +2,6 @@ version: "3.8"
 
 volumes:
   postgres:
-  redis:
   static:
   swag:
 
@@ -16,10 +15,7 @@ services:
       POSTGRES_PASSWORD: "spongeauth"
       POSTGRES_DB: "spongeauth"
   redis:
-    image: redis:6.0.6
-    command: redis-server --appendonly yes
-    volumes:
-      - redis:/data
+    image: redis:6.0.8
   app:
     build: .
     volumes:
