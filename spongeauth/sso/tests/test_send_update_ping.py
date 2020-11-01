@@ -18,7 +18,6 @@ TEST_SSO_ENDPOINTS = {
 }
 
 
-
 @pytest.mark.django_db
 def test_send_update_ping(settings):
     with unittest.mock.patch.object(
