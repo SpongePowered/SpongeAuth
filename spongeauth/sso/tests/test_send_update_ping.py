@@ -18,6 +18,7 @@ TEST_SSO_ENDPOINTS = {
 }
 
 
+
 @pytest.mark.django_db
 def test_send_update_ping(settings):
     with unittest.mock.patch.object(
@@ -25,7 +26,7 @@ def test_send_update_ping(settings):
     ) as fake_discourse_signer_cls, unittest.mock.patch.object(requests, "post") as fake_send_post:
         fake_discourse_signer = fake_discourse_signer_cls.return_value
         fake_discourse_signer.sign.return_value = ("payload", "signature")
-        fake_send_post.return_value = {"status_code": 200}
+        fake_send_post.return_value.status_code = 200
 
         user = UserFactory.create(
             email="foo@example.com",
@@ -81,7 +82,7 @@ def test_send_update_ping_better(settings):
     ) as fake_discourse_signer_cls, unittest.mock.patch.object(requests, "post") as fake_send_post:
         fake_discourse_signer = fake_discourse_signer_cls.return_value
         fake_discourse_signer.sign.return_value = ("payload", "signature")
-        fake_send_post.return_value = {"status_code": 200}
+        fake_send_post.return_value.status_code = 200
 
         excluded_group = GroupFactory.create(internal_only=False, internal_name="1-excluded")
         in_group = GroupFactory.create(internal_only=False, internal_name="2-in")
