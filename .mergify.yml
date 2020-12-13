@@ -1,7 +1,7 @@
 pull_request_rules:
   - name: Dependency updater - automatic merge on CI passing
     conditions:
-      - "author~=^(pyup-bot|dependabot)$"
+      - "author~=^(pyup-bot|dependabot\\[bot\\])$"
       - "-merged"
       - "status-success=test (3.x, 12, py36-cov)"
       - "status-success=test (3.x, 12, lint)"
