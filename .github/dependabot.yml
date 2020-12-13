@@ -3,4 +3,8 @@ updates:
   - package-ecosystem: "pip"
     directory: "/requirements"
     schedule:
+        interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
       interval: "daily"
