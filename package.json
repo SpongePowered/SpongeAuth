@@ -1,9 +1,9 @@
 {
-    "name": "spongeauth",
+    "name": "oreauth",
     "version": "1.0.0",
     "main": "index.js",
-    "repository": "https://github.com/SpongePowered/SpongeAuth.git",
-    "author": "The SpongePowered Team",
+    "repository": "https://github.com/PowerNukkit/OreAuth.git",
+    "author": "The PowerNukkit Ore Team",
     "license": "MIT",
     "devDependencies": {
         "@babel/core": "^7.12.10",

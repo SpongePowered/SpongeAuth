@@ -1,8 +1,8 @@
 {% load i18n %}{% blocktrans with username=user.username %}Hi {{ username }},{% endblocktrans %}
 
-{% blocktrans %}Welcome to SpongePowered! Click the link below to confirm your new account.{% endblocktrans %}
+{% blocktrans %}Welcome to PowerNukkit Ore! Click the link below to confirm your new account.{% endblocktrans %}
 
 {{ link }}
 
 {% blocktrans %}Best regards,
-The SpongePowered Team{% endblocktrans %}
+The PowerNukkit Team{% endblocktrans %}

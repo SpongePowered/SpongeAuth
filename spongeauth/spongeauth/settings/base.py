@@ -23,7 +23,7 @@ SECRET_KEY = "tr2#$_hu73wp2p&jt@%u#d%xx859%32o)8f(dy1+&o!z2o=c1)"
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["auth.spongepowered.org"]
+ALLOWED_HOSTS = ["auth.powernukkit.org"]
 
 REQUIRE_EMAIL_CONFIRM = True
 
@@ -162,4 +162,4 @@ ACCOUNTS_AVATAR_CHANGE_GROUPS = ["dummy"]
 # Redis queue settings.
 RQ_QUEUES = {"default": {"HOST": "localhost", "PORT": 6379, "DB": 0, "DEFAULT_TIMEOUT": 300}}
 
-LETTER_AVATAR_BASE = "https://forums-cdn.spongepowered.org/" "letter_avatar_proxy/v2/letter/{}/{}/240.png"
+LETTER_AVATAR_BASE = "https://discuss.powernukkit.org/" "letter_avatar_proxy/v2/letter/{}/{}/240.png"
