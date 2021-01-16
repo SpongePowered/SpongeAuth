@@ -31,7 +31,7 @@ set +euxo pipefail
 (
 	trap 'kill -TERM $PYTHONPID' TERM INT
 	while true; do
-		su -c "/env/bin/python spongeauth/manage.py runserver 0.0.0.0:8080" spongeauth &
+		su -c "/env/bin/python spongeauth/manage.py runserver 0.0.0.0:8000" spongeauth &
 		PYTHONPID=$!
 		wait $PYTHONPID
 	done
