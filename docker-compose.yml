@@ -23,3 +23,5 @@ services:
     links:
       - "db"
       - "mail"
+    volumes:	
+      - .:/app
