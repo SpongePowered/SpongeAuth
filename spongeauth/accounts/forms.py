@@ -41,7 +41,7 @@ class ProfileFieldsMixin(forms.Form):
         label=_("Full Name"), max_length=255, required=False, help_text=_("Enter your full name here")
     )
     mc_username = forms.CharField(
-        label=_("Minecraft Username"),
+        label=_("XBox GameTag"),
         max_length=255,
         required=False,
         help_text=_("Enter the username you use for Minecraft here"),
