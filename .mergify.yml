@@ -3,7 +3,7 @@ pull_request_rules:
     conditions:
       - "author~=^(pyup-bot|dependabot\\[bot\\])$"
       - "-merged"
-      - "status-success=test (3.x, 12, py36-cov)"
+      - "status-success=test (3.x, 12, py3-cov)"
       - "status-success=test (3.x, 12, lint)"
     actions:
       merge:
@@ -14,7 +14,7 @@ pull_request_rules:
     conditions:
       - "author~=^(pyup-bot|dependabot)$"
       - "-merged"
-      - "status-failure=test (3.x, 12, py36-cov)"
+      - "status-failure=test (3.x, 12, py3-cov)"
     actions:
       request_reviews:
         users: [lukegb, felixoi]
@@ -25,7 +25,7 @@ pull_request_rules:
       - "author~=^(pyup-bot|dependabot)$"
       - "-merged"
       - "status-failure=test (3.x, 12, lint)"
-      - "-status-failure=test (3.x, 12, py36-cov)"
+      - "-status-failure=test (3.x, 12, py3-cov)"
     actions:
       request_reviews:
         users: [lukegb, felixoi]
