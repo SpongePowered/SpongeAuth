@@ -10,7 +10,7 @@ jobs:
       matrix:
         python-version: [ '3.x' ]
         node-version: [ '12' ]
-        tox-env: ['py36-cov', 'lint']
+        tox-env: ['py3-cov', 'lint']
         
     services:
       postgres:
