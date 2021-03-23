@@ -7,7 +7,7 @@
     "license": "MIT",
     "devDependencies": {
         "@babel/core": "^7.13.10",
-        "@babel/preset-env": "^7.13.10",
+        "@babel/preset-env": "^7.13.12",
         "@babel/register": "^7.13.8",
         "bootstrap-sass": "3.4.1",
         "font-awesome": "^4.7.0",
