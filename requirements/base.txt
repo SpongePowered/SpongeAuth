@@ -1,4 +1,4 @@
-Django==3.2.3
+Django==3.2.4
 -e git+https://github.com/lukegb/django-user-sessions.git#egg=django-user-sessions
 Pillow==8.2.0
 oauth2client==4.1.3
