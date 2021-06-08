@@ -8,4 +8,4 @@ django-debug-toolbar==3.2.1
 pylint==2.5.3
 black==21.5b2
 pre-commit==2.13.0
-fakeredis==1.5.1
+fakeredis==1.5.2
