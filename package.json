@@ -16,7 +16,7 @@
         "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.3.0",
         "gulp-cli": "^2.3.0",
-        "gulp-sass": "^4.1.1",
+        "gulp-sass": "^5.0.0",
         "gulp-sourcemaps": "^3.0.0",
         "minimist": "^1.2.5",
         "sass-module-importer": "^1.4.0"
