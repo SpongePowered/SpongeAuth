@@ -3,12 +3,12 @@ import path from 'path';
 import minimist from 'minimist'
 import gulp from 'gulp'
 import sourcemaps from 'gulp-sourcemaps';
-import sass from 'gulp-sass';
 import cleanCSS from 'gulp-clean-css';
 import moduleImporter from 'sass-module-importer';
 import compilerPackage from 'google-closure-compiler';
 import babel from 'gulp-babel'
 
+const sass = require('gulp-sass')(require('sass'));
 const closureCompiler = compilerPackage.gulp();
 
 const paths = {
