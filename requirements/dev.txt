@@ -6,6 +6,6 @@ factory_boy==3.2.0
 Faker==8.12.1
 django-debug-toolbar==3.2.2
 pylint<3
-black==21.7b0
+black==21.8b0
 pre-commit==2.14.0
 fakeredis==1.6.0
