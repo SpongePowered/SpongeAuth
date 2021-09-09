@@ -11,7 +11,7 @@
         "@babel/register": "^7.15.3",
         "bootstrap-sass": "3.4.1",
         "font-awesome": "^4.7.0",
-        "google-closure-compiler": "^20210906.0.0",
+        "google-closure-compiler": "^20210907.0.0",
         "gulp": "^4.0.2",
         "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.3.0",
