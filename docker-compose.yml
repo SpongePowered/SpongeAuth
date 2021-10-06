@@ -1,19 +1,9 @@
 version: "3.8"
 
 volumes:
-  postgres:
   static:
-  swag:
 
 services:
-  db:
-    image: postgres:12.4
-    volumes:
-      - postgres:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: "spongeauth"
-      POSTGRES_PASSWORD: "spongeauth"
-      POSTGRES_DB: "spongeauth"
   redis:
     image: redis:6.0.8
   app:
@@ -24,36 +14,18 @@ services:
     expose:
       - "8000"
     links:
-      - "db"
       - "redis"
     env_file:
     - .env
     depends_on:
       - "redis"
-      - "db"
-  swag:
-    image: linuxserver/swag
-    container_name: swag
-    cap_add:
-      - NET_ADMIN
-    restart: unless-stopped
-    ports:
-      - 443:443
-      - 80:80
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/London
-      - URL="${FQDN:?You must set a full qualified domain name}"
-      - SUBDOMAINS=
-      - VALIDATION=http
-      - EMAIL="${CERTBOT_EMAIL:?You must set an email for certbot}"
-      - STAGING="${STAGING:-false}"
+  nginx:
+    image: nginx:latest
     volumes:
-      - swag:/config
-      - ./conf/nginx.conf:/config/nginx/site-confs/default
-      - ./media:/srv/http/media:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - static:/srv/http/static:ro
+    ports:
+      - "8000:8000"
     links:
       - "app"
     depends_on:

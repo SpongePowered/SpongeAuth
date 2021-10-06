@@ -23,7 +23,7 @@ SECRET_KEY = "tr2#$_hu73wp2p&jt@%u#d%xx859%32o)8f(dy1+&o!z2o=c1)"
 
 DEBUG = os.getenv("DEBUG").lower() == 'true' if os.getenv("DEBUG") else False
 
-ALLOWED_HOSTS = ["auth.spongepowered.org", "staging-auth.spongeproject.net"]
+ALLOWED_HOSTS = ["auth.spongepowered.org", "staging-auth.spongeproject.net", "localhost:8000", "localhost"]
 
 REQUIRE_EMAIL_CONFIRM = True
 
@@ -60,7 +60,7 @@ MIDDLEWARE = [
     "accounts.middleware.EnforceVerifiedEmails",
     "accounts.middleware.EnforceToSAccepted",
 ]
-
+SILENCED_SYSTEM_CHECKS = ['admin.E410']
 SESSION_ENGINE = "user_sessions.backends.db"
 
 ROOT_URLCONF = "spongeauth.urls"
@@ -105,6 +105,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

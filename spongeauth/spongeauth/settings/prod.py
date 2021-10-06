@@ -10,6 +10,7 @@ GIT_REPO_ROOT = os.path.dirname(BASE_DIR)
 PARENT_ROOT = os.path.dirname(GIT_REPO_ROOT)
 
 SECRET_KEY = os.environ["SECRET_KEY"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(',')
 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -44,8 +45,6 @@ TEMPLATES = [
         },
     }
 ]
-
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 SSO_ENDPOINTS = {}
 for k, v in os.environ.items():
