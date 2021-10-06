@@ -80,9 +80,16 @@ MEDIA_ROOT = os.path.join(PARENT_ROOT, "public_html", "media")
 
 ACCOUNTS_AVATAR_CHANGE_GROUPS = ["dummy", "Ore_Organization"]
 
-RQ_QUEUES = {"default": {"HOST": os.environ["REDIS_HOST"], "PORT": 6379, "DB": 0, "DEFAULT_TIMEOUT": 300}}
+RQ_QUEUES = {
+    "default": {
+        "HOST": os.environ["REDIS_HOST"],
+        "PORT": os.environ["REDIS_PORT"],
+        "DB": os.environ["REDIS_DB"],
+        "DEFAULT_TIMEOUT": 300
+    }
+}
 
-LETTER_AVATAR_BASE = os.getenv("LETTER_AVATAR_BASE") or "https://forums-cdn.spongepowered.org/" "letter_avatar_proxy/v2/letter/{}/{}/240.png"
+LETTER_AVATAR_BASE = os.getenv("LETTER_AVATAR_BASE") or "https://forums-cdn.spongepowered.org/letter_avatar_proxy/v2/letter/{}/{}/240.png"
 
 if not os.environ.get("DJANGO_SETTINGS_SKIP_LOCAL", False):
     try:

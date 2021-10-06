@@ -23,7 +23,7 @@ SECRET_KEY = "tr2#$_hu73wp2p&jt@%u#d%xx859%32o)8f(dy1+&o!z2o=c1)"
 
 DEBUG = os.getenv("DEBUG").lower() == 'true' if os.getenv("DEBUG") else False
 
-ALLOWED_HOSTS = ["auth.spongepowered.org", "staging-auth.spongeproject.net", "localhost:8000", "localhost"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(',')
 
 REQUIRE_EMAIL_CONFIRM = True
 
