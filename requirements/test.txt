@@ -1,4 +1,4 @@
 -r dev.txt
 
-coveralls==3.2.0
+coveralls==3.3.0
 pytest-cov==3.0.0
