@@ -1,3 +1,9 @@
+queue_rules:
+  - name: default
+    conditions:
+      - "status-success=test (3.x, 12, py3-cov)"
+      - "status-success=test (3.x, 12, lint)"
+
 pull_request_rules:
   - name: Dependency updater - automatic merge on CI passing
     conditions:
@@ -6,9 +12,9 @@ pull_request_rules:
       - "status-success=test (3.x, 12, py3-cov)"
       - "status-success=test (3.x, 12, lint)"
     actions:
-      merge:
+      queue:
         method: rebase
-        strict: smart
+        name: default
       delete_head_branch: {}
   - name: Dependency updater - flag for human review on coverage failing
     conditions:
@@ -37,7 +43,7 @@ pull_request_rules:
       - "#changes-requested-reviews-by=0"
       - "label=ready to merge"
     actions:
-      merge:
+      queue:
         method: merge
-        strict: smart
+        name: default
       delete_head_branch: {}
