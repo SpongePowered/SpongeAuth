@@ -63,6 +63,8 @@ MIDDLEWARE = [
 
 SESSION_ENGINE = "user_sessions.backends.db"
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 ROOT_URLCONF = "spongeauth.urls"
 
 TEMPLATES = [

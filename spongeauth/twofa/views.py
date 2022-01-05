@@ -11,7 +11,8 @@ import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.utils import timezone
-from django.utils.http import urlquote, urlencode
+from django.utils.http import urlencode
+from urllib.parse import quote
 
 import qrcode
 import qrcode.image.svg
@@ -123,7 +124,7 @@ def setup_totp(request):
     signed_secret = setup_signer.sign(b32_secret)
 
     url = "otpauth://totp/Sponge:{}?{}".format(
-        urlquote(request.user.username), urlencode({"secret": b32_secret, "issuer": "Sponge"})
+        quote(request.user.username), urlencode({"secret": b32_secret, "issuer": "Sponge"})
     )
     img = qrcode.make(url, image_factory=qrcode.image.svg.SvgPathFillImage)
     img_buf = io.BytesIO()
