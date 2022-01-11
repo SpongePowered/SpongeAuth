@@ -8,7 +8,7 @@
     "devDependencies": {
         "@babel/core": "^7.16.7",
         "@babel/preset-env": "^7.16.8",
-        "@babel/register": "^7.16.7",
+        "@babel/register": "^7.16.8",
         "bootstrap-sass": "3.4.1",
         "font-awesome": "^4.7.0",
         "google-closure-compiler": "^20220104.0.0",
