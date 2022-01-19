@@ -19,7 +19,7 @@
         "gulp-sass": "^5.1.0",
         "gulp-sourcemaps": "^3.0.0",
         "minimist": "^1.2.5",
-        "sass": "^1.48.0",
+        "sass": "^1.49.0",
         "sass-module-importer": "^1.4.0"
     },
     "resolutions": {
