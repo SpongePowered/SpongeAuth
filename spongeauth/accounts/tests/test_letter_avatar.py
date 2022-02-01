@@ -13,5 +13,5 @@ def test_colours(username, expected):
 def test_get_absolute_url():
     av = letter_avatar.LetterAvatar("sAlaMi")
     assert av.get_absolute_url() == (
-        "https://forums-cdn.spongepowered.org/letter_avatar_proxy/" "v2/letter/s/f05b48/240.png"
+        "https://avatars.discourse-cdn.com/v4/letter/s/f05b48/240.png"
     )
