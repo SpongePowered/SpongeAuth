@@ -11,8 +11,8 @@ DEBUG = False
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
-DEFAULT_FROM_EMAIL = "admin@spongepowered.org"
-SERVER_EMAIL = "admin@spongepowered.org"
+DEFAULT_FROM_EMAIL = os.environ["DEFAULT_FROM_EMAIL"]
+SERVER_EMAIL = os.environ["SERVER_EMAIL"]
 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -20,10 +20,10 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST = "mail.spongepowered.org"
-EMAIL_PORT = 587
+EMAIL_USE_TLS = os.environ["EMAIL_TLS"] == 'true'
+EMAIL_USE_SSL = os.environ["EMAIL_SSL"] == 'true'
+EMAIL_HOST = os.environ["EMAIL_HOST"]
+EMAIL_PORT = int(os.environ["EMAIL_PORT"])
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 
@@ -48,8 +48,6 @@ TEMPLATES = [
     }
 ]
 
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
-
 SSO_ENDPOINTS = {}
 for k, v in os.environ.items():
     if not k.startswith("SSO_ENDPOINT_"):
@@ -60,7 +58,7 @@ for k, v in os.environ.items():
     d[key.lower()] = v
 
 sentry_sdk.init(
-    dsn=os.environ.get("RAVEN_DSN"),
+    dsn=os.environ.get("SENTRY_DSN"),
     integrations=[DjangoIntegration()],
     release=fetch_git_sha(GIT_REPO_ROOT),
     send_default_pii=True,
@@ -71,9 +69,3 @@ STATIC_ROOT = os.path.join(PARENT_ROOT, "public_html", "static")
 MEDIA_ROOT = os.path.join(PARENT_ROOT, "public_html", "media")
 
 ACCOUNTS_AVATAR_CHANGE_GROUPS = ["dummy", "Ore_Organization"]
-
-if not os.environ.get("DJANGO_SETTINGS_SKIP_LOCAL", False):
-    try:
-        from .local_settings import *
-    except ImportError:
-        pass

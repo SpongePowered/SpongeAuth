@@ -34,7 +34,11 @@
                 {% include 'bootstrap3/layout/help_text_and_errors.html' %}
             {% else %}
                 <div class="controls {{ field_class }}">
-                    {% crispy_field field %}
+                    {% if not field|is_file %}
+                        {% crispy_field field 'class' 'form-control' %}
+                    {% else %}
+                        {% crispy_field field %}
+                    {% endif %}
                     {% include 'bootstrap3/layout/help_text_and_errors.html' %}
                 </div>
             {% endif %}

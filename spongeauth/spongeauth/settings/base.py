@@ -23,7 +23,7 @@ SECRET_KEY = "tr2#$_hu73wp2p&jt@%u#d%xx859%32o)8f(dy1+&o!z2o=c1)"
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["auth.spongepowered.org"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "auth.spongepowered.org").split(',')
 
 REQUIRE_EMAIL_CONFIRM = True
 
@@ -82,6 +82,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "spongeauth.wsgi.application"
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
@@ -160,6 +162,7 @@ ACCOUNTS_AVATAR_RESIZE_MAX_DIMENSION = 240
 ACCOUNTS_AVATAR_CHANGE_GROUPS = ["dummy"]
 
 # Redis queue settings.
-RQ_QUEUES = {"default": {"HOST": "localhost", "PORT": 6379, "DB": 0, "DEFAULT_TIMEOUT": 300}}
+RQ_QUEUES = {"default": {"HOST": os.getenv("REDIS_HOST", "localhost"), "PORT": 6379, "DB": 0, "DEFAULT_TIMEOUT": 300}}
 
-LETTER_AVATAR_BASE = "https://forums-cdn.spongepowered.org/" "letter_avatar_proxy/v2/letter/{}/{}/240.png"
+LETTER_AVATAR_BASE = os.getenv("LETTER_AVATAR_BASE", "https://avatars.discourse-cdn.com/v4") \
+                     + "/letter/{}/{}/240.png"
