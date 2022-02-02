@@ -1,5 +1,6 @@
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 from .utils import fetch_git_sha
 from .base import *
@@ -18,7 +19,7 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
-
+<
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = os.environ["EMAIL_TLS"] == 'true'
 EMAIL_USE_SSL = os.environ["EMAIL_SSL"] == 'true'
@@ -59,7 +60,7 @@ for k, v in os.environ.items():
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
-    integrations=[DjangoIntegration()],
+    integrations=[DjangoIntegration(), RedisIntegration()],
     release=fetch_git_sha(GIT_REPO_ROOT),
     send_default_pii=True,
 )
