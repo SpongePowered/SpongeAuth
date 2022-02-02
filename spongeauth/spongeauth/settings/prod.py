@@ -1,5 +1,6 @@
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 from .utils import fetch_git_sha
 from .base import *
@@ -59,7 +60,7 @@ for k, v in os.environ.items():
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
-    integrations=[DjangoIntegration()],
+    integrations=[DjangoIntegration(), RedisIntegration()],
     release=fetch_git_sha(GIT_REPO_ROOT),
     send_default_pii=True,
 )

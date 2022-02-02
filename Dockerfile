@@ -36,7 +36,7 @@ RUN mkdir -p $APP_HOME
 RUN addgroup -S $APP_NAME && adduser -S $APP_NAME -G $APP_NAME
 WORKDIR $APP_HOME
 
-RUN apk update && apk add libpq py3-virtualenv jpeg-dev libpng-dev libwebp-dev
+RUN apk update && apk add libpq py3-virtualenv zlib-dev jpeg-dev libpng-dev libwebp-dev
 
 COPY . $APP_HOME
 COPY --from=builder /app/spongeauth/static-build $APP_HOME/spongeauth/static-build
