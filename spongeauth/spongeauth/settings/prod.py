@@ -19,7 +19,7 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
-<
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = os.environ["EMAIL_TLS"] == 'true'
 EMAIL_USE_SSL = os.environ["EMAIL_SSL"] == 'true'
