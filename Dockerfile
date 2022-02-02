@@ -10,7 +10,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apk update \
-    && apk add postgresql-dev python3-dev nodejs npm git py-pip zlib-dev jpeg-dev musl-dev gcc py3-virtualenv
+    && apk add postgresql-dev python3-dev nodejs npm git py-pip zlib-dev jpeg-dev libpng-dev libwebp-dev musl-dev gcc py3-virtualenv
 
 COPY . /app
 
@@ -36,7 +36,7 @@ RUN mkdir -p $APP_HOME
 RUN addgroup -S $APP_NAME && adduser -S $APP_NAME -G $APP_NAME
 WORKDIR $APP_HOME
 
-RUN apk update && apk add libpq py3-virtualenv jpeg-dev
+RUN apk update && apk add libpq py3-virtualenv jpeg-dev libpng-dev libwebp-dev
 
 COPY . $APP_HOME
 COPY --from=builder /app/spongeauth/static-build $APP_HOME/spongeauth/static-build
