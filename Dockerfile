@@ -33,7 +33,7 @@ ENV HOME=/home/$APP_NAME
 ENV APP_HOME=$HOME/app
 
 RUN mkdir -p $APP_HOME
-RUN addgroup -S $APP_NAME && adduser -S $APP_NAME -G $APP_NAME
+RUN addgroup -g 1000 -S $APP_NAME && adduser -u 1000 -S $APP_NAME -G $APP_NAME
 WORKDIR $APP_HOME
 
 RUN apk update && apk add libpq py3-virtualenv zlib-dev jpeg-dev libpng-dev libwebp-dev
