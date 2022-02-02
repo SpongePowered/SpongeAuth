@@ -13,8 +13,8 @@ services:
   app:
     build: .
     volumes:
-      - static:/home/app/public_html/static
-      - ../media:/home/app/public_html/media
+      - static:/home/spongeauth/public_html/static
+      - ../media:/home/spongeauth/public_html/media
     env_file: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
