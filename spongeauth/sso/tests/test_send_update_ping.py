@@ -50,7 +50,7 @@ def test_send_update_ping(settings):
 
         fake_send_post.assert_called_once_with(
             "http://discourse.example.com/admin/users/sync_sso",
-            headers={"Api-Key": "discourse-api-key", "Api-Username": "system"},
+            headers={"Api-Username": "system", "Api-Key": "discourse-api-key"},
             data={"sso": "payload", "sig": "signature"},
         )
         fake_discourse_signer.sign.assert_called_once_with(
@@ -105,7 +105,8 @@ def test_send_update_ping_better(settings):
 
         fake_send_post.assert_called_once_with(
             "http://discourse.example.com/admin/users/sync_sso",
-            data={"sso": "payload", "sig": "signature", "api_key": "discourse-api-key", "api_username": "system"},
+            headers={"Api-Username": "system", "Api-Key": "discourse-api-key"},
+            data={"sso": "payload", "sig": "signature"},
         )
         fake_discourse_signer.sign.assert_called_once_with(
             {
