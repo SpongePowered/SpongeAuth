@@ -8,10 +8,12 @@ services:
   redis:
     image: redis:alpine
     command: redis-server --save 60 1
+    restart: always
     volumes:
       - redis_data:/data
   app:
     build: .
+    restart: always
     volumes:
       - static:/home/spongeauth/public_html/static
       - ../media:/home/spongeauth/public_html/media
@@ -22,6 +24,7 @@ services:
       - "redis"
   proxy:
     image: nginx:mainline-alpine
+    restart: always
     volumes:
       - static:/usr/share/nginx/public_html/static
       - ../media:/usr/share/nginx/public_html/media
