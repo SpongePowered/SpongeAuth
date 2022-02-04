@@ -1,6 +1,6 @@
 import unittest.mock
 
-from django.conf.urls import url, include
+from django.urls import re_path, include
 import django.http
 import django.test
 import django.shortcuts
@@ -89,7 +89,7 @@ def decorated_view(request):
 
 
 urlpatterns = [
-    url(r"^allowed/$", decorated_view, name="allowed"),
-    url(r"^not-allowed/$", not_decorated_view, name="not-allowed"),
-    url(r"", include(([url(r"^verify/$", decorated_view, name="verify")], "accounts"))),
+    re_path(r"^allowed/$", decorated_view, name="allowed"),
+    re_path(r"^not-allowed/$", not_decorated_view, name="not-allowed"),
+    re_path(r"", include(([re_path(r"^verify/$", decorated_view, name="verify")], "accounts"))),
 ]
