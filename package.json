@@ -6,12 +6,12 @@
     "author": "The SpongePowered Team",
     "license": "MIT",
     "devDependencies": {
-        "@babel/core": "^7.16.7",
-        "@babel/preset-env": "^7.16.7",
-        "@babel/register": "^7.16.7",
+        "@babel/core": "^7.17.0",
+        "@babel/preset-env": "^7.16.11",
+        "@babel/register": "^7.17.0",
         "bootstrap-sass": "3.4.1",
         "font-awesome": "^4.7.0",
-        "google-closure-compiler": "^20211201.0.0",
+        "google-closure-compiler": "^20220104.0.0",
         "gulp": "^4.0.2",
         "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.3.0",
@@ -19,7 +19,7 @@
         "gulp-sass": "^5.1.0",
         "gulp-sourcemaps": "^3.0.0",
         "minimist": "^1.2.5",
-        "sass": "^1.45.2",
+        "sass": "^1.49.7",
         "sass-module-importer": "^1.4.0"
     },
     "resolutions": {

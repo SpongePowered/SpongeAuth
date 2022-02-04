@@ -75,7 +75,7 @@ function scripts() {
         presets: ['@babel/env'],
     });
 
-    return gulp.src(paths.inBase + paths.appScript, {base: './'})
+    return gulp.src(paths.inBase + paths.appScript)
         .pipe(sourcemaps.init())
         .pipe(compiler)
         .pipe(sourcemaps.write('../maps/'))
