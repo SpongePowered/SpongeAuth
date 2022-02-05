@@ -2,18 +2,22 @@ from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 
 
 class SourcemapManifestStaticFilesStorage(ManifestStaticFilesStorage):
-    CSS_SOURCE_MAPS_PATTERN = (r"""(/\*#\s*sourceMappingURL=(.*)\s*\*/)""", """/*# sourceMappingURL=%s */""")
-
-    JS_SOURCE_MAPS_PATTERN = (r"""(//#\s*sourceMappingURL=(.*)$)""", """//# sourceMappingURL=%s""")
-
     patterns = (
-        (
-            "*.css",
+        ("*.css", (
+            r"""(?P<matched>url\(['"]{0,1}\s*(?P<url>.*?)["']{0,1}\))""",
             (
-                r"""(url\(['"]{0,1}\s*(.*?)["']{0,1}\))""",
-                (r"""(@import\s*["']\s*(.*?)["'])""", """@import url("%s")"""),
-                CSS_SOURCE_MAPS_PATTERN,
+                r"""(?P<matched>@import\s*["']\s*(?P<url>.*?)["'])""",
+                """@import url("%(url)s")""",
             ),
-        ),
-        ("*.js", (JS_SOURCE_MAPS_PATTERN,)),
+            (
+                r'(?m)(?P<matched>)^(/\*# (?-i:sourceMappingURL)=(?P<url>.*) \*/)$',
+                '/*# sourceMappingURL=%(url)s */',
+            ),
+        )),
+        ('*.js', (
+            (
+                '(?m)(?P<matched>)^(//# (?-i:sourceMappingURL)=(?P<url>.*))$',
+                '//# sourceMappingURL=%(url)s',
+            ),
+        )),
     )

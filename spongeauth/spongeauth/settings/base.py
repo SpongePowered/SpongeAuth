@@ -85,8 +85,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "spongeauth.wsgi.application"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
