@@ -173,6 +173,7 @@ class AuthenticationForm(forms.Form):
             HTML(
                 """<div class="g-signin2 pull-left" """
                 """data-onsuccess="onGoogleSignIn" """
+                """data-onfailure="onGoogleSignInFailure" """
                 """data-theme="dark"></div>"""
             ),
             FormActions(

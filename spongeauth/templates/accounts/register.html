@@ -14,7 +14,7 @@
                 <div class="panel-body">
 
 					{% if not login_type %}
-                    <div class="g-signin2" data-onsuccess="onGoogleSignIn" data-theme="dark"></div>
+                    <div class="g-signin2" data-onsuccess="onGoogleSignIn" data-onfailure="onGoogleSignInFailure" data-theme="dark"></div>
 					{% endif %}
 
                     {% crispy form %}
