@@ -133,8 +133,9 @@ MEDIA_URL = "/media/"
 
 LOGIN_REDIRECT_URL = "/"
 
-GOOGLE_CLIENT_ID = "375961146994-9cnsdrrhs12geakfbmgiq9e3mfhqo3av.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_SCOPES = ["profile", "email"]
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"
 

@@ -3,6 +3,10 @@
 {% load crispy_forms_tags %}
 
 {% block title %}{% trans "Log in" %}{% endblock %}
+{% block meta %}
+<meta name="google-signin-scope" content="profile email">
+<meta name="google-signin-client_id" content="{{ client_id }}">
+{% endblock %}
 {% block main %}
 <div class="container top-level">
 	<div class="row">
