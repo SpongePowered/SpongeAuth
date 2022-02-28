@@ -9,7 +9,7 @@
         "@babel/core": "^7.17.5",
         "@babel/preset-env": "^7.16.11",
         "@babel/register": "^7.17.0",
-        "bootstrap-sass": "3.4.1",
+        "bootstrap-sass": "3.4.3",
         "font-awesome": "^4.7.0",
         "google-closure-compiler": "^20220202.0.0",
         "gulp": "^4.0.2",
