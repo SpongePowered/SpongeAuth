@@ -14,7 +14,7 @@ ignore-paths:
 ignore-patterns:
   - ^[a-z]+/migrations(/|$)
 
-pep8:
+pycodestyle:
   full: true
   disable:
     - E203
