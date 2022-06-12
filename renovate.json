@@ -2,5 +2,8 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>SpongePowered/.github:renovate-config"
-  ]
+  ],
+  "pip_requirements": {
+    "fileMatch": ["requirements/[^/]*.txt"]
+  }
 }
