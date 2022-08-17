@@ -37,7 +37,7 @@ class AdminUserChangeForm(forms.ModelForm):
                 new_value = self.cleaned_data.get(field)
                 old_value = getattr(self.instance, field)
                 if new_value == old_value:
-                    exclude += [field]
+                    exclude |= {field}
         return exclude
 
     def save_m2m(self):
