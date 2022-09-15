@@ -41,6 +41,7 @@ def _generate_paper_codes_if_needed(user, redirect_to=None, should_generate=_sho
     twofa.models.PaperDevice.objects.active_for_user(user).update(deleted_at=timezone.now())
 
     device = twofa.models.PaperDevice(owner=user)
+    device.save()
     device.regenerate()
 
     return redirect(
