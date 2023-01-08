@@ -12,7 +12,7 @@ ignore-paths:
   - spongeauth/spongeauth/settings
 
 ignore-patterns:
-  - ^[a-z]+/migrations(/|$)
+  - ^spongeauth/[a-z]+/migrations(/|$)
 
 pycodestyle:
   full: true
