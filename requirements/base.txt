@@ -10,4 +10,4 @@ requests==2.31.0
 psycopg2-binary==2.9.6
 django-autocomplete-light==3.9.7
 django-rq==2.8.1
-rq<1.15
+rq<1.16
