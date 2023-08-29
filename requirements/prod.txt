@@ -1,4 +1,4 @@
 -r base.txt
 
-sentry-sdk==1.29.2
+sentry-sdk==1.30.0
 gunicorn==21.2.0
