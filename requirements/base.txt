@@ -1,6 +1,6 @@
 Django==4.2.6
 -e git+https://github.com/felixoi/django-user-sessions.git#egg=django-user-sessions
-Pillow==10.0.1
+Pillow==10.1.0
 oauth2client==4.1.3
 django-crispy-forms==1.14.0
 django-model-utils==4.3.1
