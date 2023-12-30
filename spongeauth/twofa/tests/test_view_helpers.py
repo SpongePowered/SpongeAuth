@@ -44,7 +44,7 @@ class TestShouldGeneratePaperCodes:
 
 @pytest.mark.django_db
 class TestGeneratePaperCodesIfNeeded:
-    def setup(self):
+    def setup_method(self):
         self.user = accounts.models.User(twofa_enabled=True)
         self.user.save()
 

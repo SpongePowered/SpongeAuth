@@ -34,7 +34,7 @@ class TestSetupTotp(django.test.TestCase):
         return base64.b32decode(setup_signer.unsign(resp.context[-1]["form"].secret))
 
     def signer(self, user):
-        return django.core.signing.TimestampSigner("twofa.views.setup_totp:{}".format(user.pk))
+        return django.core.signing.TimestampSigner(key="twofa.views.setup_totp:{}".format(user.pk))
 
     def test_requires_login(self):
         client = django.test.Client()
