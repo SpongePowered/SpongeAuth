@@ -7,7 +7,7 @@ HARDCODED_SIGNING = "slartibartfast"
 
 
 class SignerTestCase:
-    def setup(self):
+    def setup_method(self):
         self.signer = discourse_sso.DiscourseSigner(HARDCODED_SIGNING)
 
 
