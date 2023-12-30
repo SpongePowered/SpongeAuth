@@ -86,7 +86,7 @@ class TestGeneratePaperCodesIfNeeded:
 
 @pytest.mark.django_db
 class TestGetVerifyDevice:
-    def setup(self):
+    def setup_method(self):
         self.user = accounts.models.User.objects.create_user(
             username="fred", email="fred@example.com", password="secret", twofa_enabled=True
         )

@@ -14,7 +14,7 @@ def test_cast_bool():
 
 @pytest.mark.django_db
 class TestMakePayload:
-    def setup(self):
+    def setup_method(self):
         self.request = unittest.mock.MagicMock()
         self.request.build_absolute_uri.return_value = "http://www.example.com/example.jpg"
 

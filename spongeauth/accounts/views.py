@@ -351,7 +351,7 @@ def change_email(request):
     if request.method == "POST" and form.is_valid():
         new_email = form.cleaned_data["new_email"]
         _send_change_email(request, request.user, new_email)
-        signer = Signer("accounts.views.change-email")
+        signer = Signer(key="accounts.views.change-email")
         email_signed = urlsafe_base64_encode(signer.sign(new_email).encode("utf8"))
         return redirect(reverse("accounts:change-email-sent") + "?e=" + email_signed)
 
@@ -361,7 +361,7 @@ def change_email(request):
 @middleware.allow_without_verified_email
 @login_required
 def change_email_step1done(request):
-    signer = Signer("accounts.views.change-email")
+    signer = Signer(key="accounts.views.change-email")
     email_signed = urlsafe_base64_decode(request.GET.get("e", ""))
     try:
         email = signer.unsign(email_signed.decode("utf8"))
@@ -467,7 +467,7 @@ def forgot(request):
                 user = None
             if user:
                 _send_forgot_email(request, user)
-                signer = Signer("accounts.views.forgot-email")
+                signer = Signer(key="accounts.views.forgot-email")
                 email_signed = urlsafe_base64_encode(signer.sign(user.email).encode("utf8"))
                 return redirect(reverse("accounts:forgot-sent") + "?e=" + email_signed)
     return render(request, "accounts/forgot/step1.html", {"form": form})
@@ -477,7 +477,7 @@ def forgot_step1done(request):
     if request.user.is_authenticated:
         return redirect(_login_redirect_url(request))
 
-    signer = Signer("accounts.views.forgot-email")
+    signer = Signer(key="accounts.views.forgot-email")
     email_signed = urlsafe_base64_decode(request.GET.get("e", ""))
     try:
         email = signer.unsign(email_signed.decode("utf8"))
