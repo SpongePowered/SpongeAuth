@@ -109,7 +109,7 @@ def setup_totp(request):
         messages.error(request, _("You may not have multiple Google Authenticators attached to your account."))
         return redirect("twofa:list")
 
-    setup_signer = TimestampSigner("twofa.views.setup_totp:{}".format(request.user.pk))
+    setup_signer = TimestampSigner(key="twofa.views.setup_totp:{}".format(request.user.pk))
 
     if request.method == "POST" and "secret" in request.POST:
         try:

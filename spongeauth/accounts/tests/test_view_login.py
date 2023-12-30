@@ -49,7 +49,7 @@ class TestLogin(django.test.TestCase):
     def test_errors_with_invalid_username(self):
         resp = self.client.post(self.path(), {"username": "foobar", "password": "barbarbar"})
         assert isinstance(resp.context["form"], forms.AuthenticationForm)
-        self.assertFormError(resp, "form", "username", "There is no user with that username.")
+        self.assertFormError(resp.context["form"], "username", "There is no user with that username.")
         user = django.contrib.auth.get_user(self.client)
         assert not user.is_authenticated
 
@@ -57,7 +57,7 @@ class TestLogin(django.test.TestCase):
         user = factories.UserFactory.create()
         resp = self.client.post(self.path(), {"username": user.username, "password": "barbarbar"})
         assert isinstance(resp.context["form"], forms.AuthenticationForm)
-        self.assertFormError(resp, "form", "password", "The provided password was incorrect.")
+        self.assertFormError(resp.context["form"], "password", "The provided password was incorrect.")
         user = django.contrib.auth.get_user(self.client)
         assert not user.is_authenticated
 
