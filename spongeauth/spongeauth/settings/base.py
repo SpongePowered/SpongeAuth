@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "migrator",
     "api",
     "crispy_forms",
+    "crispy_bootstrap3",
     "dal",
     "dal_select2",
     "django.contrib.admin",
@@ -137,6 +138,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_SCOPES = ["profile", "email"]
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap3"
 CRISPY_TEMPLATE_PACK = "bootstrap3"
 
 AUTH_USER_MODEL = "accounts.User"
