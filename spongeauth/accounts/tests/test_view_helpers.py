@@ -179,7 +179,7 @@ class TestVerifyGoogleIDToken:
         with pytest.raises(oauth2client.crypt.AppIdentityError) as exc:
             views._verify_google_id_token(request)
         assert str(exc.value) == "Invalid issuer."
-        assert mock_verify_id_token.called_once_with("baz", "gcid")
+        mock_verify_id_token.assert_called_once_with("baz", "gcid")
 
     @unittest.mock.patch("oauth2client.client.verify_id_token")
     @django.test.override_settings(GOOGLE_CLIENT_ID="gcid")
