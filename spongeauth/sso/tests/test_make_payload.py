@@ -20,6 +20,9 @@ class TestMakePayload:
 
     def test_builds_payload(self):
         user = accounts.tests.factories.UserFactory.build()
+        user._state.adding = False
+        user._state.db = 'default'
+        user.id = 123
 
         payload = utils.make_payload(user, "nonce-nce")
         assert payload == {
@@ -41,6 +44,9 @@ class TestMakePayload:
 
     def test_builds_payload_not_activated(self):
         user = accounts.tests.factories.UserFactory.build(email_verified=False)
+        user._state.adding = False
+        user._state.db = 'default'
+        user.id = 123
 
         payload = utils.make_payload(user, "nonce-nce")
         assert payload == {
@@ -62,6 +68,9 @@ class TestMakePayload:
 
     def test_sends_groups(self):
         user = accounts.tests.factories.UserFactory.create()
+        user.id = 123
+        user._state.adding = False
+        user._state.db = 'default'
         int_group_in = accounts.tests.factories.GroupFactory.create(internal_only=True)
         int_group_not_in = accounts.tests.factories.GroupFactory.create(internal_only=True)
         group1_in = accounts.tests.factories.GroupFactory.create(internal_only=False)
