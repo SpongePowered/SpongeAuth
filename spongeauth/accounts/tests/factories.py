@@ -23,6 +23,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.User
 
+    id = factory.Faker("pyint")
+
     email = factory.Faker("safe_email")
     email_verified = True
     username = factory.Faker("user_name")

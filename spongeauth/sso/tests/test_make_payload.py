@@ -20,6 +20,9 @@ class TestMakePayload:
 
     def test_builds_payload(self):
         user = accounts.tests.factories.UserFactory.build()
+        # Needed as in Django 5.0 passing unsaved model instances to related filters is no longer allowed
+        user._state.adding = False
+        user._state.db = 'default'
 
         payload = utils.make_payload(user, "nonce-nce")
         assert payload == {
@@ -41,6 +44,9 @@ class TestMakePayload:
 
     def test_builds_payload_not_activated(self):
         user = accounts.tests.factories.UserFactory.build(email_verified=False)
+        # Needed as in Django 5.0 passing unsaved model instances to related filters is no longer allowed
+        user._state.adding = False
+        user._state.db = 'default'
 
         payload = utils.make_payload(user, "nonce-nce")
         assert payload == {
@@ -62,6 +68,10 @@ class TestMakePayload:
 
     def test_sends_groups(self):
         user = accounts.tests.factories.UserFactory.create()
+        # Needed as in Django 5.0 passing unsaved model instances to related filters is no longer allowed
+        user._state.adding = False
+        user._state.db = 'default'
+
         int_group_in = accounts.tests.factories.GroupFactory.create(internal_only=True)
         int_group_not_in = accounts.tests.factories.GroupFactory.create(internal_only=True)
         group1_in = accounts.tests.factories.GroupFactory.create(internal_only=False)
