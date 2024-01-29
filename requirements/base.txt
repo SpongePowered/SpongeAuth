@@ -6,7 +6,7 @@ django-crispy-forms==2.1
 crispy-bootstrap3==2024.1
 django-model-utils==4.3.1
 qrcode==7.4.2
-pytz==2023.3.post1
+pytz==2023.4
 requests==2.31.0
 psycopg2-binary==2.9.9
 django-autocomplete-light==3.9.7
