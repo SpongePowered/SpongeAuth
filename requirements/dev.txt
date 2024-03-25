@@ -7,5 +7,5 @@ Faker==24.3.0
 django-debug-toolbar==4.3.0
 pylint<3
 black==24.3.0
-pre-commit==3.6.2
+pre-commit==3.7.0
 fakeredis==2.21.3
