@@ -12,7 +12,7 @@
         "bootstrap-sass": "3.4.3",
         "font-awesome": "^4.7.0",
         "google-closure-compiler": "^20240317.0.0",
-        "gulp": "^4.0.2",
+        "gulp": "^5.0.0",
         "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.3.0",
         "gulp-cli": "^3.0.0",
