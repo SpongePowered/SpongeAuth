@@ -7,7 +7,7 @@ crispy-bootstrap3==2024.1
 django-model-utils==4.5.1
 qrcode==7.4.2
 pytz==2024.1
-requests==2.32.0
+requests==2.32.1
 psycopg2-binary==2.9.9
 django-autocomplete-light==3.11.0
 django-rq==2.10.2
