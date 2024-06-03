@@ -3,7 +3,7 @@
 pytest-django==4.8.0
 prospector==1.10.3
 factory_boy==3.3.0
-Faker==25.3.0
+Faker==25.4.0
 django-debug-toolbar==4.4.2
 pylint<3
 black==24.4.2
