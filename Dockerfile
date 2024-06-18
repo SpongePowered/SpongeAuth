@@ -47,7 +47,7 @@ RUN mkdir -p $HOME/public_html/media
 RUN chown -R $APP_NAME:$APP_NAME $HOME
 USER $APP_NAME
 
-RUN sed -i 's/-e\ git+https:\/\/github\.com\/felixoi\/django-user-sessions.git#egg=//g' $APP_HOME/requirements/base.txt
+RUN sed -i 's/-e\ git+https:\/\/github\.com\/jazzband\/django-user-sessions.git#egg=//g' $APP_HOME/requirements/base.txt
 RUN python3 -m venv $HOME/env && $HOME/env/bin/pip install --upgrade --no-cache pip && $HOME/env/bin/pip install \
     -r requirements/base.txt \
     -r requirements/prod.txt \
