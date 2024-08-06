@@ -1,4 +1,4 @@
-Django==5.0.7
+Django==5.0.8
 -e git+https://github.com/jazzband/django-user-sessions.git#egg=django-user-sessions
 Pillow==10.4.0
 oauth2client==4.1.3
