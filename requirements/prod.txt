@@ -1,4 +1,4 @@
 -r base.txt
 
 sentry-sdk==2.6.0
-gunicorn==22.0.0
+gunicorn==23.0.0
