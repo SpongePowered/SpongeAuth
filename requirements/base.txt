@@ -12,4 +12,4 @@ psycopg2-binary==2.9.9
 django-autocomplete-light==3.11.0
 django-rq==2.10.2
 rq<1.17
-setuptools==73.0.1
+setuptools==74.0.0
