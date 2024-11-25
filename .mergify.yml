@@ -1,8 +1,25 @@
 queue_rules:
-  - name: default
-    conditions:
+  - name: duplicated default from Automatic merge on approval
+    queue_conditions:
+      - "author~=^(pyup-bot|dependabot\\[bot\\])$"
+      - "-merged"
       - "status-success=test (3.x, 12, py3-cov)"
       - "status-success=test (3.x, 12, lint)"
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - "label=ready to merge"
+    merge_conditions: []
+    merge_method: merge
+  - name: default
+    queue_conditions:
+      - "author~=^(pyup-bot|dependabot\\[bot\\])$"
+      - "-merged"
+      - "status-success=test (3.x, 12, py3-cov)"
+      - "status-success=test (3.x, 12, lint)"
+    merge_conditions:
+      - "status-success=test (3.x, 12, py3-cov)"
+      - "status-success=test (3.x, 12, lint)"
+    merge_method: rebase
 
 pull_request_rules:
   - name: Dependency updater - automatic merge on CI passing
@@ -12,9 +29,6 @@ pull_request_rules:
       - "status-success=test (3.x, 12, py3-cov)"
       - "status-success=test (3.x, 12, lint)"
     actions:
-      queue:
-        method: rebase
-        name: default
       delete_head_branch: {}
   - name: Dependency updater - flag for human review on coverage failing
     conditions:
@@ -43,7 +57,9 @@ pull_request_rules:
       - "#changes-requested-reviews-by=0"
       - "label=ready to merge"
     actions:
-      queue:
-        method: merge
-        name: default
       delete_head_branch: {}
+  - name: Automatic merge on approval + Dependency updater - automatic merge on CI
+      passing
+    conditions: []
+    actions:
+      queue:
