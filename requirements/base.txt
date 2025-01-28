@@ -9,7 +9,7 @@ qrcode==8.0
 pytz==2024.2
 requests==2.32.3
 psycopg2-binary==2.9.10
-django-autocomplete-light==3.11.0
+django-autocomplete-light==3.12.0
 django-rq==3.0.0
 rq<2.2
 setuptools==75.8.0
