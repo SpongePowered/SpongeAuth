@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.12' ]
-        node-version: [ '12' ]
+        node-version: [ '22' ]
         tox-env: ['py3-cov', 'lint']
         
     services:
