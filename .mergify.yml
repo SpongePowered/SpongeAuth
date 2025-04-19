@@ -3,8 +3,8 @@ queue_rules:
     queue_conditions:
       - "author~=^(pyup-bot|dependabot\\[bot\\])$"
       - "-merged"
-      - "status-success=test (3.x, 12, py3-cov)"
-      - "status-success=test (3.x, 12, lint)"
+      - "status-success=test (3.12, 22, py3-cov)"
+      - "status-success=test (3.12, 22, lint)"
       - "#approved-reviews-by>=1"
       - "#changes-requested-reviews-by=0"
       - "label=ready to merge"
@@ -14,11 +14,11 @@ queue_rules:
     queue_conditions:
       - "author~=^(pyup-bot|dependabot\\[bot\\])$"
       - "-merged"
-      - "status-success=test (3.x, 12, py3-cov)"
-      - "status-success=test (3.x, 12, lint)"
+      - "status-success=test (3.12, 22, py3-cov)"
+      - "status-success=test (3.12, 22, lint)"
     merge_conditions:
-      - "status-success=test (3.x, 12, py3-cov)"
-      - "status-success=test (3.x, 12, lint)"
+      - "status-success=test (3.12, 22, py3-cov)"
+      - "status-success=test (3.12, 22, lint)"
     merge_method: rebase
 
 pull_request_rules:
@@ -26,15 +26,15 @@ pull_request_rules:
     conditions:
       - "author~=^(pyup-bot|dependabot\\[bot\\])$"
       - "-merged"
-      - "status-success=test (3.x, 12, py3-cov)"
-      - "status-success=test (3.x, 12, lint)"
+      - "status-success=test (3.12, 22, py3-cov)"
+      - "status-success=test (3.12, 22, lint)"
     actions:
       delete_head_branch: {}
   - name: Dependency updater - flag for human review on coverage failing
     conditions:
       - "author~=^(pyup-bot|dependabot)$"
       - "-merged"
-      - "status-failure=test (3.x, 12, py3-cov)"
+      - "status-failure=test (3.12, 22, py3-cov)"
     actions:
       request_reviews:
         users: [lukegb, felixoi]
@@ -44,8 +44,8 @@ pull_request_rules:
     conditions:
       - "author~=^(pyup-bot|dependabot)$"
       - "-merged"
-      - "status-failure=test (3.x, 12, lint)"
-      - "-status-failure=test (3.x, 12, py3-cov)"
+      - "status-failure=test (3.12, 22, lint)"
+      - "-status-failure=test (3.12, 22, py3-cov)"
     actions:
       request_reviews:
         users: [lukegb, felixoi]
