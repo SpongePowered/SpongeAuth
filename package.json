@@ -12,14 +12,14 @@
         "bootstrap-sass": "3.4.3",
         "font-awesome": "^4.7.0",
         "google-closure-compiler": "^20240317.0.0",
-        "gulp": "^5.0.0",
+        "gulp": "^5.0.1",
         "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.3.0",
         "gulp-cli": "^3.1.0",
         "gulp-sass": "^5.1.0",
         "gulp-sourcemaps": "^3.0.0",
         "minimist": "^1.2.8",
-        "sass": "^1.89.0",
+        "sass": "^1.89.1",
         "sass-module-importer": "^1.4.0"
     },
     "resolutions": {
