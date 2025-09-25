@@ -69,3 +69,5 @@ priority_rules:
       - "#changes-requested-reviews-by=0"
       - "label=ready to merge"
     priority: 2250
+merge_queue:
+  max_parallel_checks: 1
