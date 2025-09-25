@@ -1,6 +1,5 @@
 queue_rules:
   - name: duplicated default from Automatic merge on approval
-    max_parallel_checks: 1
     queue_conditions:
       - "author~=^(pyup-bot|dependabot\\[bot\\])$"
       - "-merged"
@@ -12,7 +11,6 @@ queue_rules:
     merge_conditions: []
     merge_method: merge
   - name: default
-    max_parallel_checks: 1
     queue_conditions:
       - "author~=^(pyup-bot|dependabot\\[bot\\])$"
       - "-merged"
@@ -71,3 +69,5 @@ priority_rules:
       - "#changes-requested-reviews-by=0"
       - "label=ready to merge"
     priority: 2250
+merge_queue:
+  max_parallel_checks: 1
