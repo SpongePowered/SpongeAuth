@@ -10,6 +10,6 @@ pytz==2025.2
 requests==2.32.4
 psycopg2-binary==2.9.10
 django-autocomplete-light==3.12.1
-django-rq==3.0.1
+django-rq==3.1
 rq<2.5
 setuptools==80.9.0
