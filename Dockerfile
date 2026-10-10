@@ -1,58 +1,60 @@
+# syntax=docker/dockerfile:1
+
 #########################################
-#                BUILDER                #
+#                ASSETS                 #
 #########################################
 
-FROM python:3-alpine as builder
+FROM node:22-alpine3.24 AS assets
 
 WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-RUN apk update \
-    && apk add postgresql-dev python3-dev nodejs npm git py-pip zlib-dev jpeg-dev libpng-dev libwebp-dev musl-dev gcc py3-virtualenv
-
-COPY . /app
-
-RUN python3 -m venv /venv && /venv/bin/pip install --upgrade --no-cache pip wheel && \
-    /venv/bin/pip wheel --no-cache-dir --wheel-dir /app/wheels \
-    -r /app/requirements/base.txt \
-    -r /app/requirements/prod.txt
-
+COPY package.json package-lock.json .babelrc gulpfile.babel.js ./
 RUN npm ci
-RUN production=true node_modules/.bin/gulp build
+
+COPY closureexterns closureexterns
+COPY spongeauth/static spongeauth/static
+RUN npx gulp build
+
+#########################################
+#             PYTHON DEPS               #
+#########################################
+
+FROM python:3.12-alpine3.24 AS builder
+
+# git: django-user-sessions is installed from a pinned git commit
+RUN apk add --no-cache git
+
+COPY requirements /requirements
+# Install the git dependency as a regular (non-editable) package so the venv can be copied as-is
+RUN sed -i 's/^-e //' /requirements/base.txt \
+    && python -m venv /home/spongeauth/env \
+    && /home/spongeauth/env/bin/pip install --no-cache-dir -r /requirements/prod.txt
 
 #########################################
 #                 FINAL                 #
 #########################################
 
-FROM python:3-alpine
+FROM python:3.12-alpine3.24
 
-ENV APP_NAME=spongeauth
-ENV HOME=/home/$APP_NAME
-ENV APP_HOME=$HOME/app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    APP_NAME=spongeauth \
+    HOME=/home/spongeauth \
+    APP_HOME=/home/spongeauth/app \
+    DJANGO_SETTINGS_MODULE=spongeauth.settings.prod
 
-RUN mkdir -p $APP_HOME
-RUN addgroup -g 1000 -S $APP_NAME && adduser -u 1000 -S $APP_NAME -G $APP_NAME
+RUN addgroup -g 1000 -S $APP_NAME && adduser -u 1000 -S $APP_NAME -G $APP_NAME \
+    && mkdir -p $HOME/public_html/static $HOME/public_html/media \
+    && chown -R $APP_NAME:$APP_NAME $HOME
+
 WORKDIR $APP_HOME
 
-RUN apk update && apk add libpq py3-virtualenv zlib-dev jpeg-dev libpng-dev libwebp-dev
+COPY --from=builder /home/spongeauth/env $HOME/env
+COPY --chown=$APP_NAME:$APP_NAME . $APP_HOME
+COPY --from=assets --chown=$APP_NAME:$APP_NAME /app/spongeauth/static-build $APP_HOME/spongeauth/static-build
 
-COPY . $APP_HOME
-COPY --from=builder /app/spongeauth/static-build $APP_HOME/spongeauth/static-build
-COPY --from=builder /app/wheels /wheels
-RUN mkdir -p $HOME/public_html/static
-RUN mkdir -p $HOME/public_html/media
-
-RUN chown -R $APP_NAME:$APP_NAME $HOME
 USER $APP_NAME
 
-RUN sed -i 's/-e\ git+https:\/\/github\.com\/jazzband\/django-user-sessions.git#egg=//g' $APP_HOME/requirements/base.txt
-RUN python3 -m venv $HOME/env && $HOME/env/bin/pip install --upgrade --no-cache pip && $HOME/env/bin/pip install \
-    -r requirements/base.txt \
-    -r requirements/prod.txt \
-    --no-cache /wheels/*
-
-ENV DJANGO_SETTINGS_MODULE=spongeauth.settings.prod
+EXPOSE 8080
 
 ENTRYPOINT ["sh", "-c", "$APP_HOME/entrypoint/run.sh"]
