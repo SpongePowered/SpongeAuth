@@ -16,3 +16,4 @@ venv/
 Pipfile*
 spongeauth/spongeauth/settings/local_settigs.py
 .env
+.venv/

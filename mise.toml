@@ -1,0 +1,60 @@
+[tools]
+python = "3.12"
+node = "22"
+actionlint = "1.7.12"
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+# matches docker-compose.dev.yml
+DB_HOST = "localhost"
+DB_USER = "spongeauth"
+DB_PASSWORD = "spongeauth"
+
+[tasks.install]
+description = "Install Python and Node dependencies"
+run = [
+  "pip install --upgrade pip",
+  "pip install -r requirements/test.txt",
+  "npm ci",
+]
+
+[tasks.assets]
+description = "Build static assets into spongeauth/static-build"
+run = "npx gulp build"
+
+[tasks."assets:watch"]
+description = "Rebuild static assets on change"
+run = "npx gulp watch"
+
+[tasks.db]
+description = "Start the local Postgres container"
+run = "docker compose -f docker-compose.dev.yml up -d"
+
+[tasks.migrate]
+description = "Apply migrations against the local database"
+env = { DJANGO_SETTINGS_MODULE = "spongeauth.settings.dev" }
+run = "python spongeauth/manage.py migrate"
+
+[tasks.dev]
+description = "Run the Django dev server on :8000"
+depends = ["migrate"]
+env = { DJANGO_SETTINGS_MODULE = "spongeauth.settings.dev" }
+run = "python spongeauth/manage.py runserver"
+
+[tasks.test]
+description = "Run the test suite (needs `mise run db`)"
+dir = "spongeauth"
+env = { PYTHONPATH = ".", DJANGO_SETTINGS_SKIP_LOCAL = "True", LANG = "C" }
+run = "pytest --cov-config=../.coveragerc --cov=. {{arg(name='pytest_args', var=true, default='')}}"
+
+[tasks.lint]
+description = "Run prospector"
+run = ["prospector --die-on-tool-error", "actionlint"]
+
+[tasks.fmt]
+description = "Format with black"
+run = "black spongeauth"
+
+[tasks."docker:build"]
+description = "Build the production image locally"
+run = "docker build -t spongeauth:local ."
