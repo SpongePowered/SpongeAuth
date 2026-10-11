@@ -8,10 +8,9 @@ FROM node:22-alpine3.24 AS assets
 
 WORKDIR /app
 
-COPY package.json package-lock.json .babelrc gulpfile.babel.js ./
+COPY package.json package-lock.json gulpfile.mjs ./
 RUN npm ci
 
-COPY closureexterns closureexterns
 COPY spongeauth/static spongeauth/static
 RUN npx gulp build
 
