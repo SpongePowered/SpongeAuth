@@ -18,7 +18,7 @@ RUN npx gulp build
 #             PYTHON DEPS               #
 #########################################
 
-FROM python:3.12-alpine3.24 AS builder
+FROM python:3.14-alpine3.24 AS builder
 
 # git: django-user-sessions is installed from a pinned git commit
 RUN apk add --no-cache git
@@ -33,7 +33,7 @@ RUN sed -i 's/^-e //' /requirements/base.txt \
 #                 FINAL                 #
 #########################################
 
-FROM python:3.12-alpine3.24
+FROM python:3.14-alpine3.24
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
