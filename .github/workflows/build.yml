@@ -4,7 +4,8 @@ on: [push, pull_request]
 
 jobs:
   test:
-
+    # fixed check names for branch protection and Mergify; versions live in the matrix
+    name: test (${{ matrix.tox-env }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
