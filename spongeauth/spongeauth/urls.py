@@ -25,7 +25,7 @@ import api.urls
 import twofa.urls
 import sso.urls
 
-from core.views import index, admin_login_redirect
+from core.views import index, admin_login_redirect, healthz
 
 from accounts.views import avatar_for_user
 
@@ -39,6 +39,7 @@ urlpatterns = [
     re_path(r"^avatar/(?P<username>[^/]+)/?$", avatar_for_user, name="avatar-for-user"),
     re_path(r"^sso/", include(sso.urls, "sso")),
     re_path(r"^$", index, name="index"),
+    re_path(r"^healthz$", healthz, name="healthz"),
     re_path(r"^api/", include(api.urls, "api")),
     re_path("django-rq/", include(django_rq.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

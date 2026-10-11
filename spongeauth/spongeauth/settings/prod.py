@@ -20,6 +20,15 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "true") != 'false'
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = os.environ["CSRF_TRUSTED_ORIGINS"].split(',')
+# TLS terminates at the ingress; nginx forwards its X-Forwarded-Proto
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
+}
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = os.environ["EMAIL_TLS"] == 'true'

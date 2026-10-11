@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -14,3 +15,7 @@ def admin_login_redirect(request):
         return redirect("index")
 
     return redirect("{}?{}".format(reverse("accounts:login"), urlencode({"next": request.GET.get("next", "/")})))
+
+
+def healthz(request):
+    return HttpResponse("ok", content_type="text/plain")
