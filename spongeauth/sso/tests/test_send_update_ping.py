@@ -19,7 +19,7 @@ TEST_SSO_ENDPOINTS = {
 
 
 @pytest.mark.django_db
-def test_send_update_ping(settings):
+def test_send_update_ping(settings, django_capture_on_commit_callbacks):
     with unittest.mock.patch.object(
         discourse_sso, "DiscourseSigner"
     ) as fake_discourse_signer_cls, unittest.mock.patch.object(requests, "post") as fake_send_post:
@@ -45,7 +45,9 @@ def test_send_update_ping(settings):
         user.save()
 
         settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
-        send_update_ping(user)
+        # django-rq enqueues on commit, and the test transaction never commits
+        with django_capture_on_commit_callbacks(execute=True):
+            send_update_ping(user)
         django_rq.get_worker().work(burst=True)
 
         fake_send_post.assert_called_once_with(
@@ -74,7 +76,7 @@ def test_send_update_ping(settings):
 
 
 @pytest.mark.django_db
-def test_send_update_ping_better(settings):
+def test_send_update_ping_better(settings, django_capture_on_commit_callbacks):
     with unittest.mock.patch.object(
         discourse_sso, "DiscourseSigner"
     ) as fake_discourse_signer_cls, unittest.mock.patch.object(requests, "post") as fake_send_post:
@@ -100,7 +102,9 @@ def test_send_update_ping_better(settings):
         user.groups.set([excluded_group, in_group, in_internal_group])
 
         settings.SSO_ENDPOINTS = TEST_SSO_ENDPOINTS
-        send_update_ping(user, exclude_groups=[excluded_group.id])
+        # django-rq enqueues on commit, and the test transaction never commits
+        with django_capture_on_commit_callbacks(execute=True):
+            send_update_ping(user, exclude_groups=[excluded_group.id])
         django_rq.get_worker().work(burst=True)
 
         fake_send_post.assert_called_once_with(
@@ -127,7 +131,9 @@ def test_send_update_ping_better(settings):
             }
         )
 
-        send_update_ping(user)
+        # django-rq enqueues on commit, and the test transaction never commits
+        with django_capture_on_commit_callbacks(execute=True):
+            send_update_ping(user)
         django_rq.get_worker().work(burst=True)
         fake_discourse_signer.sign.assert_called_with(
             {
