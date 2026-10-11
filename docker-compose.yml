@@ -22,14 +22,19 @@ services:
       - "host.docker.internal:host-gateway"
     links:
       - "redis"
+    # nginx shares this container's network, so its port is published here
+    ports:
+      - "8080:80"
   proxy:
     image: nginx:mainline-alpine
     restart: always
+    # same network namespace as app, like a k8s pod: nginx.conf proxies to 127.0.0.1:8080
+    network_mode: "service:app"
+    environment:
+      # IPs/CIDRs allowed to set X-Forwarded-For; empty trusts none
+      NGINX_TRUSTED_PROXIES: ${NGINX_TRUSTED_PROXIES:-}
     volumes:
       - static:/usr/share/nginx/public_html/static
       - ../media:/usr/share/nginx/public_html/media
       - ./nginx.conf:/etc/nginx/nginx.conf
-    links:
-      - "app"
-    ports:
-      - "8080:80"
+      - ./nginx-trusted-proxies.sh:/docker-entrypoint.d/40-trusted-proxies.sh

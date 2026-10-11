@@ -18,3 +18,10 @@ def test_admin_login_redirect_not_staff():
     client.login(username=user.username, password="secret")
     resp = client.get("/admin/", follow=True)
     assert resp.redirect_chain == [("/admin/login/?next=/admin/", 302), ("/", 302)]
+
+
+def test_healthz():
+    # no django_db mark: fails if the probe ever starts touching the database
+    resp = django.test.Client().get("/healthz")
+    assert resp.status_code == 200
+    assert resp.content == b"ok"
