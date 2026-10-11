@@ -75,7 +75,10 @@ sentry_sdk.init(
     send_default_pii=True,
 )
 
-STATICFILES_STORAGE = "core.staticfiles.SourcemapManifestStaticFilesStorage"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "core.staticfiles.SourcemapManifestStaticFilesStorage"},
+}
 STATIC_ROOT = os.path.join(PARENT_ROOT, "public_html", "static")
 MEDIA_ROOT = os.path.join(PARENT_ROOT, "public_html", "media")
 
