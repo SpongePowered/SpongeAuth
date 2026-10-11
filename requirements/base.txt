@@ -1,15 +1,15 @@
 Django==5.2.17
 -e git+https://github.com/jazzband/django-user-sessions.git@527f91e83e61d240d6bba6e20d460cc515a52dbb#egg=django-user-sessions
-Pillow==11.3.0
+Pillow==12.3.0
 oauth2client==4.1.3
-django-crispy-forms==2.4
+django-crispy-forms==2.7
 crispy-bootstrap3==2024.1
 django-model-utils==5.0.0
 qrcode==8.2
-pytz==2025.2
-requests==2.32.5
-psycopg2-binary==2.9.10
-django-autocomplete-light==3.12.1
-django-rq==3.1
-rq<2.7
+pytz==2026.5
+requests==2.34.2
+psycopg2-binary==2.9.13
+django-autocomplete-light==5.0.0
+django-rq==4.2.0
+rq==2.12.0
 setuptools==80.9.0
