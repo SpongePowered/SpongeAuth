@@ -47,6 +47,17 @@ dir = "spongeauth"
 env = { PYTHONPATH = ".", DJANGO_SETTINGS_SKIP_LOCAL = "True", LANG = "C" }
 run = "pytest --cov-config=../.coveragerc --cov=. {{arg(name='pytest_args', var=true, default='')}}"
 
+[tasks."test:docker"]
+description = "Run the test suite in Linux like CI, e.g. when macOS image output differs (needs `mise run db`)"
+run = """
+docker run --rm -t \
+  -v "$PWD:/src" -v spongeauth-pip-cache:/root/.cache/pip -w /src/spongeauth \
+  -e DB_HOST=host.docker.internal -e DB_USER -e DB_PASSWORD \
+  -e PYTHONPATH=. -e PYTHONDONTWRITEBYTECODE=1 -e DJANGO_SETTINGS_SKIP_LOCAL=True -e LANG=C \
+  python:3.12 sh -c \
+  'pip install -q --root-user-action=ignore --disable-pip-version-check --src /tmp/src -r ../requirements/test.txt && pytest -p no:cacheprovider "$@"' --
+"""
+
 [tasks.lint]
 description = "Run prospector"
 run = ["prospector --die-on-tool-error", "actionlint"]
