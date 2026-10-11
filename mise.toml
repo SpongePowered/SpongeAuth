@@ -1,6 +1,6 @@
 [tools]
 python = "3.12"
-node = "22"
+node = "24"
 actionlint = "1.7.12"
 
 [env]
