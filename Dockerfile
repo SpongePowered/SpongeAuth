@@ -4,7 +4,7 @@
 #                ASSETS                 #
 #########################################
 
-FROM node:24-alpine3.24 AS assets
+FROM node:26-alpine3.24 AS assets
 
 WORKDIR /app
 
