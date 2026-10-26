@@ -6,7 +6,7 @@
     "author": "The SpongePowered Team",
     "license": "MIT",
     "devDependencies": {
-        "@babel/core": "^8.0.7",
+        "@babel/core": "^8.0.9",
         "@babel/preset-env": "^8.0.7",
         "bootstrap-sass": "3.4.3",
         "font-awesome": "^4.7.0",
