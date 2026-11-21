@@ -62,7 +62,7 @@ MIDDLEWARE = [
     "accounts.middleware.EnforceToSAccepted",
 ]
 
-SESSION_ENGINE = "user_sessions.backends.db"
+SESSION_ENGINE = "core.sessions"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
