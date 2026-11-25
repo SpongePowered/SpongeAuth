@@ -1,0 +1,73 @@
+# Throwaway stack for the e2e suite (e2e/): the production image behind nginx,
+# with its own Postgres and Redis, and Mailpit catching all outgoing mail.
+# `mise run e2e:up` starts it, `mise run e2e:down` deletes it and its data.
+name: spongeauth-e2e
+
+volumes:
+  static:
+  media:
+
+services:
+  postgres:
+    image: postgres:18.3
+    environment:
+      POSTGRES_DB: spongeauth
+      POSTGRES_USER: spongeauth
+      POSTGRES_PASSWORD: spongeauth
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "spongeauth"]
+      interval: 2s
+      retries: 30
+  redis:
+    image: redis:alpine
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "18025:8025"
+  app:
+    build: .
+    # as the k8s pod runs it: read-only root, writable /tmp for gunicorn
+    read_only: true
+    tmpfs:
+      - /tmp
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - static:/home/spongeauth/public_html/static
+      - media:/home/spongeauth/public_html/media
+    environment:
+      ALLOWED_HOSTS: localhost
+      CSRF_TRUSTED_ORIGINS: http://localhost:18080
+      # plain http here, so the cookies must not be Secure
+      SESSION_COOKIE_SECURE: "false"
+      CSRF_COOKIE_SECURE: "false"
+      SECRET_KEY: e2e-not-a-secret
+      DB_NAME: spongeauth
+      DB_USER: spongeauth
+      DB_PASSWORD: spongeauth
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      EMAIL_HOST: mailpit
+      EMAIL_PORT: "1025"
+      EMAIL_HOST_USER: ""
+      EMAIL_HOST_PASSWORD: ""
+      EMAIL_TLS: "false"
+      EMAIL_SSL: "false"
+      DEFAULT_FROM_EMAIL: e2e@auth.example.com
+      SERVER_EMAIL: e2e@auth.example.com
+      GOOGLE_CLIENT_ID: e2e.apps.googleusercontent.com
+      # the suite plays the DiscourseConnect consumer with this secret (E2E_SSO_SECRET);
+      # no sync_sso_endpoint, so nothing is pushed anywhere
+      SSO_ENDPOINT_e2e_SSO_SECRET: e2e-sso-secret
+    ports:
+      - "18080:80"
+  proxy:
+    image: nginx:mainline-alpine
+    # same network namespace as app, like the k8s pod
+    network_mode: "service:app"
+    volumes:
+      - static:/usr/share/nginx/public_html/static
+      - media:/usr/share/nginx/public_html/media
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx-trusted-proxies.sh:/docker-entrypoint.d/40-trusted-proxies.sh

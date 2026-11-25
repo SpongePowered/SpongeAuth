@@ -57,8 +57,30 @@ jobs:
         DB_HOST: localhost
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  e2e:
+    # the production image behind nginx, with throwaway Postgres/Redis/Mailpit (docker-compose.e2e.yml)
+    name: e2e
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      with:
+        python-version: '3.12'
+    - name: Start the stack
+      run: |
+        docker compose -f docker-compose.e2e.yml up -d --build
+        curl -fsS -o /dev/null --retry 30 --retry-delay 2 --retry-all-errors http://localhost:18080/healthz
+    - name: Run the e2e suite
+      working-directory: e2e
+      run: |
+        pip install -r ../requirements/ci.txt
+        pytest -p no:cacheprovider
+    - name: Stack logs
+      if: failure()
+      run: docker compose -f docker-compose.e2e.yml logs --no-color
+
   image:
-    needs: test
+    needs: [test, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: read

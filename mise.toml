@@ -58,6 +58,22 @@ docker run --rm -t \
   'pip install -q --root-user-action=ignore --disable-pip-version-check --src /tmp/src -r ../requirements/test.txt && pytest -p no:cacheprovider "$@"' --
 """
 
+[tasks."e2e:up"]
+description = "Build and start the throwaway e2e stack (app :18080, Mailpit :18025)"
+run = [
+  "docker compose -f docker-compose.e2e.yml up -d --build",
+  "curl -fsS -o /dev/null --retry 30 --retry-delay 2 --retry-all-errors http://localhost:18080/healthz",
+]
+
+[tasks."e2e:down"]
+description = "Delete the e2e stack and its data"
+run = "docker compose -f docker-compose.e2e.yml down -v"
+
+[tasks.e2e]
+description = "Run the e2e suite against E2E_BASE_URL (default: the `mise run e2e:up` stack)"
+dir = "e2e"
+run = "pytest -p no:django -p no:cacheprovider {{arg(name='pytest_args', var=true, default='')}}"
+
 [tasks.lint]
 description = "Run prospector"
 run = ["prospector --die-on-tool-error", "actionlint"]
